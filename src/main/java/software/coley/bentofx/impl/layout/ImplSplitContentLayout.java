@@ -43,6 +43,8 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 		this.childLayouts = new ArrayList<>(childLayouts);
 		this.identifier = identifier;
 
+		BentoUtils.disableWhenNoParent(this);
+
 		orientationProperty().set(orientation);
 
 		List<Region> contentLayoutRegions = childLayouts.stream()

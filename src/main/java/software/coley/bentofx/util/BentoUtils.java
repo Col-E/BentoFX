@@ -19,9 +19,11 @@ import javafx.stage.Stage;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.Dockable;
 import software.coley.bentofx.DockableDestination;
+import software.coley.bentofx.content.TabbedContent;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderView;
 import software.coley.bentofx.impl.content.ImplTabbedContent;
+import software.coley.bentofx.layout.ContentLayout;
 import software.coley.bentofx.path.DockablePath;
 
 import java.util.ArrayList;
@@ -375,5 +377,38 @@ public class BentoUtils {
 			destination.clearCanvas();
 			region.setEffect(null);
 		});
+	}
+
+	/**
+	 * I encountered some 3rd party libraries that do wierd scene-graph manipulations that trigger
+	 * <a href="https://stackoverflow.com/questions/70920125/problems-reseting-scene-graph-in-javafx">the 2nd bug
+	 * in this StackOverflow post</a>. The relevant exception is:
+	 * <pre>{@code
+	 * Exception in thread "JavaFX Application Thread" java.lang.NullPointerException: Cannot invoke "javafx.scene.Scene.isDepthBuffer()" because the return value of "javafx.scene.Node.getScene()" is null
+	 *     at javafx.graphics/com.sun.javafx.scene.input.PickResultChooser.processOffer(PickResultChooser.java:185)
+	 *     at javafx.graphics/com.sun.javafx.scene.input.PickResultChooser.offer(PickResultChooser.java:143)
+	 *     at javafx.graphics/javafx.scene.Node.doComputeIntersects(Node.java:5263)
+	 *     at javafx.graphics/javafx.scene.Node$1.doComputeIntersects(Node.java:456)
+	 *     at javafx.graphics/com.sun.javafx.scene.NodeHelper.computeIntersectsImpl(NodeHelper.java:180)
+	 *     at javafx.graphics/com.sun.javafx.scene.NodeHelper.computeIntersects(NodeHelper.java:133)
+	 *     at javafx.graphics/javafx.scene.Node.intersects(Node.java:5234)
+	 *     at javafx.graphics/javafx.scene.Node.doPickNodeLocal(Node.java:5171)
+	 *     at javafx.graphics/javafx.scene.Node$1.doPickNodeLocal(Node.java:450)
+	 *     at javafx.graphics/com.sun.javafx.scene.NodeHelper.pickNodeLocalImpl(NodeHelper.java:175)
+	 *     at javafx.graphics/com.sun.javafx.scene.NodeHelper.pickNodeLocal(NodeHelper.java:128)
+	 *     at javafx.graphics/javafx.scene.Node.pickNode(Node.java:5203)
+	 * }</pre>
+	 * The 3rd party manipulation is leading to a state where their {@link Node} inside a {@link TabbedContent}
+	 * is trying to re-parent itself when temporarily removed with drag-n-drop behavior.
+	 * The easiest fix is the make it so that the picking logic in {@code Node.pickNode} skips it.
+	 * If you encounter this problem, just call this method on your misbehaving 3rd party control.
+	 * <p/>
+	 * We will be using this on all {@link ContentLayout} implementations to ensure this does not ever happen.
+	 *
+	 * @param node
+	 * 		Node to disable when it has no parent.
+	 */
+	public static void disableWhenNoParent(@Nonnull Node node) {
+		node.parentProperty().addListener((ob, old, cur) -> node.setDisable(cur == null));
 	}
 }

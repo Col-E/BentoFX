@@ -36,6 +36,8 @@ public class ImplLeafContentLayout extends BorderPane implements LeafContentLayo
 		this.content = content;
 		this.identifier = identifier;
 
+		BentoUtils.disableWhenNoParent(this);
+
 		setContent(content);
 	}
 
