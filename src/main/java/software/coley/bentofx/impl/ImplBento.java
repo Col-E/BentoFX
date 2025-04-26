@@ -11,6 +11,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import software.coley.bentofx.Bento;
+import software.coley.bentofx.DockableDestination;
 import software.coley.bentofx.EmptyDisplayFactory;
 import software.coley.bentofx.builder.ContentBuilder;
 import software.coley.bentofx.builder.DockableBuilder;
@@ -61,13 +62,13 @@ public class ImplBento implements Bento {
 
 	@Nonnull
 	@Override
-	public Stage newStageForDroppedHeader(@Nonnull Header header) {
+	public Stage newStageForDroppedHeader(@Nonnull DockableDestination source, @Nonnull Header header) {
 		Scene sourceScene = header.getScene();
 		ContentBuilder builder = newContentBuilder();
 		LeafContentLayout layout = builder.tabbed(Side.TOP, header.getDockable());
 		Region region = builder.root(layout).getBackingRegion();
 		Stage stage = new DragDropStage(true);
-		Scene scene = new Scene(region);
+		Scene scene = new Scene(region, source.getBackingRegion().getWidth(), source.getBackingRegion().getHeight());
 		stage.setScene(scene);
 		if (sourceScene != null) {
 			scene.setUserAgentStylesheet(sourceScene.getUserAgentStylesheet());

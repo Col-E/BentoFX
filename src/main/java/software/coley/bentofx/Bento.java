@@ -66,13 +66,15 @@ public interface Bento {
 	void setEmptyDisplayFactory(@Nullable EmptyDisplayFactory factory);
 
 	/**
+	 * @param source
+	 * 		The source where the header is being dragged out of.
 	 * @param header
 	 * 		Header being dragged into some open space, triggering the creation of a new stage.
 	 *
 	 * @return The new stage for the header to be moved to.
 	 */
 	@Nonnull
-	Stage newStageForDroppedHeader(@Nonnull Header header);
+	Stage newStageForDroppedHeader(@Nonnull DockableDestination source, @Nonnull Header header);
 
 	/**
 	 * @return Unmodifiable list of all tracked {@link RootContentLayout}

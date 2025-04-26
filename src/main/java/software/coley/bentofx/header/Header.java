@@ -265,7 +265,7 @@ public class Header extends Group {
 			if (e.getGestureTarget() == null
 					&& headerSource.dockable.canBeDroppedToNewWindow().get()
 					&& sourceParent.removeDockable(headerSource.dockable)) {
-				Stage stage = bento.newStageForDroppedHeader(headerSource);
+				Stage stage = bento.newStageForDroppedHeader(sourceParent.getComposedDestinationRoot(), headerSource);
 				stage.show();
 				stage.toFront();
 				stage.requestFocus();

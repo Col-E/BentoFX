@@ -348,6 +348,12 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 
 	@Nonnull
 	@Override
+	public DockableDestination getComposedDestinationRoot() {
+		return parentView;
+	}
+
+	@Nonnull
+	@Override
 	public Region getBackingRegion() {
 		return this;
 	}

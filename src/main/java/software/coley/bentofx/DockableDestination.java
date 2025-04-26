@@ -3,10 +3,13 @@ package software.coley.bentofx;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import javafx.geometry.Side;
+import javafx.scene.Parent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.header.Header;
+import software.coley.bentofx.header.HeaderRegion;
+import software.coley.bentofx.header.HeaderView;
 import software.coley.bentofx.layout.ContentLayout;
 import software.coley.bentofx.layout.SplitContentLayout;
 
@@ -164,4 +167,15 @@ public interface DockableDestination extends RegionBacked, Identifiable {
 	 * @see #toggleCollapsed()
 	 */
 	boolean isCollapsed();
+
+	/**
+	 * In some cases a destination is implemented as a multi-section {@link Parent}.
+	 * For instance, {@link HeaderRegion} is a {@link DockableDestination} but its
+	 * direct parent is {@link HeaderView} which is also {@link DockableDestination}.
+	 * In that case, calling this on either would yield the {@link HeaderView}.
+	 *
+	 * @return Composed root destination.
+	 */
+	@Nonnull
+	DockableDestination getComposedDestinationRoot();
 }

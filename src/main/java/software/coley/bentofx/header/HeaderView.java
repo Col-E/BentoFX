@@ -262,6 +262,12 @@ public class HeaderView extends StackPane implements DockableDestination {
 
 	@Nonnull
 	@Override
+	public DockableDestination getComposedDestinationRoot() {
+		return this;
+	}
+
+	@Nonnull
+	@Override
 	public String getIdentifier() {
 		return identifier;
 	}
@@ -399,6 +405,12 @@ public class HeaderView extends StackPane implements DockableDestination {
 		@Override
 		public boolean isCollapsed() {
 			return parentView.isCollapsed();
+		}
+
+		@Nonnull
+		@Override
+		public DockableDestination getComposedDestinationRoot() {
+			return parentView;
 		}
 
 		@Nonnull
