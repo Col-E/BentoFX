@@ -2,6 +2,26 @@
 
 A docking system for JavaFX.
 
+## Usage
+
+Requirements:
+- JavaFX 19+
+- Java 21+
+
+Gradle syntax:
+```groovy
+implementation "software.coley:bento-fx:${version}"
+```
+
+Maven syntax:
+```xml
+<dependency>
+    <groupId>software.coley</groupId>
+    <artifactId>bento-fx</artifactId>
+    <version>${version}</version>
+</dependency>
+```
+
 ## Overview
 
 ![overview](assets/overview.png)
@@ -42,7 +62,7 @@ The `Dockable` can be thought of as the model behind each of a `HeaderView`'s `H
 It outlines capabilities like whether the `Header` can be draggable, where it can be dropped, what text/graphic to display,
 and the associated JavaFX `Node` to display when placed into a `Content`.
 
-## Example usage
+## Example
 
 In this example we create a layout structure that loosely models how an IDE is laid out.
 There are tool-tabs on the left and bottom sides. The primary content like Java sources files
