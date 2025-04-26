@@ -90,6 +90,7 @@ dragged into the areas housing our tools. If you try this out in IntelliJ you'll
 follows the same behavior.
 
 ```java
+// Full code can be found in the "src/test" directory
 Bento bento = Bento.newBento();
 ContentBuilder builder = bento.newContentBuilder();
 ContentLayout layout = builder.vsplit(
@@ -98,6 +99,7 @@ ContentLayout layout = builder.vsplit(
             new TabbedContentArgs()
                 .setSide(Side.LEFT)
                 .addDockables(
+                    // "buildDockable(int, String)" is an alias for "builder.dockable()" with a dummy contents based on the int/string parameter
                     buildDockable(builder, 1, "Workspace").withClosable(false).withDragGroup(TOOLS),
                     buildDockable(builder, 2, "Bookmarks").withClosable(false).withDragGroup(TOOLS),
                     buildDockable(builder, 3, "Modifications").withClosable(false).withDragGroup(TOOLS)
