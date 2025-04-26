@@ -57,7 +57,7 @@ public class BoxApp extends Application {
 					makeDockable(builder, 5, "Class5")
 				)
 			),
-			builder.tabbed(
+			builder.leaf(builder.tabbed(
 				new TabbedContentArgs()
 					.setSide(Side.BOTTOM)
 					.addDockables(
@@ -68,7 +68,7 @@ public class BoxApp extends Application {
 					.setResizeWithParent(false)
 					.setAutoPruneWhenEmpty(false)
 					.setCanSplit(false)
-			)
+			))
 		);
 		RootContentLayout root = builder.root(layout);
 		stage.setScene(new Scene(root.getBackingRegion()));

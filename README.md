@@ -117,7 +117,7 @@ ContentLayout layout = builder.vsplit(
             makeDockable(builder, 5, "Class5")
         )
     ),
-    builder.tabbed(
+    builer.leaf(builder.tabbed(
         new TabbedContentArgs()
             .setSide(Side.BOTTOM)
             .addDockables(
@@ -128,7 +128,7 @@ ContentLayout layout = builder.vsplit(
             .setResizeWithParent(false)
             .setAutoPruneWhenEmpty(false)
             .setCanSplit(false)
-    )
+    ))
 );
 
 // Create the root layout and put it in a new scene.

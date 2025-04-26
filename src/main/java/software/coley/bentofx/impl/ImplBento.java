@@ -65,7 +65,7 @@ public class ImplBento implements Bento {
 	public Stage newStageForDroppedHeader(@Nonnull DockableDestination source, @Nonnull Header header) {
 		Scene sourceScene = header.getScene();
 		ContentBuilder builder = newContentBuilder();
-		LeafContentLayout layout = builder.tabbed(Side.TOP, header.getDockable());
+		LeafContentLayout layout = builder.leaf(builder.tabbed(Side.TOP, header.getDockable()));
 		Region region = builder.root(layout).getBackingRegion();
 		Stage stage = new DragDropStage(true);
 		Scene scene = new Scene(region, source.getBackingRegion().getWidth(), source.getBackingRegion().getHeight());

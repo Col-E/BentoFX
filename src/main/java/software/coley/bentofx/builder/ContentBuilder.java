@@ -5,6 +5,8 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.control.SplitPane;
 import software.coley.bentofx.Dockable;
+import software.coley.bentofx.content.Content;
+import software.coley.bentofx.content.TabbedContent;
 import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.impl.content.ImplTabbedContent;
 import software.coley.bentofx.impl.layout.ImplLeafContentLayout;
@@ -15,6 +17,8 @@ import software.coley.bentofx.layout.LeafContentLayout;
 import software.coley.bentofx.layout.RootContentLayout;
 import software.coley.bentofx.layout.SplitContentLayout;
 import software.coley.bentofx.util.BentoUtils;
+
+import java.util.Arrays;
 
 public class ContentBuilder {
 	private final ImplBento bento;
@@ -44,8 +48,24 @@ public class ContentBuilder {
 	}
 
 	@Nonnull
+	public SplitContentLayout vsplit(@Nonnull Content... children) {
+		return split(new SplitContentArgs()
+				.setOrientation(Orientation.VERTICAL)
+				.addChildren(Arrays.stream(children).map(this::leaf).toList())
+		);
+	}
+
+	@Nonnull
 	public SplitContentLayout hsplit(@Nonnull ContentLayout... children) {
 		return split(Orientation.HORIZONTAL, children);
+	}
+
+	@Nonnull
+	public SplitContentLayout hsplit(@Nonnull Content... children) {
+		return split(new SplitContentArgs()
+				.setOrientation(Orientation.HORIZONTAL)
+				.addChildren(Arrays.stream(children).map(this::leaf).toList())
+		);
 	}
 
 	@Nonnull
@@ -69,19 +89,27 @@ public class ContentBuilder {
 	}
 
 	@Nonnull
-	public LeafContentLayout tabbed(@Nonnull Side side, @Nonnull Dockable... dockables) {
-		return tabbed(new TabbedContentArgs()
-				.setSide(side)
-				.addDockables(dockables));
+	public LeafContentLayout leaf(@Nonnull Content content) {
+		return leaf(new ContentLayoutArgs(), content);
 	}
 
 	@Nonnull
-	public LeafContentLayout tabbed(@Nonnull TabbedContentArgs args) {
-		ImplTabbedContent content = new ImplTabbedContent(bento, args.getSide(), args.getDockables(), args.isAutoPruneWhenEmpty(), args.isCanSplit(), args.getIdentifier());
+	public LeafContentLayout leaf(@Nonnull ContentLayoutArgs args, @Nonnull Content content) {
 		ImplLeafContentLayout layout = new ImplLeafContentLayout(bento, content);
 		if (!args.isResizeWithParent())
 			SplitPane.setResizableWithParent(layout.getBackingRegion(), false);
 		return layout;
 	}
 
+	@Nonnull
+	public TabbedContent tabbed(@Nonnull Side side, @Nonnull Dockable... dockables) {
+		return tabbed(new TabbedContentArgs()
+				.setSide(side)
+				.addDockables(dockables));
+	}
+
+	@Nonnull
+	public TabbedContent tabbed(@Nonnull TabbedContentArgs args) {
+		return new ImplTabbedContent(bento, args.getSide(), args.getDockables(), args.isAutoPruneWhenEmpty(), args.isCanSplit(), args.getIdentifier());
+	}
 }

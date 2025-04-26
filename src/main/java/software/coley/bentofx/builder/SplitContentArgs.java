@@ -34,7 +34,7 @@ public class SplitContentArgs extends ContentArgs<SplitContentArgs> {
 	}
 
 	@Nonnull
-	public SplitContentArgs addChildren(@Nonnull List<ContentLayout> children) {
+	public SplitContentArgs addChildren(@Nonnull List<? extends ContentLayout> children) {
 		this.children.addAll(children);
 		return this;
 	}
