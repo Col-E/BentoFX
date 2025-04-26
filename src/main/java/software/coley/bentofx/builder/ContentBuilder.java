@@ -1,0 +1,87 @@
+package software.coley.bentofx.builder;
+
+import jakarta.annotation.Nonnull;
+import javafx.geometry.Orientation;
+import javafx.geometry.Side;
+import javafx.scene.control.SplitPane;
+import software.coley.bentofx.Dockable;
+import software.coley.bentofx.impl.ImplBento;
+import software.coley.bentofx.impl.content.ImplTabbedContent;
+import software.coley.bentofx.impl.layout.ImplLeafContentLayout;
+import software.coley.bentofx.impl.layout.ImplRootContentLayout;
+import software.coley.bentofx.impl.layout.ImplSplitContentLayout;
+import software.coley.bentofx.layout.ContentLayout;
+import software.coley.bentofx.layout.LeafContentLayout;
+import software.coley.bentofx.layout.RootContentLayout;
+import software.coley.bentofx.layout.SplitContentLayout;
+import software.coley.bentofx.util.BentoUtils;
+
+public class ContentBuilder {
+	private final ImplBento bento;
+
+	public ContentBuilder(@Nonnull ImplBento bento) {
+		this.bento = bento;
+	}
+
+	@Nonnull
+	public DockableBuilder dockable() {
+		return bento.newDockableBuilder();
+	}
+
+	@Nonnull
+	public RootContentLayout root(@Nonnull ContentLayout child) {
+		return root(child, BentoUtils.ID_PROVIDER.get());
+	}
+
+	@Nonnull
+	public RootContentLayout root(@Nonnull ContentLayout child, @Nonnull String identifier) {
+		return new ImplRootContentLayout(bento, child, identifier);
+	}
+
+	@Nonnull
+	public SplitContentLayout vsplit(@Nonnull ContentLayout... children) {
+		return split(Orientation.VERTICAL, children);
+	}
+
+	@Nonnull
+	public SplitContentLayout hsplit(@Nonnull ContentLayout... children) {
+		return split(Orientation.HORIZONTAL, children);
+	}
+
+	@Nonnull
+	public SplitContentLayout split(@Nonnull Orientation orientation,
+	                                @Nonnull ContentLayout... children) {
+		return split(new SplitContentArgs()
+				.setOrientation(orientation)
+				.addChildren(children));
+	}
+
+	@Nonnull
+	public SplitContentLayout split(@Nonnull SplitContentArgs args) {
+		ImplSplitContentLayout layout = new ImplSplitContentLayout(bento,
+				args.getOrientation(),
+				args.getChildren(),
+				args.getIdentifier()
+		);
+		if (!args.isResizeWithParent())
+			SplitPane.setResizableWithParent(layout.getBackingRegion(), false);
+		return layout;
+	}
+
+	@Nonnull
+	public LeafContentLayout tabbed(@Nonnull Side side, @Nonnull Dockable... dockables) {
+		return tabbed(new TabbedContentArgs()
+				.setSide(side)
+				.addDockables(dockables));
+	}
+
+	@Nonnull
+	public LeafContentLayout tabbed(@Nonnull TabbedContentArgs args) {
+		ImplTabbedContent content = new ImplTabbedContent(bento, args.getSide(), args.getDockables(), args.isAutoPruneWhenEmpty(), args.isCanSplit(), args.getIdentifier());
+		ImplLeafContentLayout layout = new ImplLeafContentLayout(bento, content);
+		if (!args.isResizeWithParent())
+			SplitPane.setResizableWithParent(layout.getBackingRegion(), false);
+		return layout;
+	}
+
+}

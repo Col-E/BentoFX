@@ -1,0 +1,163 @@
+.root {
+    -color-base-9: white;
+    -color-base-8: #dddddd;
+    -color-base-7: #d0d0d0;
+    -color-base-6: #c4c4c4;
+    -color-base-5: rgb(170, 170, 170);
+    -color-base-4: #6a6a6a;
+    -color-base-3: #5e5e5e;
+    -color-base-2: #444444;
+    -color-base-1: #373737;
+    -color-base-0: #373737;
+    -color-accent-9: #bddeff;
+    -color-accent-8: #a3d1ff;
+    -color-accent-7: #7abcff;
+    -color-accent-6: #57aaff;
+    -color-accent-5: #3d9eff;
+    -color-accent-4: rgb(10, 132, 255);
+    -color-accent-3: #006bd6;
+    -color-accent-2: #005bb7;
+    -color-accent-1: #00448a;
+    -color-accent-0: #002b57;
+    -color-fg-default: black;
+    -color-fg-muted: rgb(50, 50, 50);
+    -color-fg-subtle: rgb(90, 90, 90);
+    -color-bg-default: -color-base-9;
+    -color-bg-overlay: -color-base-8;
+    -color-bg-subtle: -color-base-6;
+    -color-bg-inset: -color-base-4;
+    -color-border-default: -color-base-1;
+    -color-border-muted: -color-base-2;
+    -color-border-subtle: -color-base-3;
+    -color-accent-fg: rgb(110, 180, 255);
+    -color-accent-emphasis: rgb(0, 180, 255);
+    -color-accent-muted: rgba(10, 132, 255, 0.4);
+    -color-accent-subtle: rgba(10, 132, 255, 0.15);
+    -fx-background-color: -color-bg-default;
+}
+
+.split-pane {
+    -fx-background-color: -color-bg-default;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.split-pane > .split-pane-divider {
+    -fx-background-color: -color-bg-inset !important;
+    -fx-padding: 0 2px 0 2px;
+}
+
+.split-pane > .split-pane-divider > .horizontal-grabber {
+    -fx-background-color: -color-base-6;
+    -fx-padding: 5px 1px 5px 1px;
+}
+
+.split-pane > .split-pane-divider > .vertical-grabber {
+    -fx-background-color: -color-base-6;
+    -fx-padding: 1px 5px 1px 5px;
+}
+
+.split-pane > .split-pane-divider:hover {
+    -fx-background-color: -color-accent-fg;
+}
+.split-pane > .split-pane-divider:pressed {
+    -fx-background-color: -color-accent-emphasis;
+}
+.split-pane > .split-pane-divider:disabled {
+    -fx-background-color: -color-border-muted;
+}
+.split-pane > .split-pane-divider:hover> .horizontal-grabber,
+.split-pane > .split-pane-divider:hover> .vertical-grabber {
+    -fx-background-color: -color-accent-7;
+}
+.split-pane > .split-pane-divider:pressed > .horizontal-grabber,
+.split-pane > .split-pane-divider:pressed > .vertical-grabber {
+    -fx-background-color: -color-accent-emphasis;
+}
+
+
+.dock-region {
+    -fx-background-color: -color-bg-inset !important;
+    -fx-padding: 4px;
+}
+
+
+.dock-container {
+    -fx-border-width: 1px;
+    -fx-border-color: -color-border-default;
+    -fx-background-color: -color-bg-default;
+}
+
+
+.dock-header-box {
+    -fx-background-color: -color-border-subtle, -color-bg-overlay;
+}
+.dock-header-box:top {
+    -fx-background-insets: 0, 0 0 1px 0;
+}
+.dock-header-box:bottom {
+    -fx-background-insets: 0, 1px 0 0 0;
+}
+.dock-header-box:left {
+    -fx-background-insets: 0, 0 1px 0 0;
+}
+.dock-header-box:right {
+    -fx-background-insets: 0, 0 0 0 1px;
+}
+/* TODO: Orientation variants
+.dock-header-box > .cut-off {
+    -fx-background-insets: 0 0 1px 0;
+    -fx-background-color: linear-gradient(from 0% 100% to 80% 100%, transparent, -color-bg-overlay);
+    -fx-border-insets: 0 -1px 0 0;
+    -fx-border-width: 0 1px 0 0;
+    -fx-border-color: -color-border-subtle;
+}
+.dock-header-box > .actions {
+    -fx-background-color: transparent;
+}
+.dock-header-box > .actions > .icon {
+    -fx-shape: "M 0 0 L 10 18 L 20 0 z";
+    -fx-scale-shape: false;
+    -fx-background-color: -color-border-default;
+    -fx-background-insets: 5px;
+}
+.dock-header-box > .actions:hover > .icon {
+    -fx-background-color: -color-accent-emphasis;
+}*/
+.dock-header {
+    -fx-background-color: -color-border-subtle, -color-bg-overlay;
+    -fx-padding: 0.3em 0.6em 0.3em 0.6em;
+}
+.dock-header:top {
+    -fx-background-insets: 0, 0 0 1px 0;
+}
+.dock-header:bottom {
+    -fx-background-insets: 0, 1px 0 0 0;
+}
+.dock-header:left {
+    -fx-background-insets: 0, 0 1px 0 0;
+}
+.dock-header:right {
+    -fx-background-insets: 0, 0 0 0 1px;
+}
+.dock-header:hover {
+    -fx-background-color: -color-border-subtle, -color-bg-subtle;
+}
+.dock-header:selected {
+    -fx-background-color: -color-accent-4, -color-bg-default;
+}
+.dock-header:selected:top {
+    -fx-background-insets: 0, 0 0 2px 0;
+}
+.dock-header:selected:bottom {
+    -fx-background-insets: 0, 2px 0 0 0;
+}
+.dock-header:selected:left {
+    -fx-background-insets: 0, 0 2px 0 0;
+}
+.dock-header:selected:right {
+    -fx-background-insets: 0, 0 0 0 2px;
+}
+.dock-ghost-zone {
+    -fx-opacity: 0.3;
+}
