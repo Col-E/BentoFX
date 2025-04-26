@@ -122,6 +122,24 @@ public class BentoUtils {
 		return list;
 	}
 
+	/**
+	 * Find all children with the given type in the given parent.
+	 * <p/>
+	 * The search does not continue for children that match the type. For instance if you had five
+	 * {@link BorderPane} embedded in a row all, only the top-most {@link BorderPane} would be yielded here.
+	 *
+	 * @param parent
+	 * 		Parent to search in.
+	 * @param nodeType
+	 * 		Type of children to find.
+	 *
+	 * @return All matching children of any level with the given type.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> getCastChildren(@Nonnull Parent parent, @Nonnull Class<T> nodeType) {
+		return (List<T>) getChildren(parent, nodeType);
+	}
+
 	private static void visitAndMatchChildren(@Nonnull Parent parent,
 	                                          @Nonnull Selector selector,
 	                                          @Nonnull List<Node> list) {

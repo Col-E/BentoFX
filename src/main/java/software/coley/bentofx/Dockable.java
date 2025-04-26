@@ -163,4 +163,13 @@ public interface Dockable extends Identifiable {
 		closableProperty().set(closable);
 		return this;
 	}
+
+	/**
+	 * @param listener
+	 * 		Listener to call upon this dockable's closure.
+	 *
+	 * @return Self.
+	 */
+	@Nonnull
+	Dockable withCloseListener(@Nullable DockableCloseListener listener);
 }

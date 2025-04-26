@@ -9,6 +9,7 @@ import software.coley.bentofx.header.Header;
 import software.coley.bentofx.layout.RootContentLayout;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 /**
  * Stage subtype created by {@link Bento#newStageForDroppedHeader(Header)}.
@@ -26,6 +27,24 @@ public class DragDropStage extends Stage {
 	 */
 	public DragDropStage(boolean autoCloseWhenEmpty) {
 		this.autoCloseWhenEmpty = autoCloseWhenEmpty;
+
+		// Cancel closure if headers that are not closable exist.
+		addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, e -> {
+			Parent root = getScene().getRoot();
+			if (root != null) {
+				boolean canClose = true;
+
+				// Try to close all headers and track if any remain.
+				List<Header> headersInScene = BentoUtils.getCastChildren(root, Header.class);
+				for (Header header : headersInScene)
+					if (!header.removeFromParent(Header.RemovalReason.CLOSING))
+						canClose = false;
+
+				// If some headers remain, abort the close.
+				if (!canClose)
+					e.consume();
+			}
+		});
 
 		// Add event filters to clear/restore the scene contents when hiding/showing.
 		// Each respective action will trigger the root contents listeners that handle registering/unregistering.

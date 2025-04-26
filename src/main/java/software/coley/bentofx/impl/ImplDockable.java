@@ -4,16 +4,19 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import software.coley.bentofx.Dockable;
+import software.coley.bentofx.DockableCloseListener;
 import software.coley.bentofx.IconFactory;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.MenuFactory;
 import software.coley.bentofx.builder.DockableBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImplDockable implements Dockable {
 	private final String identifier;
@@ -27,6 +30,7 @@ public class ImplDockable implements Dockable {
 	private final BooleanProperty canBeDroppedToNewWindow;
 	private final ObjectProperty<MenuFactory> contextMenuFactoryProperty;
 	private final BooleanProperty cachedContextMenuProperty;
+	private List<DockableCloseListener> closeListeners;
 
 	public ImplDockable(@Nonnull DockableBuilder builder) {
 		identifier = builder.getIdentifier();
@@ -40,6 +44,19 @@ public class ImplDockable implements Dockable {
 		contextMenuFactoryProperty = builder.contextMenuFactoryProperty();
 		cachedContextMenuProperty = builder.cachedContextMenuProperty();
 		dragGroup = builder.getDragGroup();
+	}
+
+	/**
+	 * Called when this dockable is removed from the scene with intent of permanent removal.
+	 */
+	public void onClose() {
+		if (closeListeners != null) {
+			for (DockableCloseListener listener : closeListeners)
+				listener.onClose(this);
+
+			// Clear so that any repeated calls do not re-trigger listeners.
+			closeListeners = null;
+		}
 	}
 
 	@Nonnull
@@ -111,5 +128,14 @@ public class ImplDockable implements Dockable {
 	@Override
 	public BooleanProperty cachedContextMenuProperty() {
 		return cachedContextMenuProperty;
+	}
+
+	@Nonnull
+	@Override
+	public Dockable withCloseListener(@Nullable DockableCloseListener listener) {
+		if (closeListeners == null)
+			closeListeners = new ArrayList<>(3);
+		closeListeners.add(listener);
+		return this;
 	}
 }

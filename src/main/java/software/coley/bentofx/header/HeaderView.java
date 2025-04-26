@@ -237,11 +237,11 @@ public class HeaderView extends StackPane implements DockableDestination {
 			}
 		} else {
 			// Skip if this would steal the divider away from some adjacent collapsed destination space
-			List<Node> destinations = BentoUtils.getChildren(parentSplitLayout.getBackingRegion(), DockableDestination.class);
+			List<DockableDestination> destinations = BentoUtils.getCastChildren(parentSplitLayout.getBackingRegion(), DockableDestination.class);
 			int i = destinations.indexOf(this);
-			if (i > 0 && ((DockableDestination) destinations.get(i - 1)).isCollapsed())
+			if (i > 0 && destinations.get(i - 1).isCollapsed())
 				return;
-			if (i <= destinations.size() - 2 && ((DockableDestination) destinations.get(i + 1)).isCollapsed())
+			if (i <= destinations.size() - 2 && destinations.get(i + 1).isCollapsed())
 				return;
 
 			// Remove content

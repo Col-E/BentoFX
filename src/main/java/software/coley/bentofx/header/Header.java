@@ -31,6 +31,7 @@ import software.coley.bentofx.Bento;
 import software.coley.bentofx.Dockable;
 import software.coley.bentofx.DockableDestination;
 import software.coley.bentofx.MenuFactory;
+import software.coley.bentofx.impl.ImplDockable;
 import software.coley.bentofx.util.BentoUtils;
 import software.coley.bentofx.util.DropTargetType;
 
@@ -314,8 +315,11 @@ public class Header extends Group {
 
 		// Remove if parent destination (dockable container) exists.
 		DockableDestination destination = getParentDestination();
-		if (destination != null && destination.removeDockable(dockable))
+		if (destination != null && destination.removeDockable(dockable)) {
+			if (reason == RemovalReason.CLOSING)
+				((ImplDockable) dockable).onClose();
 			cleanup();
+		}
 		return true;
 	}
 
