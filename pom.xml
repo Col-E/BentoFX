@@ -6,7 +6,7 @@
 
     <groupId>software.coley</groupId>
     <artifactId>bento-fx</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 
     <name>BentoFX</name>
     <description>A docking system for JavaFX</description>
