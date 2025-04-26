@@ -2,6 +2,7 @@ package software.coley.bentofx.header;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import javafx.css.PseudoClass;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -25,6 +26,7 @@ import software.coley.bentofx.util.BentoUtils;
 import java.util.List;
 
 public class HeaderView extends StackPane implements DockableDestination {
+	public static final PseudoClass PSEUDO_ACTIVE = PseudoClass.getPseudoClass("active");
 	private final Bento bento;
 	private final String identifier = BentoUtils.newIdentifier();
 	private final ContentWrapper contentWrapper;
@@ -43,6 +45,10 @@ public class HeaderView extends StackPane implements DockableDestination {
 		contentWrapper = new ContentWrapper(bento, this);
 
 		getStyleClass().add("dock-container");
+
+		// Track that this view has focus somewhere in the hierarchy.
+		// This will allow us to style the active view's subclasses specially.
+		focusWithinProperty().addListener((ob, old, cur) -> pseudoClassStateChanged(PSEUDO_ACTIVE, cur));
 
 		// Fit the canvas to the container size
 		canvas.setManaged(false);
@@ -289,9 +295,12 @@ public class HeaderView extends StackPane implements DockableDestination {
 
 			// Always show selected content
 			parentView.headerRegion.selectedProperty().addListener((ob, old, cur) -> {
-				if (cur != null)
-					setCenter(cur.getNode());
-				else {
+				if (cur != null) {
+					Node node = cur.getNode();
+					setCenter(node);
+					if (node.isFocusTraversable())
+						node.requestFocus();
+				} else {
 					ContentLayout parentLayout = getParentLayout();
 					if (parentLayout != null) {
 						// Replace the content with the "empty-content" template.

@@ -143,7 +143,10 @@
 .dock-header:hover {
     -fx-background-color: -color-border-subtle, -color-bg-subtle;
 }
-.dock-header:selected {
+.dock-container .dock-header:selected {
+    -fx-background-color: -color-bg-inset, -color-bg-default;
+}
+.dock-container:active .dock-header:selected {
     -fx-background-color: -color-accent-4, -color-bg-default;
 }
 .dock-header:selected:top {

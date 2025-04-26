@@ -83,10 +83,12 @@ public class BoxApp extends Application {
 
 	@Nonnull
 	private DockableBuilder buildDockable(@Nonnull ContentBuilder builder, int i, @Nonnull String title) {
+		Label content = new Label("<" + title + ":" + i + ">");
+		content.setFocusTraversable(true); // Set to facilitate detection of 'focusWithinProperty()' in TabbedContent implementations
 		return builder.dockable()
 			.withTitle(title)
 			.withIconFactory(dockable -> makeIcon(i))
-			.withContent(new Label("<" + title + ":" + i + ">"))
+			.withContent(content)
 			.withCachedContextMenu(true)
 			.withContextMenuFactory(dockable -> new ContextMenu(
 				new MenuItem("Menu for : " + dockable.titleProperty().get()),
