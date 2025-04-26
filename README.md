@@ -24,7 +24,6 @@ Each `Dockable` can be constructed via a `Bento` instance's builder offered by `
 | Layout type           | Description                                                                                                                                                                                                                       |
 |-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `SplitContentLayout`  | Used to show multiple child `ContentLayout` instances in a `SplitPane` display. Orientation can be specified at creation and child `ContentLayout` instances can choose if they auto-scale at construction via the builder model. |
-| `SingleContentLayout` | Used to show a single `ContentLayout` instance occupying the full space of the layout.                                                                                                                                            |
 | `LeafContentLayout`   | Used to show a single `Content` instance occupying the full space of the layout.                                                                                                                                                  |
 
 ### Contents
