@@ -250,6 +250,9 @@ public class HeaderView extends StackPane implements DockableDestination {
 			parentSplitLayout.setChildSize(parentLayout, newSize);
 			parentSplitLayout.setChildResizable(parentLayout, false);
 
+			// Deselect any dockable since we are now collapsed
+			headerRegion.selectedProperty().set(null);
+
 			// Mark
 			collapsed = true;
 		}
