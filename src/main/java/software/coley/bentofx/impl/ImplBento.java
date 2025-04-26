@@ -63,18 +63,19 @@ public class ImplBento implements Bento {
 	@Nonnull
 	@Override
 	public Stage newStageForDroppedHeader(@Nonnull DockableDestination source, @Nonnull Header header) {
-		Scene sourceScene = header.getScene();
 		ContentBuilder builder = newContentBuilder();
 		LeafContentLayout layout = builder.leaf(builder.tabbed(Side.TOP, header.getDockable()));
 		Region region = builder.root(layout).getBackingRegion();
 		Stage stage = new DragDropStage(true);
 		Scene scene = new Scene(region, source.getBackingRegion().getWidth(), source.getBackingRegion().getHeight());
 		stage.setScene(scene);
+
+		Scene sourceScene = source.getBackingRegion().getScene();
 		if (sourceScene != null) {
 			scene.setUserAgentStylesheet(sourceScene.getUserAgentStylesheet());
 			scene.getStylesheets().addAll(sourceScene.getStylesheets());
 
-			Window sourceWindow = scene.getWindow();
+			Window sourceWindow = sourceScene.getWindow();
 			stage.initOwner(sourceWindow);
 			stage.setMinWidth(150);
 			stage.setMinHeight(100);
@@ -82,6 +83,7 @@ public class ImplBento implements Bento {
 				stage.getIcons().addAll(sourceStage.getIcons());
 			}
 		}
+
 		return stage;
 	}
 
