@@ -2,6 +2,7 @@ package software.coley.bentofx.impl.layout;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import javafx.css.Selector;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
@@ -24,6 +25,7 @@ import java.util.List;
 
 @SuppressWarnings("NullableProblems") // Mute the shading of "orientationProperty" not being annotated
 public class ImplSplitContentLayout extends SplitPane implements SplitContentLayout {
+	private static final Selector DIVIDER_SELECTOR = Selector.createSelector(".split-pane-divider");
 	private final Bento bento;
 	private final List<ContentLayout> childLayouts;
 	private final String identifier;
@@ -162,7 +164,8 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 
 	@Override
 	public void setChildResizable(@Nonnull ContentLayout childLayout, boolean resizable) {
-		List<Node> dividers = BentoUtils.getChildren(this, ".split-pane-divider");
+		// Get our direct children that are dividers.
+		List<Node> dividers = getChildren().stream().filter(DIVIDER_SELECTOR::applies).toList();
 		if (dividers.isEmpty())
 			return;
 
