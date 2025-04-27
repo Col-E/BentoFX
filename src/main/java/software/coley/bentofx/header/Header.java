@@ -13,6 +13,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -33,6 +34,7 @@ import software.coley.bentofx.DockableDestination;
 import software.coley.bentofx.MenuFactory;
 import software.coley.bentofx.impl.ImplDockable;
 import software.coley.bentofx.util.BentoUtils;
+import software.coley.bentofx.util.DragDropStage;
 import software.coley.bentofx.util.DropTargetType;
 
 import java.util.function.Consumer;
@@ -256,6 +258,12 @@ public class Header extends Group {
 			// Drag source must have a parent destination it currently belongs to.
 			DockableDestination sourceParent = headerSource.getParentDestination();
 			if (sourceParent == null)
+				return;
+
+			// Drag source must not be a drag-drop-stage with the source header as the only item.
+			// We don't want to close the window just to open a new one with the same content, that would be dumb.
+			Scene scene = sourceParent.getBackingRegion().getScene();
+			if (scene.getWindow() instanceof DragDropStage && BentoUtils.getChildren(scene.getRoot(), Header.class).size() == 1)
 				return;
 
 			// Drag completion event must not have a drop target specified.
