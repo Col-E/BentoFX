@@ -56,7 +56,7 @@ public class Header extends Group {
 	private final Dockable dockable;
 	private ContextMenu cachedContextMenu;
 
-	private Header(@Nonnull Dockable dockable, @Nonnull Side side) {
+	public Header(@Nonnull Dockable dockable, @Nonnull Side side) {
 		this.dockable = dockable;
 
 		grid.getStyleClass().add("dock-header");

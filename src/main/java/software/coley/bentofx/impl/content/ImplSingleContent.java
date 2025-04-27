@@ -42,27 +42,23 @@ public class ImplSingleContent extends ImplContentBase implements SingleContent 
 			Header value;
 			switch (side) {
 				case TOP -> {
-					value = new Header(bento, dockable, Side.TOP);
+					value = new Header(dockable, Side.TOP);
 					layout.setTop(value);
 				}
 				case BOTTOM -> {
-					value = new Header(bento, dockable, Side.BOTTOM);
+					value = new Header(dockable, Side.BOTTOM);
 					layout.setBottom(value);
 				}
 				case LEFT -> {
-					value = new Header(bento, dockable, Side.LEFT);
+					value = new Header(dockable, Side.LEFT);
 					layout.setLeft(value);
 				}
 				case RIGHT -> {
-					value = new Header(bento, dockable, Side.RIGHT);
+					value = new Header(dockable, Side.RIGHT);
 					layout.setRight(value);
 				}
 				default -> value = null;
 			}
-
-			// TODO: Need to disable some of the standard header capabilities since this isn't a tabbed content
-			//  if (value != null)
-			//    value.setMouseTransparent(true);
 		}
 	}
 
