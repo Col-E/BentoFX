@@ -49,7 +49,7 @@ public class ContentBuilder {
 
 	@Nonnull
 	public SplitContentLayout vsplit(@Nonnull Content... children) {
-		return split(new SplitContentArgs()
+		return split(new SplitContentLayoutArgs()
 				.setOrientation(Orientation.VERTICAL)
 				.addChildren(Arrays.stream(children).map(this::leaf).toList())
 		);
@@ -62,7 +62,7 @@ public class ContentBuilder {
 
 	@Nonnull
 	public SplitContentLayout hsplit(@Nonnull Content... children) {
-		return split(new SplitContentArgs()
+		return split(new SplitContentLayoutArgs()
 				.setOrientation(Orientation.HORIZONTAL)
 				.addChildren(Arrays.stream(children).map(this::leaf).toList())
 		);
@@ -71,13 +71,13 @@ public class ContentBuilder {
 	@Nonnull
 	public SplitContentLayout split(@Nonnull Orientation orientation,
 	                                @Nonnull ContentLayout... children) {
-		return split(new SplitContentArgs()
+		return split(new SplitContentLayoutArgs()
 				.setOrientation(orientation)
 				.addChildren(children));
 	}
 
 	@Nonnull
-	public SplitContentLayout split(@Nonnull SplitContentArgs args) {
+	public SplitContentLayout split(@Nonnull SplitContentLayoutArgs args) {
 		ImplSplitContentLayout layout = new ImplSplitContentLayout(bento,
 				args.getOrientation(),
 				args.getChildren(),
@@ -90,12 +90,22 @@ public class ContentBuilder {
 
 	@Nonnull
 	public LeafContentLayout leaf(@Nonnull Content content) {
-		return leaf(new ContentLayoutArgs(), content);
+		return leaf(content, true);
 	}
 
 	@Nonnull
-	public LeafContentLayout leaf(@Nonnull ContentLayoutArgs args, @Nonnull Content content) {
-		ImplLeafContentLayout layout = new ImplLeafContentLayout(bento, content);
+	public LeafContentLayout fitLeaf(@Nonnull Content content) {
+		return leaf(content, false);
+	}
+
+	@Nonnull
+	public LeafContentLayout leaf(@Nonnull Content content, boolean resizeWithParent) {
+		return leaf(new LeafContentLayoutArgs().setContent(content).setResizeWithParent(resizeWithParent));
+	}
+
+	@Nonnull
+	public LeafContentLayout leaf(@Nonnull LeafContentLayoutArgs args) {
+		ImplLeafContentLayout layout = new ImplLeafContentLayout(bento, args.getContent());
 		if (!args.isResizeWithParent())
 			SplitPane.setResizableWithParent(layout.getBackingRegion(), false);
 		return layout;

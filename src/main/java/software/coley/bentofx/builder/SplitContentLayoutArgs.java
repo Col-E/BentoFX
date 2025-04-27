@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SplitContentArgs extends ContentArgs<SplitContentArgs> {
+public class SplitContentLayoutArgs extends AbstractContentLayoutArgs<SplitContentLayoutArgs> {
 	private final List<ContentLayout> children = new ArrayList<>();
 	private Orientation orientation = Orientation.HORIZONTAL;
 
@@ -18,7 +18,7 @@ public class SplitContentArgs extends ContentArgs<SplitContentArgs> {
 	}
 
 	@Nonnull
-	public SplitContentArgs setOrientation(@Nonnull Orientation orientation) {
+	public SplitContentLayoutArgs setOrientation(@Nonnull Orientation orientation) {
 		this.orientation = orientation;
 		return this;
 	}
@@ -29,12 +29,12 @@ public class SplitContentArgs extends ContentArgs<SplitContentArgs> {
 	}
 
 	@Nonnull
-	public SplitContentArgs addChildren(@Nonnull ContentLayout... children) {
+	public SplitContentLayoutArgs addChildren(@Nonnull ContentLayout... children) {
 		return addChildren(Arrays.asList(children));
 	}
 
 	@Nonnull
-	public SplitContentArgs addChildren(@Nonnull List<? extends ContentLayout> children) {
+	public SplitContentLayoutArgs addChildren(@Nonnull List<? extends ContentLayout> children) {
 		this.children.addAll(children);
 		return this;
 	}

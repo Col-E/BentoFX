@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TabbedContentArgs extends ContentArgs<TabbedContentArgs> {
+public class TabbedContentArgs extends AbstractContentArgs<TabbedContentArgs> {
 	private final List<Dockable> dockables = new ArrayList<>();
 	private boolean autoPruneWhenEmpty = true;
 	private boolean canSplit = true;

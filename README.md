@@ -41,20 +41,20 @@ Each `Dockable` can be constructed via a `Bento` instance's builder offered by `
 
 ![layouts](assets/layouts.png)
 
-| Layout type           | Description                                                                                                                                                                                                                       |
+| Layout type       | Description                                                                                                               |
 |-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `SplitContentLayout`  | Used to show multiple child `ContentLayout` instances in a `SplitPane` display. Orientation can be specified at creation and child `ContentLayout` instances can choose if they auto-scale at construction via the builder model. |
-| `LeafContentLayout`   | Used to show a single `Content` instance occupying the full space of the layout.                                                                                                                                                  |
+| `LeafContentLayout`   | Used to show a single `Content` instance occupying the full space of the layout.                                                                          |
 
 ### Contents
 
 ![contents](assets/contents.png)
 
-| Content type    | Description                                                                                                                                                                                                                                                                                                                                                                             | Supports drag-n-drop |
+| Content type    | Description                                                                                                                                                                                         | Supports drag-n-drop |
 |-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|
 | `TabbedContent` | Used to show multiple `Dockable` instances in a `HeaderView` display (similar to a `TabPane`). The tabs are able to be dragged and dropped to other `TabbedContent` instances, or externally to create a new window with a new `LeafContentLayout` holding a `TabbedContent` in the root layout. Orientation and other properties are configured at construction via the builder model. | :white_check_mark:   |
-| `SingleContent` | Used to show a single `Dockable` instance occupying the full space of the content. A `Header` will be shown on a configured side of the content, however without the drag-n-drop capabilities of the `TabbedContent`.                                                                                                                                                                   | :x:                  |
-| `EmptyContent`  | Used as a placeholder. It will display a value determined by the `Bento` instance's empty content factory.                                                                                                                                                                                                                                                                              | :x:                  |
+| `SingleContent` | Used to show a single `Dockable` instance occupying the full space of the content. A `Header` will be shown on a configured side of the content, however without the drag-n-drop capabilities of the `TabbedContent`.                                                                                   | :x:          |
+| `EmptyContent`  | Used as a placeholder. It will display a value determined by the `Bento` instance's empty content factory.                                                                                                                                          | :x:          |
 
 ### Dockable
 
@@ -95,40 +95,33 @@ Bento bento = Bento.newBento();
 ContentBuilder builder = bento.newContentBuilder();
 ContentLayout layout = builder.vsplit(
     builder.hsplit(
-        builder.tabbed(
-            new TabbedContentArgs()
-                .setSide(Side.LEFT)
-                .addDockables(
-                    // "buildDockable(int, String)" is an alias for "builder.dockable()" with a dummy contents based on the int/string parameter
-                    buildDockable(builder, 1, "Workspace").withClosable(false).withDragGroup(TOOLS),
-                    buildDockable(builder, 2, "Bookmarks").withClosable(false).withDragGroup(TOOLS),
-                    buildDockable(builder, 3, "Modifications").withClosable(false).withDragGroup(TOOLS)
-                )
-                .setResizeWithParent(false)
-                .setAutoPruneWhenEmpty(false)
-                .setCanSplit(false)
-        ),
-        builder.tabbed(
+        builder.fitLeaf(builder.tabbed(new TabbedContentArgs()
+            .setSide(Side.LEFT)
+            .addDockables(
+                buildDockable(builder, 1, "Workspace").withClosable(false).withDragGroup(TOOLS),
+                buildDockable(builder, 2, "Bookmarks").withClosable(false).withDragGroup(TOOLS),
+                buildDockable(builder, 3, "Modifications").withClosable(false).withDragGroup(TOOLS)
+            )
+            .setAutoPruneWhenEmpty(false)
+            .setCanSplit(false))),
+        builder.leaf(builder.tabbed(
             Side.TOP,
             makeDockable(builder, 1, "Class1"),
             makeDockable(builder, 2, "Class2"),
             makeDockable(builder, 3, "Class3"),
             makeDockable(builder, 4, "Class4"),
             makeDockable(builder, 5, "Class5")
-        )
+        ))
     ),
-    builer.leaf(builder.tabbed(
-        new TabbedContentArgs()
-            .setSide(Side.BOTTOM)
-            .addDockables(
-                buildDockable(builder, 1, "Logging").withClosable(false).withDragGroup(TOOLS),
-                buildDockable(builder, 2, "Terminal").withClosable(false).withDragGroup(TOOLS),
-                buildDockable(builder, 3, "Problems").withClosable(false).withDragGroup(TOOLS)
-            )
-            .setResizeWithParent(false)
-            .setAutoPruneWhenEmpty(false)
-            .setCanSplit(false)
-    ))
+    builder.fitLeaf(builder.tabbed(new TabbedContentArgs()
+        .setSide(Side.BOTTOM)
+        .addDockables(
+            buildDockable(builder, 1, "Logging").withClosable(false).withDragGroup(TOOLS),
+            buildDockable(builder, 2, "Terminal").withClosable(false).withDragGroup(TOOLS),
+            buildDockable(builder, 3, "Problems").withClosable(false).withDragGroup(TOOLS)
+        )
+        .setAutoPruneWhenEmpty(false)
+        .setCanSplit(false)))
 );
 
 // Create the root layout and put it in a new scene.

@@ -35,40 +35,34 @@ public class BoxApp extends Application {
 		Bento bento = Bento.newBento();
 		ContentBuilder builder = bento.newContentBuilder();
 		ContentLayout layout = builder.vsplit(
-			builder.hsplit(
-				builder.tabbed(
-					new TabbedContentArgs()
-						.setSide(Side.LEFT)
-						.addDockables(
-							buildDockable(builder, 1, "Workspace").withClosable(false).withDragGroup(TOOLS),
-							buildDockable(builder, 2, "Bookmarks").withClosable(false).withDragGroup(TOOLS),
-							buildDockable(builder, 3, "Modifications").withClosable(false).withDragGroup(TOOLS)
-						)
-						.setResizeWithParent(false)
-						.setAutoPruneWhenEmpty(false)
-						.setCanSplit(false)
+				builder.hsplit(
+						builder.fitLeaf(builder.tabbed(new TabbedContentArgs()
+								.setSide(Side.LEFT)
+								.addDockables(
+										buildDockable(builder, 1, "Workspace").withClosable(false).withDragGroup(TOOLS),
+										buildDockable(builder, 2, "Bookmarks").withClosable(false).withDragGroup(TOOLS),
+										buildDockable(builder, 3, "Modifications").withClosable(false).withDragGroup(TOOLS)
+								)
+								.setAutoPruneWhenEmpty(false)
+								.setCanSplit(false))),
+						builder.leaf(builder.tabbed(
+								Side.TOP,
+								makeDockable(builder, 1, "Class1"),
+								makeDockable(builder, 2, "Class2"),
+								makeDockable(builder, 3, "Class3").withClosable(false),
+								makeDockable(builder, 4, "Class4"),
+								makeDockable(builder, 5, "Class5")
+						))
 				),
-				builder.tabbed(
-					Side.TOP,
-					makeDockable(builder, 1, "Class1"),
-					makeDockable(builder, 2, "Class2"),
-					makeDockable(builder, 3, "Class3"),
-					makeDockable(builder, 4, "Class4"),
-					makeDockable(builder, 5, "Class5")
-				)
-			),
-			builder.leaf(builder.tabbed(
-				new TabbedContentArgs()
-					.setSide(Side.BOTTOM)
-					.addDockables(
-						buildDockable(builder, 1, "Logging").withClosable(false).withDragGroup(TOOLS),
-						buildDockable(builder, 2, "Terminal").withClosable(false).withDragGroup(TOOLS),
-						buildDockable(builder, 3, "Problems").withClosable(false).withDragGroup(TOOLS)
-					)
-					.setResizeWithParent(false)
-					.setAutoPruneWhenEmpty(false)
-					.setCanSplit(false)
-			))
+				builder.fitLeaf(builder.tabbed(new TabbedContentArgs()
+						.setSide(Side.BOTTOM)
+						.addDockables(
+								buildDockable(builder, 1, "Logging").withClosable(false).withDragGroup(TOOLS),
+								buildDockable(builder, 2, "Terminal").withClosable(false).withDragGroup(TOOLS),
+								buildDockable(builder, 3, "Problems").withClosable(false).withDragGroup(TOOLS)
+						)
+						.setAutoPruneWhenEmpty(false)
+						.setCanSplit(false)))
 		);
 		RootContentLayout root = builder.root(layout);
 		stage.setScene(new Scene(root.getBackingRegion()));
@@ -86,14 +80,14 @@ public class BoxApp extends Application {
 		Label content = new Label("<" + title + ":" + i + ">");
 		content.setFocusTraversable(true); // Set to facilitate detection of 'focusWithinProperty()' in TabbedContent implementations
 		return builder.dockable()
-			.withTitle(title)
-			.withIconFactory(dockable -> makeIcon(i))
-			.withContent(content)
-			.withCachedContextMenu(true)
-			.withContextMenuFactory(dockable -> new ContextMenu(
-				new MenuItem("Menu for : " + dockable.titleProperty().get()),
-				new SeparatorMenuItem(),
-				new MenuItem("Stuff")));
+				.withTitle(title)
+				.withIconFactory(dockable -> makeIcon(i))
+				.withContent(content)
+				.withCachedContextMenu(true)
+				.withContextMenuFactory(dockable -> new ContextMenu(
+						new MenuItem("Menu for : " + dockable.titleProperty().get()),
+						new SeparatorMenuItem(),
+						new MenuItem("Stuff")));
 	}
 
 	@Nonnull
