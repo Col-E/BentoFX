@@ -18,7 +18,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -53,15 +52,16 @@ public class Header extends Group {
 	private final GridPane grid = new GridPane();
 	private final Text label = new Text();
 	private final Pane graphicWrapper = new Pane();
-	private final ImageView insertionGhost = new ImageView();
+	private final BorderPane ghostWrapper = new BorderPane();
 	private final Dockable dockable;
 	private ContextMenu cachedContextMenu;
 
-	public Header(@Nonnull Bento bento, @Nonnull Dockable dockable, @Nonnull Side side) {
+	private Header(@Nonnull Dockable dockable, @Nonnull Side side) {
 		this.dockable = dockable;
 
 		grid.getStyleClass().add("dock-header");
-		insertionGhost.getStyleClass().add("dock-ghost-zone");
+		ghostWrapper.getStyleClass().add("dock-ghost-zone");
+
 		switch (side) {
 			case TOP -> grid.pseudoClassStateChanged(PSEUDO_SIDE_TOP, true);
 			case BOTTOM -> grid.pseudoClassStateChanged(PSEUDO_SIDE_BOTTOM, true);
@@ -82,6 +82,25 @@ public class Header extends Group {
 		textProperty().bind(dockable.titleProperty());
 		tooltipProperty().bind(dockable.tooltipProperty());
 		graphicProperty().bind(dockable.iconFactoryProperty().map(ic -> ic.build(dockable)));
+
+		// Layout
+		Label graphicHolder = new Label();
+		graphicHolder.graphicProperty().bind(graphicProperty);
+		graphicWrapper.getChildren().add(graphicHolder);
+		sideProperty.set(side);
+		sideProperty.addListener((ob, old, cur) -> recomputeLayout(cur));
+		grid.setHgap(6);
+		grid.setVgap(6);
+		grid.setPadding(new Insets(6));
+		BorderPane wrapper = new BorderPane();
+		wrapper.setCenter(grid);
+		wrapper.setLeft(ghostWrapper);
+		getChildren().add(wrapper);
+		recomputeLayout(side);
+	}
+
+	public Header(@Nonnull Bento bento, @Nonnull Dockable dockable, @Nonnull Side side) {
+		this(dockable, side);
 
 		// Hover support
 		addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
@@ -134,22 +153,6 @@ public class Header extends Group {
 			if (e.getButton() == MouseButton.MIDDLE && getBoundsInLocal().contains(e.getX(), e.getY()))
 				removeFromParent(RemovalReason.CLOSING);
 		});
-
-		// Layout
-		Label graphicHolder = new Label();
-		graphicHolder.graphicProperty().bind(graphicProperty);
-		graphicWrapper.getChildren().add(graphicHolder);
-		sideProperty.set(side);
-		sideProperty.addListener((ob, old, cur) -> recomputeLayout(cur));
-		grid.setHgap(6);
-		grid.setVgap(6);
-		grid.setPadding(new Insets(6));
-		BorderPane wrapper = new BorderPane();
-		BorderPane ghostWrapper = new BorderPane(insertionGhost);
-		wrapper.setCenter(grid);
-		wrapper.setLeft(ghostWrapper);
-		getChildren().add(wrapper);
-		recomputeLayout(side);
 
 		// Start dragging this header
 		if (dockable.canBeDragged().get()) {
@@ -286,24 +289,23 @@ public class Header extends Group {
 	private void enableGhost(@Nonnull Header header) {
 		grid.setMouseTransparent(true);
 		grid.setManaged(false);
-		if (BentoUtils.sideToOrientation(getSide()) == Orientation.HORIZONTAL) {
-			grid.setTranslateX(header.getLayoutBounds().getWidth());
+		Orientation ourOrientation = BentoUtils.sideToOrientation(getSide());
+		Orientation otherOrientation = BentoUtils.sideToOrientation(header.getSide());
+		if (ourOrientation == Orientation.HORIZONTAL) {
+			grid.setTranslateX(otherOrientation == ourOrientation ? header.getLayoutBounds().getWidth() : header.getLayoutBounds().getHeight());
 		} else {
-			grid.setTranslateY(header.getLayoutBounds().getHeight());
+			grid.setTranslateY(otherOrientation == ourOrientation ? header.getLayoutBounds().getHeight() : header.getLayoutBounds().getWidth());
 		}
-		insertionGhost.setImage(header.snapshot(null, null));
+		ghostWrapper.setCenter(new Header(header.dockable, getSide()));
 		getParent().requestLayout();
 	}
 
 	private void disableGhost() {
 		grid.setMouseTransparent(false);
 		grid.setManaged(true);
-		if (BentoUtils.sideToOrientation(getSide()) == Orientation.HORIZONTAL) {
-			grid.setTranslateX(0);
-		} else {
-			grid.setTranslateY(0);
-		}
-		insertionGhost.setImage(null);
+		grid.setTranslateX(0);
+		grid.setTranslateY(0);
+		ghostWrapper.setCenter(null);
 		getParent().requestLayout();
 	}
 
