@@ -11,11 +11,16 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import software.coley.bentofx.Dockable;
+import software.coley.bentofx.DockableCloseListener;
 import software.coley.bentofx.IconFactory;
 import software.coley.bentofx.MenuFactory;
 import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.impl.ImplDockable;
 import software.coley.bentofx.util.BentoUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class DockableBuilder {
 	private final ImplBento bento;
@@ -27,6 +32,7 @@ public class DockableBuilder {
 	private final BooleanProperty canBeDroppedToNewWindowProperty = new SimpleBooleanProperty(true);
 	private final ObjectProperty<MenuFactory> contextMenuFactoryProperty = new SimpleObjectProperty<>();
 	private final BooleanProperty cachedContextMenuProperty = new SimpleBooleanProperty();
+	private List<DockableCloseListener> closeListeners;
 	private String identifier = BentoUtils.newIdentifier();
 	private int dragGroup;
 	private Node content;
@@ -90,6 +96,14 @@ public class DockableBuilder {
 	}
 
 	@Nonnull
+	public DockableBuilder withCloseListener(@Nullable DockableCloseListener listener) {
+		if (closeListeners == null)
+			closeListeners = new ArrayList<>(3);
+		closeListeners.add(listener);
+		return this;
+	}
+
+	@Nonnull
 	public DockableBuilder withCanBeDragged(boolean draggable) {
 		canBeDraggedProperty.set(draggable);
 		return this;
@@ -139,6 +153,13 @@ public class DockableBuilder {
 	@Nonnull
 	public BooleanProperty cachedContextMenuProperty() {
 		return cachedContextMenuProperty;
+	}
+
+	@Nonnull
+	public List<DockableCloseListener> getCloseListeners() {
+		if (closeListeners == null)
+			return Collections.emptyList();
+		return closeListeners;
 	}
 
 	public String getIdentifier() {

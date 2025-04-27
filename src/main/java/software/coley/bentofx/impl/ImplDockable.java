@@ -44,6 +44,8 @@ public class ImplDockable implements Dockable {
 		contextMenuFactoryProperty = builder.contextMenuFactoryProperty();
 		cachedContextMenuProperty = builder.cachedContextMenuProperty();
 		dragGroup = builder.getDragGroup();
+		for (DockableCloseListener listener : builder.getCloseListeners())
+			withCloseListener(listener);
 	}
 
 	/**

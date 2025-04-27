@@ -92,14 +92,15 @@ public class BoxApp extends Application {
 
 	@Nonnull
 	private static Circle makeIcon(int i) {
+		final int radius = 6;
 		Circle icon = switch (i) {
-			case 1 -> new Circle(6, Color.RED);
-			case 2 -> new Circle(6, Color.ORANGE);
-			case 3 -> new Circle(6, Color.LIME);
-			case 4 -> new Circle(6, Color.CYAN);
-			case 5 -> new Circle(6, Color.BLUE);
-			case 6 -> new Circle(6, Color.PURPLE);
-			default -> new Circle(6, Color.GREY);
+			case 1 -> new Circle(radius, Color.RED);
+			case 2 -> new Circle(radius, Color.ORANGE);
+			case 3 -> new Circle(radius, Color.LIME);
+			case 4 -> new Circle(radius, Color.CYAN);
+			case 5 -> new Circle(radius, Color.BLUE);
+			case 6 -> new Circle(radius, Color.PURPLE);
+			default -> new Circle(radius, Color.GREY);
 		};
 		icon.setEffect(new InnerShadow(BlurType.ONE_PASS_BOX, Color.BLACK, 2F, 10F, 0, 0));
 		return icon;
