@@ -2,6 +2,7 @@ package software.coley.bentofx.header;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import javafx.beans.value.ObservableValue;
 import javafx.css.PseudoClass;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
@@ -68,6 +69,11 @@ public class HeaderView extends StackPane implements DockableDestination {
 
 		// Put canvas on top
 		getChildren().addAll(layoutWrapper, canvas);
+	}
+
+	@Nonnull
+	public ObservableValue<? extends Dockable> selectedProperty() {
+		return headerRegion.selectedProperty();
 	}
 
 	@Nullable

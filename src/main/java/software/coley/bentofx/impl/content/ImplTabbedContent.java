@@ -22,7 +22,7 @@ import java.util.List;
 public class ImplTabbedContent extends ImplContentBase implements TabbedContent {
 	private final BooleanProperty autoPruneWhenEmptyProperty;
 	private final BooleanProperty canSplitProperty;
-	private final ObjectProperty<Dockable> selectedDockableProperty;
+	private final ObjectProperty<Dockable> selectedProperty;
 	private final ObjectProperty<Side> sideProperty;
 	private final String identifier;
 	private HeaderView view;
@@ -34,7 +34,7 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 	public ImplTabbedContent(@Nonnull Bento bento, @Nonnull Side side, @Nonnull List<Dockable> dockables, boolean autoPrune, boolean canSplit, @Nonnull String identifier) {
 		this.identifier = identifier;
 		this.sideProperty = new SimpleObjectProperty<>(side);
-		this.selectedDockableProperty = new SimpleObjectProperty<>(dockables.isEmpty() ? null : dockables.getFirst());
+		this.selectedProperty = new SimpleObjectProperty<>();
 		this.autoPruneWhenEmptyProperty = new SimpleBooleanProperty(autoPrune);
 		this.canSplitProperty = new SimpleBooleanProperty(canSplit);
 
@@ -42,6 +42,7 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 		view = new HeaderView(bento, side);
 		for (Dockable dockable : dockables)
 			view.addDockable(dockable);
+		selectedProperty.bind(view.selectedProperty());
 		layout.setCenter(view);
 	}
 
@@ -110,6 +111,6 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 	@Nonnull
 	@Override
 	public ReadOnlyObjectProperty<Dockable> selectedDockableProperty() {
-		return selectedDockableProperty;
+		return selectedProperty;
 	}
 }
