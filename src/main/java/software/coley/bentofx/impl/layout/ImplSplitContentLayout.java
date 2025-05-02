@@ -127,8 +127,18 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 	public boolean replaceChildLayout(@Nonnull ContentLayout child, @Nonnull ContentLayout replacement) {
 		int i = indexOfChild(child);
 		if (i >= 0 && i < getItems().size()) {
+			// Record existing child size.
+			Node existing = getItems().get(i);
+			double size = orientationProperty().get() == Orientation.HORIZONTAL ?
+					existing.getLayoutBounds().getWidth() :
+					existing.getLayoutBounds().getHeight();
+
+			// Replace child.
 			children.set(i, new ChildData(replacement));
 			getItems().set(i, replacement.getBackingRegion());
+
+			// Ensure the size of the replacement is set to the size of the prior child.
+			setChildSize(replacement, size);
 			return true;
 		}
 		return false;
