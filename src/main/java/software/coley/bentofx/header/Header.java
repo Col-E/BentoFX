@@ -309,9 +309,26 @@ public class Header extends Group {
 		getParent().requestLayout();
 	}
 
+	/**
+	 * @return Header's associated dockable.
+	 */
 	@Nonnull
 	public Dockable getDockable() {
 		return dockable;
+	}
+
+	/**
+	 * @return Header width.
+	 */
+	public double getWidth() {
+		return grid.getWidth();
+	}
+
+	/**
+	 * @return Header height.
+	 */
+	public double getHeight() {
+		return grid.getHeight();
 	}
 
 	public boolean removeFromParent(@Nonnull RemovalReason reason) {

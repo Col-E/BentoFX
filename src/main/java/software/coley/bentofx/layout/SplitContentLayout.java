@@ -59,4 +59,23 @@ non-sealed public interface SplitContentLayout extends ContentLayout {
 	 * @see #setChildResizable(ContentLayout, boolean)
 	 */
 	boolean isChildResizable(@Nonnull ContentLayout childLayout);
+
+	/**
+	 * @param childLayout
+	 * 		Child layout to change collapsed state of.
+	 * @param collapsed
+	 * 		New collapsed state.
+	 *
+	 * @return {@code true} when the state has changed to the requested state or already is in the given state.
+	 * {@code false} when the state couldn't be changed.
+	 */
+	boolean setChildCollapsed(@Nonnull ContentLayout childLayout, boolean collapsed);
+
+	/**
+	 * @param childLayout
+	 * 		Child layout to get the collapsed state of.
+	 *
+	 * @return Collapsed state.
+	 */
+	boolean isChildCollapsed(@Nonnull ContentLayout childLayout);
 }

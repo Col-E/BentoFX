@@ -157,9 +157,11 @@ public interface DockableDestination extends RegionBacked, Identifiable {
 	 * Toggle this destination being <i>"collapsed"</i>.
 	 * This is only supported if this space is on the edge of a parent {@link SplitContentLayout}.
 	 *
+	 * @return {@code true} when toggled successfully.
+	 *
 	 * @see #isCollapsed()
 	 */
-	void toggleCollapsed();
+	boolean toggleCollapsed();
 
 	/**
 	 * @return Current collapsed status of this space.

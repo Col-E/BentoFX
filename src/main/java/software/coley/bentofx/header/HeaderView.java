@@ -36,7 +36,6 @@ public class HeaderView extends StackPane implements DockableDestination {
 	private final Side side;
 	private double lastWidth;
 	private double lastHeight;
-	private boolean collapsed;
 
 	public HeaderView(@Nonnull Bento bento, @Nonnull Side side) {
 		this.bento = bento;
@@ -205,74 +204,27 @@ public class HeaderView extends StackPane implements DockableDestination {
 	}
 
 	@Override
-	public void toggleCollapsed() {
+	public boolean toggleCollapsed() {
 		SplitContentLayout parentSplitLayout = BentoUtils.getOrParent(this, SplitContentLayout.class);
 		ContentLayout parentLayout = BentoUtils.getOrParent(this, ContentLayout.class);
 
 		// Skip if there is no parent split or parent layout.
 		if (parentSplitLayout == null || parentLayout == null)
-			return;
+			return false;
 
-		// Skip if the split-pane orientation is not compatible with the tabbed layout side.
-		Orientation orientation = parentSplitLayout.orientationProperty().get();
-		if (orientation == Orientation.HORIZONTAL && (side == Side.TOP || side == Side.BOTTOM))
-			return;
-		if (orientation == Orientation.VERTICAL && (side == Side.LEFT || side == Side.RIGHT))
-			return;
-
-		// TODO: If you have a horizontal split with tabs on the window edges and collapse both
-		//  this breaks.
-
-		// Delegate collapse handling to parents.
-		if (isCollapsed()) {
-			// Uncollapse if possible
-			Dockable selected = headerRegion.getSelectedDockable();
-			if (selected != null) {
-				// Restore content
-				contentWrapper.setCenter(selected.getNode());
-
-				// Update parent split-pane
-				double newSize = orientation == Orientation.HORIZONTAL ?
-						lastWidth :
-						lastHeight;
-				parentSplitLayout.setChildSize(parentLayout, newSize);
-				parentSplitLayout.setChildResizable(parentLayout, true);
-
-				// Unmark
-				collapsed = false;
-			}
-		} else {
-			// Skip if this would steal the divider away from some adjacent collapsed destination space
-			List<DockableDestination> destinations = BentoUtils.getCastChildren(parentSplitLayout.getBackingRegion(), DockableDestination.class);
-			int i = destinations.indexOf(this);
-			if (i > 0 && destinations.get(i - 1).isCollapsed())
-				return;
-			if (i <= destinations.size() - 2 && destinations.get(i + 1).isCollapsed())
-				return;
-
-			// Remove content
-			lastWidth = getWidth();
-			lastHeight = getHeight();
-			contentWrapper.setCenter(null);
-
-			// Update parent split-pane
-			double newSize = orientation == Orientation.HORIZONTAL ?
-					headerRegion.getWidth() :
-					headerRegion.getHeight();
-			parentSplitLayout.setChildSize(parentLayout, newSize);
-			parentSplitLayout.setChildResizable(parentLayout, false);
-
-			// Deselect any dockable since we are now collapsed
-			headerRegion.selectedProperty().set(null);
-
-			// Mark
-			collapsed = true;
-		}
+		return parentSplitLayout.setChildCollapsed(parentLayout, !parentSplitLayout.isChildCollapsed(parentLayout));
 	}
 
 	@Override
 	public boolean isCollapsed() {
-		return collapsed;
+		SplitContentLayout parentSplitLayout = BentoUtils.getOrParent(this, SplitContentLayout.class);
+		ContentLayout parentLayout = BentoUtils.getOrParent(this, ContentLayout.class);
+
+		// Skip if there is no parent split or parent layout.
+		if (parentSplitLayout == null || parentLayout == null)
+			return false;
+
+		return parentSplitLayout.isChildCollapsed(parentLayout);
 	}
 
 	@Nonnull
@@ -416,8 +368,8 @@ public class HeaderView extends StackPane implements DockableDestination {
 		}
 
 		@Override
-		public void toggleCollapsed() {
-			parentView.toggleCollapsed();
+		public boolean toggleCollapsed() {
+			return parentView.toggleCollapsed();
 		}
 
 		@Override

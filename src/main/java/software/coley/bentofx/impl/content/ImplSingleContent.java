@@ -5,6 +5,7 @@ import jakarta.annotation.Nullable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.Dockable;
@@ -60,6 +61,22 @@ public class ImplSingleContent extends ImplContentBase implements SingleContent 
 				default -> value = null;
 			}
 		}
+	}
+
+	@Nullable
+	public Header getHeader() {
+		Side side = headerSideProperty.get();
+		if (side == null)
+			return null;
+		Node maybeHeader = switch (side) {
+			case TOP -> layout.getTop();
+			case BOTTOM -> layout.getBottom();
+			case LEFT -> layout.getLeft();
+			case RIGHT -> layout.getRight();
+		};
+		if (maybeHeader instanceof Header header)
+			return header;
+		return null;
 	}
 
 	@Nonnull

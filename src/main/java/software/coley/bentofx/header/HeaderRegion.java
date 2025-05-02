@@ -22,7 +22,6 @@ import software.coley.bentofx.content.TabbedContent;
 import software.coley.bentofx.impl.content.ImplTabbedContent;
 import software.coley.bentofx.layout.ContentLayout;
 import software.coley.bentofx.layout.RootContentLayout;
-import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.util.BentoUtils;
 import software.coley.bentofx.util.DropTargetType;
 import software.coley.bentofx.util.LinearItemPane;
@@ -340,8 +339,8 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 	}
 
 	@Override
-	public void toggleCollapsed() {
-		parentView.toggleCollapsed();
+	public boolean toggleCollapsed() {
+		return parentView.toggleCollapsed();
 	}
 
 	@Override
