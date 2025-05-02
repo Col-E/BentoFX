@@ -2,6 +2,7 @@ package software.coley.boxfx.demo;
 
 import jakarta.annotation.Nonnull;
 import javafx.application.Application;
+import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
@@ -17,9 +18,13 @@ import software.coley.bentofx.Bento;
 import software.coley.bentofx.Dockable;
 import software.coley.bentofx.builder.ContentBuilder;
 import software.coley.bentofx.builder.DockableBuilder;
+import software.coley.bentofx.builder.SplitContentLayoutArgs;
 import software.coley.bentofx.builder.TabbedContentArgs;
+import software.coley.bentofx.content.TabbedContent;
 import software.coley.bentofx.layout.ContentLayout;
+import software.coley.bentofx.layout.LeafContentLayout;
 import software.coley.bentofx.layout.RootContentLayout;
+import software.coley.bentofx.layout.SplitContentLayout;
 
 public class BoxApp extends Application {
 	private static final int TOOLS = 1;
@@ -34,38 +39,51 @@ public class BoxApp extends Application {
 
 		Bento bento = Bento.newBento();
 		ContentBuilder builder = bento.newContentBuilder();
-		ContentLayout layout = builder.vsplit(
-				builder.hsplit(
-						builder.fitLeaf(builder.tabbed(new TabbedContentArgs()
-								.setSide(Side.LEFT)
-								.addDockables(
-										buildDockable(builder, 1, "Workspace").withClosable(false).withDragGroup(TOOLS),
-										buildDockable(builder, 2, "Bookmarks").withClosable(false).withDragGroup(TOOLS),
-										buildDockable(builder, 3, "Modifications").withClosable(false).withDragGroup(TOOLS)
-								)
-								.setAutoPruneWhenEmpty(false)
-								.setCanSplit(false))),
-						builder.leaf(builder.tabbed(
-								Side.TOP,
-								makeDockable(builder, 1, "Class1"),
-								makeDockable(builder, 2, "Class2"),
-								makeDockable(builder, 3, "Class3").withClosable(false),
-								makeDockable(builder, 4, "Class4"),
-								makeDockable(builder, 5, "Class5")
-						))
-				),
-				builder.fitLeaf(builder.tabbed(new TabbedContentArgs()
-						.setSide(Side.BOTTOM)
-						.addDockables(
-								buildDockable(builder, 1, "Logging").withClosable(false).withDragGroup(TOOLS),
-								buildDockable(builder, 2, "Terminal").withClosable(false).withDragGroup(TOOLS),
-								buildDockable(builder, 3, "Problems").withClosable(false).withDragGroup(TOOLS)
-						)
-						.setAutoPruneWhenEmpty(false)
-						.setCanSplit(false)))
+
+		TabbedContent toolTabs = builder.tabbed(new TabbedContentArgs()
+				.setSide(Side.LEFT)
+				.addDockables(
+						buildDockable(builder, 1, "Workspace").withClosable(false).withDragGroup(TOOLS),
+						buildDockable(builder, 2, "Bookmarks").withClosable(false).withDragGroup(TOOLS),
+						buildDockable(builder, 3, "Modifications").withClosable(false).withDragGroup(TOOLS)
+				)
+				.setAutoPruneWhenEmpty(false)
+				.setCanSplit(false));
+		TabbedContent workTabs = builder.tabbed(
+				Side.TOP,
+				makeDockable(builder, 1, "Class1"),
+				makeDockable(builder, 2, "Class2"),
+				makeDockable(builder, 3, "Class3").withClosable(false),
+				makeDockable(builder, 4, "Class4"),
+				makeDockable(builder, 5, "Class5")
+		);
+		SplitContentLayout topSplit = builder.split(new SplitContentLayoutArgs()
+				.setOrientation(Orientation.HORIZONTAL)
+				.addChildren(
+						builder.fitLeaf(toolTabs),
+						builder.leaf(workTabs)
+				)
+				.setChildrenSizes(200)
+		);
+		LeafContentLayout bottomLeaf = builder.fitLeaf(builder.tabbed(new TabbedContentArgs()
+				.setSide(Side.BOTTOM)
+				.addDockables(
+						buildDockable(builder, 1, "Logging").withClosable(false).withDragGroup(TOOLS),
+						buildDockable(builder, 2, "Terminal").withClosable(false).withDragGroup(TOOLS),
+						buildDockable(builder, 3, "Problems").withClosable(false).withDragGroup(TOOLS)
+				)
+				.setAutoPruneWhenEmpty(false)
+				.setCanSplit(false))
+		);
+		SplitContentLayout layout = builder.split(new SplitContentLayoutArgs()
+				.setOrientation(Orientation.VERTICAL)
+				.addChildren(topSplit, bottomLeaf)
+				.setChildrenPercentages(-1, 0.2) // The negative first value lets us specifically only configure the 2nd child
 		);
 		RootContentLayout root = builder.root(layout);
-		stage.setScene(new Scene(root.getBackingRegion()));
+		Scene scene = new Scene(root.getBackingRegion());
+		scene.getStylesheets().add(Bento.getCssPath());
+		stage.setScene(scene);
 		stage.setOnHidden(e -> System.exit(0));
 		stage.show();
 	}
