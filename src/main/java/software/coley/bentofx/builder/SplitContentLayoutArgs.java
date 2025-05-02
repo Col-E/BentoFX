@@ -10,6 +10,8 @@ import java.util.List;
 
 public class SplitContentLayoutArgs extends AbstractContentLayoutArgs<SplitContentLayoutArgs> {
 	private final List<ContentLayout> children = new ArrayList<>();
+	private final List<Double> childrenSizes = new ArrayList<>();
+	private final List<Double> childrenPercentages = new ArrayList<>();
 	private Orientation orientation = Orientation.HORIZONTAL;
 
 	@Nonnull
@@ -39,5 +41,29 @@ public class SplitContentLayoutArgs extends AbstractContentLayoutArgs<SplitConte
 		return this;
 	}
 
+	@Nonnull
+	public List<Double> getChildrenSizes() {
+		return childrenSizes;
+	}
 
+	@Nonnull
+	public SplitContentLayoutArgs setChildrenSizes(double... sizes) {
+		childrenSizes.clear();
+		for (double size : sizes)
+			childrenSizes.add(size);
+		return this;
+	}
+
+	@Nonnull
+	public List<Double> getChildrenPercentages() {
+		return childrenPercentages;
+	}
+
+	@Nonnull
+	public SplitContentLayoutArgs setChildrenPercentages(double... percentages) {
+		childrenPercentages.clear();
+		for (double percentage : percentages)
+			childrenPercentages.add(percentage);
+		return this;
+	}
 }

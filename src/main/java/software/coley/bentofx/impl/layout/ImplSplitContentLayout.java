@@ -151,17 +151,35 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 
 	@Override
 	public void setChildSize(@Nonnull ContentLayout childLayout, double size) {
-		int i = childLayouts.indexOf(childLayout);
-		double max = orientationProperty().get() == Orientation.HORIZONTAL ? getWidth() : getHeight();
+		BentoUtils.scheduleWhenShown(this, split -> {
+			int i = childLayouts.indexOf(childLayout);
+			double max = orientationProperty().get() == Orientation.HORIZONTAL ? getWidth() : getHeight();
 
-		double ratio = size / max;
-		if (i == 0 && childLayouts.size() > 1) {
-			// Child is first, move the first divider if one exists
-			setDividerPosition(0, ratio);
-		} else if (i > 0 && i == childLayouts.size() - 1) {
-			// Child is last, move the last divider if one exists
-			setDividerPosition(i - 1, 1 - ratio);
-		}
+			double ratio = Math.clamp(size / max, 0, 1);
+
+			if (i == 0 && childLayouts.size() > 1) {
+				// Child is first, move the first divider if one exists
+				setDividerPosition(0, ratio);
+			} else if (i > 0 && i == childLayouts.size() - 1) {
+				// Child is last, move the last divider if one exists
+				setDividerPosition(i - 1, 1 - ratio);
+			}
+		});
+	}
+
+	@Override
+	public void setChildPercent(@Nonnull ContentLayout childLayout, double percent) {
+		BentoUtils.scheduleWhenShown(this, split -> {
+			int i = childLayouts.indexOf(childLayout);
+
+			if (i == 0 && childLayouts.size() > 1) {
+				// Child is first, move the first divider if one exists
+				setDividerPosition(0, percent);
+			} else if (i > 0 && i == childLayouts.size() - 1) {
+				// Child is last, move the last divider if one exists
+				setDividerPosition(i - 1, 1 - percent);
+			}
+		});
 	}
 
 	@Override

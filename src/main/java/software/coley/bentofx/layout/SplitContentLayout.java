@@ -28,6 +28,16 @@ non-sealed public interface SplitContentLayout extends ContentLayout {
 	void setChildSize(@Nonnull ContentLayout childLayout, double size);
 
 	/**
+	 * Reallocates the size of a given child in the containing {@link SplitPane}.
+	 *
+	 * @param childLayout
+	 * 		Child layout to change size of.
+	 * @param percent
+	 * 		New size <i>(In percent)</i> to grant the given child in the containing {@link SplitPane}.
+	 */
+	void setChildPercent(@Nonnull ContentLayout childLayout, double percent);
+
+	/**
 	 * Disables dividers in the contained {@link SplitPane} so that the given child layout cannot be resized.
 	 *
 	 * @param childLayout

@@ -2,12 +2,16 @@ package software.coley.bentofx.util;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.css.Selector;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
@@ -30,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -394,6 +399,40 @@ public class BentoUtils {
 		region.setOnDragExited(e -> {
 			destination.clearCanvas();
 			region.setEffect(null);
+		});
+	}
+
+	/**
+	 * Schedules some action to be run later when a {@link Node} is attached to a {@link Scene}.
+	 *
+	 * @param node
+	 * 		Node to operate on.
+	 * @param action
+	 * 		Action to run on the node when it is attached to a scene.
+	 * @param <T>
+	 * 		Node type.
+	 */
+	public static <T extends Node> void scheduleWhenShown(@Nonnull T node, @Nonnull Consumer<T> action) {
+		// Already showing, do the action immediately.
+		Scene scene = node.getScene();
+		if (scene != null) {
+			action.accept(node);
+			return;
+		}
+
+		// Schedule again when the node is attached to a scene.
+		node.sceneProperty().addListener(new ChangeListener<>() {
+			@Override
+			public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
+				if (newValue != null) {
+					node.sceneProperty().removeListener(this);
+
+					// We schedule the action rather than handling things immediately.
+					// The layout pass still needs to run, and if we operated now some properties like dimensions
+					// would not be up-to-date with the expectations of when the target node is "showing".
+					Platform.runLater(() -> action.accept(node));
+				}
+			}
 		});
 	}
 

@@ -19,6 +19,7 @@ import software.coley.bentofx.layout.SplitContentLayout;
 import software.coley.bentofx.util.BentoUtils;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class ContentBuilder {
 	private final ImplBento bento;
@@ -78,13 +79,33 @@ public class ContentBuilder {
 
 	@Nonnull
 	public SplitContentLayout split(@Nonnull SplitContentLayoutArgs args) {
+		List<ContentLayout> children = args.getChildren();
 		ImplSplitContentLayout layout = new ImplSplitContentLayout(bento,
 				args.getOrientation(),
-				args.getChildren(),
+				children,
 				args.getIdentifier()
 		);
 		if (!args.isResizeWithParent())
 			SplitPane.setResizableWithParent(layout.getBackingRegion(), false);
+		List<Double> childrenSizes = args.getChildrenSizes();
+		List<Double> childrenPercentages = args.getChildrenPercentages();
+		if (!childrenSizes.isEmpty()) {
+			for (int i = 0; i < Math.min(children.size(), childrenSizes.size()); i++) {
+				double size = childrenSizes.get(i);
+				if (size < 0)
+					continue;
+				ContentLayout child = children.get(i);
+				layout.setChildSize(child, size);
+			}
+		} else if (!childrenPercentages.isEmpty()) {
+			for (int i = 0; i < Math.min(children.size(), childrenPercentages.size()); i++) {
+				double percent = childrenPercentages.get(i);
+				if (percent < 0)
+					continue;
+				ContentLayout child = children.get(i);
+				layout.setChildPercent(child, percent);
+			}
+		}
 		return layout;
 	}
 
