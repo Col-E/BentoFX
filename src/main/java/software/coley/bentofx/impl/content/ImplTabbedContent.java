@@ -86,7 +86,7 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 	}
 
 	@Override
-	public boolean selectDockable(@Nonnull Dockable dockable) {
+	public boolean selectDockable(@Nullable Dockable dockable) {
 		return view.selectDockable(dockable);
 	}
 

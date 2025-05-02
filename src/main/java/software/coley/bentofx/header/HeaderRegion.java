@@ -307,8 +307,11 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 	}
 
 	@Override
-	public boolean selectDockable(@Nonnull Dockable dockable) {
-		if (getDockables().contains(dockable)) {
+	public boolean selectDockable(@Nullable Dockable dockable) {
+		if (dockable == null) {
+			selectedProperty.set(null);
+			return true;
+		} else if (getDockables().contains(dockable)) {
 			selectedProperty.set(dockable);
 
 			// If we were collapsed, ensure we restore the previous expected

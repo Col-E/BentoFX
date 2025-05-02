@@ -97,7 +97,7 @@ public class HeaderView extends StackPane implements DockableDestination {
 	}
 
 	@Override
-	public boolean selectDockable(@Nonnull Dockable dockable) {
+	public boolean selectDockable(@Nullable Dockable dockable) {
 		return headerRegion.selectDockable(dockable);
 	}
 

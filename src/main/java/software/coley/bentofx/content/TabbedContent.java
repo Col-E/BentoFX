@@ -1,6 +1,7 @@
 package software.coley.bentofx.content;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -65,7 +66,7 @@ non-sealed public interface TabbedContent extends Content {
 	 *
 	 * @return {@code true} when selected. {@code false} when not selected <i>(Due to not being present)</i>.
 	 */
-	boolean selectDockable(@Nonnull Dockable dockable);
+	boolean selectDockable(@Nullable Dockable dockable);
 
 	/**
 	 * The auto-prune property, when {@code true}, will automatically this content from the
