@@ -127,4 +127,5 @@ ContentLayout layout = builder.vsplit(
 // Create the root layout and put it in a new scene.
 RootContentLayout root = builder.root(layout);
 Scene scene = new Scene(root.getBackingRegion());
+scene.getStylesheets().add(Bento.getCssPath());
 ```

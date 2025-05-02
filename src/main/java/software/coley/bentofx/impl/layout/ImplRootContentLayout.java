@@ -9,12 +9,9 @@ import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.layout.ContentLayout;
 import software.coley.bentofx.layout.RootContentLayout;
 
-import java.net.URL;
-
 public class ImplRootContentLayout extends BorderPane implements RootContentLayout {
 	private final ImplBento bento;
 	private final String identifier;
-	private String userAgentStylesheet;
 	private ContentLayout layout;
 
 	public ImplRootContentLayout(@Nonnull ImplBento bento, @Nonnull ContentLayout layout, @Nonnull String identifier) {
@@ -66,15 +63,5 @@ public class ImplRootContentLayout extends BorderPane implements RootContentLayo
 	@Override
 	public void clearLayout() {
 		setLayout(new ImplLeafContentLayout(bento, null));
-	}
-
-	@Override
-	public String getUserAgentStylesheet() {
-		if (userAgentStylesheet == null) {
-			URL resource = ImplRootContentLayout.class.getClassLoader().getResource("bento.css");
-			if (resource != null)
-				userAgentStylesheet = resource.toExternalForm();
-		}
-		return userAgentStylesheet;
 	}
 }

@@ -20,6 +20,8 @@ import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.path.LayoutPath;
 import software.coley.bentofx.util.BentoUtils;
 
+import java.net.URL;
+
 /**
  * Controller for dockable content and layouts.
  *
@@ -216,5 +218,16 @@ public interface Bento {
 				return true;
 		}
 		return false;
+	}
+
+	/**
+	 * @return Path to the {@code bento.css} stylesheet.
+	 */
+	@Nullable
+	static String getCssPath() {
+		URL resource = Bento.class.getClassLoader().getResource("bento.css");
+		if (resource != null)
+			return resource.toExternalForm();
+		return null;
 	}
 }
