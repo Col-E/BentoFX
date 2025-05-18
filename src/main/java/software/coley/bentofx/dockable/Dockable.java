@@ -1,4 +1,4 @@
-package software.coley.bentofx;
+package software.coley.bentofx.dockable;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -9,6 +9,7 @@ import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Tooltip;
+import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderView;
@@ -38,7 +39,7 @@ public interface Dockable extends Identifiable {
 	 */
 	@Nullable
 	default Node buildIcon() {
-		IconFactory factory = iconFactoryProperty().get();
+		DockableIconFactory factory = iconFactoryProperty().get();
 		return factory == null ? null : factory.build(this);
 	}
 
@@ -58,7 +59,7 @@ public interface Dockable extends Identifiable {
 	 * @return This dockable's display graphic when represented by a {@link Header}.
 	 */
 	@Nonnull
-	ObjectProperty<IconFactory> iconFactoryProperty();
+	ObjectProperty<DockableIconFactory> iconFactoryProperty();
 
 	/**
 	 * @return This dockable's closable state when represented by a {@link Header}.
@@ -82,7 +83,7 @@ public interface Dockable extends Identifiable {
 	 * @return This dockable's context-menu factory used to populate menus in a representative {@link Header}.
 	 */
 	@Nonnull
-	ObjectProperty<MenuFactory> contextMenuFactoryProperty();
+	ObjectProperty<DockableMenuFactory> contextMenuFactoryProperty();
 
 	/**
 	 * @return This dockable's persistence for {@link #contextMenuFactoryProperty()} generated {@link ContextMenu}s.
@@ -121,7 +122,7 @@ public interface Dockable extends Identifiable {
 	 * @return Self.
 	 */
 	@Nonnull
-	default Dockable withIconFactory(@Nullable IconFactory factory) {
+	default Dockable withIconFactory(@Nullable DockableIconFactory factory) {
 		iconFactoryProperty().set(factory);
 		return this;
 	}
@@ -133,7 +134,7 @@ public interface Dockable extends Identifiable {
 	 * @return Self.
 	 */
 	@Nonnull
-	default Dockable withContextMenuFactory(@Nullable MenuFactory factory) {
+	default Dockable withContextMenuFactory(@Nullable DockableMenuFactory factory) {
 		contextMenuFactoryProperty().set(factory);
 		return this;
 	}

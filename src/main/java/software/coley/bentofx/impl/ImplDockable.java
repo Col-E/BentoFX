@@ -8,11 +8,11 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
-import software.coley.bentofx.Dockable;
-import software.coley.bentofx.DockableCloseListener;
-import software.coley.bentofx.IconFactory;
+import software.coley.bentofx.dockable.Dockable;
+import software.coley.bentofx.dockable.DockableCloseListener;
+import software.coley.bentofx.dockable.DockableIconFactory;
 import software.coley.bentofx.Identifiable;
-import software.coley.bentofx.MenuFactory;
+import software.coley.bentofx.dockable.DockableMenuFactory;
 import software.coley.bentofx.builder.DockableBuilder;
 
 import java.util.ArrayList;
@@ -24,11 +24,11 @@ public class ImplDockable implements Dockable {
 	private final Node content;
 	private final StringProperty titleProperty;
 	private final ObjectProperty<Tooltip> tooltipProperty;
-	private final ObjectProperty<IconFactory> iconFactoryProperty;
+	private final ObjectProperty<DockableIconFactory> iconFactoryProperty;
 	private final BooleanProperty closableProperty;
 	private final BooleanProperty canBeDragged;
 	private final BooleanProperty canBeDroppedToNewWindow;
-	private final ObjectProperty<MenuFactory> contextMenuFactoryProperty;
+	private final ObjectProperty<DockableMenuFactory> contextMenuFactoryProperty;
 	private final BooleanProperty cachedContextMenuProperty;
 	private List<DockableCloseListener> closeListeners;
 
@@ -98,7 +98,7 @@ public class ImplDockable implements Dockable {
 
 	@Nonnull
 	@Override
-	public ObjectProperty<IconFactory> iconFactoryProperty() {
+	public ObjectProperty<DockableIconFactory> iconFactoryProperty() {
 		return iconFactoryProperty;
 	}
 
@@ -122,7 +122,7 @@ public class ImplDockable implements Dockable {
 
 	@Nonnull
 	@Override
-	public ObjectProperty<MenuFactory> contextMenuFactoryProperty() {
+	public ObjectProperty<DockableMenuFactory> contextMenuFactoryProperty() {
 		return contextMenuFactoryProperty;
 	}
 

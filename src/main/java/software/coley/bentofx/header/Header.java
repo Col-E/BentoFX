@@ -29,9 +29,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.Dockable;
-import software.coley.bentofx.DockableDestination;
-import software.coley.bentofx.MenuFactory;
+import software.coley.bentofx.dockable.Dockable;
+import software.coley.bentofx.dockable.DockableDestination;
+import software.coley.bentofx.dockable.DockableMenuFactory;
 import software.coley.bentofx.impl.ImplDockable;
 import software.coley.bentofx.util.BentoUtils;
 import software.coley.bentofx.util.DragDropStage;
@@ -133,7 +133,7 @@ public class Header extends Group {
 			if (e.getButton() == MouseButton.SECONDARY) {
 				ContextMenu menu = cachedContextMenu;
 				if (menu == null) {
-					MenuFactory factory = dockable.contextMenuFactoryProperty().getValue();
+					DockableMenuFactory factory = dockable.contextMenuFactoryProperty().getValue();
 					menu = factory.build(dockable);
 
 					// Cache for next time

@@ -1,4 +1,4 @@
-package software.coley.bentofx;
+package software.coley.bentofx.dockable;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -6,6 +6,8 @@ import javafx.geometry.Side;
 import javafx.scene.Parent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.layout.Region;
+import software.coley.bentofx.Identifiable;
+import software.coley.bentofx.RegionBacked;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderRegion;

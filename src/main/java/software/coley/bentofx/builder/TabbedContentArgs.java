@@ -2,7 +2,7 @@ package software.coley.bentofx.builder;
 
 import jakarta.annotation.Nonnull;
 import javafx.geometry.Side;
-import software.coley.bentofx.Dockable;
+import software.coley.bentofx.dockable.Dockable;
 
 import java.util.ArrayList;
 import java.util.Arrays;

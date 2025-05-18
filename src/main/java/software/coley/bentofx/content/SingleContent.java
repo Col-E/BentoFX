@@ -3,7 +3,7 @@ package software.coley.bentofx.content;
 import jakarta.annotation.Nonnull;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Side;
-import software.coley.bentofx.Dockable;
+import software.coley.bentofx.dockable.Dockable;
 
 /**
  * Single {@link Dockable} display content.

@@ -1,4 +1,4 @@
-package software.coley.bentofx;
+package software.coley.bentofx.dockable;
 
 import jakarta.annotation.Nonnull;
 import software.coley.bentofx.content.Content;

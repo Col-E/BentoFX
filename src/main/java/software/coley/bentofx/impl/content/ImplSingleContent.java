@@ -8,7 +8,7 @@ import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.Dockable;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.content.SingleContent;
 import software.coley.bentofx.header.Header;

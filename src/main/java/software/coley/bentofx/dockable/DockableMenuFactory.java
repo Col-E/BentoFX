@@ -1,4 +1,4 @@
-package software.coley.bentofx;
+package software.coley.bentofx.dockable;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -9,7 +9,7 @@ import javafx.scene.control.ContextMenu;
  *
  * @author Matt Coley
  */
-public interface MenuFactory {
+public interface DockableMenuFactory {
 	/**
 	 * @param dockable
 	 * 		Dockable to create a context menu for.

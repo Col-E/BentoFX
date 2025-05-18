@@ -1,10 +1,8 @@
-package software.coley.bentofx;
+package software.coley.bentofx.content;
 
 import jakarta.annotation.Nonnull;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import software.coley.bentofx.content.EmptyContent;
 import software.coley.bentofx.layout.ContentLayout;
 
 /**
@@ -12,11 +10,11 @@ import software.coley.bentofx.layout.ContentLayout;
  *
  * @author Matt Coley
  */
-public interface EmptyDisplayFactory {
+public interface EmptyContentDisplayFactory {
 	/**
 	 * Factory implementation that creates a blank display.
 	 */
-	EmptyDisplayFactory BLANK = new EmptyDisplayFactory() {
+	EmptyContentDisplayFactory BLANK = new EmptyContentDisplayFactory() {
 		@Nonnull
 		@Override
 		public Node build(@Nonnull ContentLayout parentLayout) {

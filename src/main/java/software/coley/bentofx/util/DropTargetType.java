@@ -1,6 +1,6 @@
 package software.coley.bentofx.util;
 
-import software.coley.bentofx.DockableDestination;
+import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.header.Header;
 
 /**

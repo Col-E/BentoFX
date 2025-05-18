@@ -5,7 +5,7 @@ import jakarta.annotation.Nullable;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.Dockable;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.content.EmptyContent;

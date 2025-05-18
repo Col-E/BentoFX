@@ -6,7 +6,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Side;
-import software.coley.bentofx.Dockable;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.header.HeaderRegion;
 import software.coley.bentofx.layout.ContentLayout;
 import software.coley.bentofx.layout.RootContentLayout;

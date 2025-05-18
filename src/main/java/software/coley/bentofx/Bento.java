@@ -11,6 +11,9 @@ import software.coley.bentofx.builder.ContentBuilder;
 import software.coley.bentofx.builder.DockableBuilder;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.content.EmptyContent;
+import software.coley.bentofx.content.EmptyContentDisplayFactory;
+import software.coley.bentofx.dockable.Dockable;
+import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.layout.ContentLayout;
@@ -56,7 +59,7 @@ public interface Bento {
 	 *
 	 * @return A new empty content instance.
 	 *
-	 * @see #setEmptyDisplayFactory(EmptyDisplayFactory)
+	 * @see #setEmptyDisplayFactory(EmptyContentDisplayFactory)
 	 */
 	@Nonnull
 	Content newEmptyContent(@Nonnull ContentLayout parentLayout);
@@ -65,7 +68,7 @@ public interface Bento {
 	 * @param factory
 	 * 		Factory to create content for {@link EmptyContent} when placed into the UI.
 	 */
-	void setEmptyDisplayFactory(@Nullable EmptyDisplayFactory factory);
+	void setEmptyDisplayFactory(@Nullable EmptyContentDisplayFactory factory);
 
 	/**
 	 * @param source

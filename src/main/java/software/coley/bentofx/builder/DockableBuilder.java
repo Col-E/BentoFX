@@ -10,10 +10,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
-import software.coley.bentofx.Dockable;
-import software.coley.bentofx.DockableCloseListener;
-import software.coley.bentofx.IconFactory;
-import software.coley.bentofx.MenuFactory;
+import software.coley.bentofx.dockable.Dockable;
+import software.coley.bentofx.dockable.DockableCloseListener;
+import software.coley.bentofx.dockable.DockableIconFactory;
+import software.coley.bentofx.dockable.DockableMenuFactory;
 import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.impl.ImplDockable;
 import software.coley.bentofx.util.BentoUtils;
@@ -26,11 +26,11 @@ public class DockableBuilder {
 	private final ImplBento bento;
 	private final StringProperty titleProperty = new SimpleStringProperty();
 	private final ObjectProperty<Tooltip> tooltipProperty = new SimpleObjectProperty<>();
-	private final ObjectProperty<IconFactory> iconFactoryProperty = new SimpleObjectProperty<>();
+	private final ObjectProperty<DockableIconFactory> iconFactoryProperty = new SimpleObjectProperty<>();
 	private final BooleanProperty closableProperty = new SimpleBooleanProperty(true);
 	private final BooleanProperty canBeDraggedProperty = new SimpleBooleanProperty(true);
 	private final BooleanProperty canBeDroppedToNewWindowProperty = new SimpleBooleanProperty(true);
-	private final ObjectProperty<MenuFactory> contextMenuFactoryProperty = new SimpleObjectProperty<>();
+	private final ObjectProperty<DockableMenuFactory> contextMenuFactoryProperty = new SimpleObjectProperty<>();
 	private final BooleanProperty cachedContextMenuProperty = new SimpleBooleanProperty();
 	private List<DockableCloseListener> closeListeners;
 	private String identifier = BentoUtils.newIdentifier();
@@ -72,13 +72,13 @@ public class DockableBuilder {
 	}
 
 	@Nonnull
-	public DockableBuilder withIconFactory(@Nullable IconFactory factory) {
+	public DockableBuilder withIconFactory(@Nullable DockableIconFactory factory) {
 		iconFactoryProperty.set(factory);
 		return this;
 	}
 
 	@Nonnull
-	public DockableBuilder withContextMenuFactory(@Nullable MenuFactory factory) {
+	public DockableBuilder withContextMenuFactory(@Nullable DockableMenuFactory factory) {
 		contextMenuFactoryProperty.set(factory);
 		return this;
 	}
@@ -126,7 +126,7 @@ public class DockableBuilder {
 	}
 
 	@Nonnull
-	public ObjectProperty<IconFactory> iconFactoryProperty() {
+	public ObjectProperty<DockableIconFactory> iconFactoryProperty() {
 		return iconFactoryProperty;
 	}
 
@@ -146,7 +146,7 @@ public class DockableBuilder {
 	}
 
 	@Nonnull
-	public ObjectProperty<MenuFactory> contextMenuFactoryProperty() {
+	public ObjectProperty<DockableMenuFactory> contextMenuFactoryProperty() {
 		return contextMenuFactoryProperty;
 	}
 

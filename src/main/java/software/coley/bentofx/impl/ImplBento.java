@@ -11,8 +11,8 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.DockableDestination;
-import software.coley.bentofx.EmptyDisplayFactory;
+import software.coley.bentofx.dockable.DockableDestination;
+import software.coley.bentofx.content.EmptyContentDisplayFactory;
 import software.coley.bentofx.builder.ContentBuilder;
 import software.coley.bentofx.builder.DockableBuilder;
 import software.coley.bentofx.content.Content;
@@ -26,7 +26,7 @@ import software.coley.bentofx.util.DragDropStage;
 
 public class ImplBento implements Bento {
 	private final ObservableList<RootContentLayout> rootLayouts = FXCollections.observableArrayList();
-	private EmptyDisplayFactory emptyDisplayFactory = EmptyDisplayFactory.BLANK;
+	private EmptyContentDisplayFactory emptyDisplayFactory = EmptyContentDisplayFactory.BLANK;
 
 	@Nonnull
 	@Override
@@ -54,9 +54,9 @@ public class ImplBento implements Bento {
 	}
 
 	@Override
-	public void setEmptyDisplayFactory(@Nullable EmptyDisplayFactory factory) {
+	public void setEmptyDisplayFactory(@Nullable EmptyContentDisplayFactory factory) {
 		if (factory == null)
-			factory = EmptyDisplayFactory.BLANK;
+			factory = EmptyContentDisplayFactory.BLANK;
 		emptyDisplayFactory = factory;
 	}
 

@@ -1,16 +1,16 @@
-package software.coley.bentofx;
+package software.coley.bentofx.dockable;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import javafx.scene.Node;
-import javafx.scene.control.ContextMenu;
+import software.coley.bentofx.dockable.Dockable;
 
 /**
  * Factory to create a {@link Node} graphic for some given {@link Dockable}.
  *
  * @author Matt Coley
  */
-public interface IconFactory {
+public interface DockableIconFactory {
 	/**
 	 * @param dockable
 	 * 		Dockable to create a graphic for.

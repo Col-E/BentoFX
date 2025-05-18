@@ -1,7 +1,7 @@
 package software.coley.bentofx.path;
 
 import jakarta.annotation.Nonnull;
-import software.coley.bentofx.Dockable;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.layout.ContentLayout;
 import software.coley.bentofx.layout.RootContentLayout;

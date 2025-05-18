@@ -3,7 +3,7 @@ package software.coley.bentofx.layout;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.Dockable;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.RegionBacked;
 import software.coley.bentofx.content.Content;

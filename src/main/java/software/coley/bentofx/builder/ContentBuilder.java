@@ -4,7 +4,7 @@ import jakarta.annotation.Nonnull;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.control.SplitPane;
-import software.coley.bentofx.Dockable;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.content.TabbedContent;
 import software.coley.bentofx.impl.ImplBento;

@@ -9,7 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.Dockable;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.RegionBacked;
 import software.coley.bentofx.content.EmptyContent;
