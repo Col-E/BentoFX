@@ -10,6 +10,7 @@ import javafx.beans.property.StringProperty;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -59,7 +60,7 @@ public class Header extends Group {
 	public Header(@Nonnull Dockable dockable, @Nonnull Side side) {
 		this.dockable = dockable;
 
-		grid.getStyleClass().add("dock-header");
+		grid.getStyleClass().add("header");
 		ghostWrapper.getStyleClass().add("dock-ghost-zone");
 
 		switch (side) {
@@ -92,6 +93,7 @@ public class Header extends Group {
 		grid.setHgap(6);
 		grid.setVgap(6);
 		grid.setPadding(new Insets(6));
+		grid.setAlignment(Pos.CENTER);
 		BorderPane wrapper = new BorderPane();
 		wrapper.setCenter(grid);
 		wrapper.setLeft(ghostWrapper);
@@ -331,6 +333,14 @@ public class Header extends Group {
 		return grid.getHeight();
 	}
 
+	/**
+	 * Attempts to remove the header from its parent. This can be blocked if the {@link #dockable} is not closable.
+	 *
+	 * @param reason
+	 * 		Reason for removal.
+	 *
+	 * @return {@code true} when removed. {@code false} when not removed.
+	 */
 	public boolean removeFromParent(@Nonnull RemovalReason reason) {
 		// Skip if not closable and the removal is from closing.
 		if (reason == RemovalReason.CLOSING && !isClosable())
@@ -352,12 +362,12 @@ public class Header extends Group {
 
 	@Nullable
 	public DockableDestination getParentDestination() {
-		return BentoUtils.getOrParent(getParent(), DockableDestination.class);
+		return BentoUtils.getParent(this, DockableDestination.class);
 	}
 
 	@Nullable
 	public HeaderView getParentHeaderView() {
-		return BentoUtils.getOrParent(getParent(), HeaderView.class);
+		return BentoUtils.getParent(this, HeaderView.class);
 	}
 
 	public void inParentDestination(@Nonnull Consumer<DockableDestination> action) {
@@ -393,6 +403,23 @@ public class Header extends Group {
 			}
 		}
 		requestLayout();
+	}
+
+	/**
+	 * Ensures this header fits the parent on the perpendicular axis it is aligned to.
+	 * <ul>
+	 * <li>Horizontal headers will fill to the parent height.</li>
+	 * <li>Vertical headers will fill to the parent width.</li>
+	 * </ul>
+	 */
+	public void bindToParentDimensions() {
+		HeaderRegion parent = BentoUtils.getParent(this, HeaderRegion.class);
+		if (parent != null) {
+			switch (getSide()) {
+				case TOP, BOTTOM -> grid.prefHeightProperty().bind(parent.heightProperty());
+				case LEFT, RIGHT -> grid.prefWidthProperty().bind(parent.widthProperty());
+			}
+		}
 	}
 
 	@Nonnull

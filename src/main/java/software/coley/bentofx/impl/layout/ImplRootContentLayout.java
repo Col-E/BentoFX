@@ -18,6 +18,8 @@ public class ImplRootContentLayout extends BorderPane implements RootContentLayo
 		this.bento = bento;
 		this.identifier = identifier;
 
+		getStyleClass().add("bento");
+
 		// Register/unregister this root based on when it belongs to the scene graph.
 		sceneProperty().addListener((on, old, cur) -> {
 			if (cur != null) {

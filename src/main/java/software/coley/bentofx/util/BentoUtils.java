@@ -179,11 +179,18 @@ public class BentoUtils {
 	@SuppressWarnings("unchecked")
 	@Nullable
 	public static <T> T getOrParent(@Nullable Node node, @Nonnull Class<T> type) {
+		// Check if node is null, or the requested type.
 		if (node == null)
 			return null;
+		else if (type.isAssignableFrom(node.getClass()))
+			return (T) type;
+
+		// Check parents.
 		Parent parent = node.getParent();
 		while (parent != null && !(type.isAssignableFrom(parent.getClass())))
 			parent = parent.getParent();
+
+		// We either found a matching parent, or have no parents left to check.
 		if (parent == null)
 			return null;
 		return (T) parent;

@@ -36,129 +36,158 @@
     -fx-background-color: -color-bg-default;
 }
 
-.split-pane {
+.bento .split-pane {
     -fx-background-color: -color-bg-default;
     -fx-background-insets: 0;
     -fx-padding: 0;
 }
 
-.split-pane > .split-pane-divider {
+.bento .split-pane > .split-pane-divider {
     -fx-background-color: -color-bg-inset !important;
     -fx-padding: 0 2px 0 2px;
 }
 
-.split-pane > .split-pane-divider > .horizontal-grabber {
+.bento .split-pane > .split-pane-divider > .horizontal-grabber {
     -fx-background-color: -color-base-6;
     -fx-padding: 5px 1px 5px 1px;
 }
 
-.split-pane > .split-pane-divider > .vertical-grabber {
+.bento .split-pane > .split-pane-divider > .vertical-grabber {
     -fx-background-color: -color-base-6;
     -fx-padding: 1px 5px 1px 5px;
 }
 
-.split-pane > .split-pane-divider:hover {
+.bento .split-pane > .split-pane-divider:hover {
     -fx-background-color: -color-accent-fg;
 }
-.split-pane > .split-pane-divider:pressed {
+.bento .split-pane > .split-pane-divider:pressed {
     -fx-background-color: -color-accent-emphasis;
 }
-.split-pane > .split-pane-divider:disabled {
+.bento .split-pane > .split-pane-divider:disabled {
     -fx-background-color: -color-border-muted;
 }
-.split-pane > .split-pane-divider:hover> .horizontal-grabber,
-.split-pane > .split-pane-divider:hover> .vertical-grabber {
+.bento .split-pane > .split-pane-divider:hover> .horizontal-grabber,
+.bento .split-pane > .split-pane-divider:hover> .vertical-grabber {
     -fx-background-color: -color-accent-7;
 }
-.split-pane > .split-pane-divider:pressed > .horizontal-grabber,
-.split-pane > .split-pane-divider:pressed > .vertical-grabber {
+.bento .split-pane > .split-pane-divider:pressed > .horizontal-grabber,
+.bento .split-pane > .split-pane-divider:pressed > .vertical-grabber {
     -fx-background-color: -color-accent-emphasis;
 }
 
-
-.dock-region {
-    -fx-background-color: -color-bg-inset !important;
-    -fx-padding: 4px;
+/* HeaderView */
+.header-view {
+    -fx-border-width: 0px;
+    -fx-background-insets: 0, 1px;
+    -fx-background-color: -color-border-default, -color-bg-default;
 }
-
-
-.dock-container {
-    -fx-border-width: 1px;
-    -fx-border-color: -color-border-default;
-    -fx-background-color: -color-bg-default;
+/* The "v" and "..." buttons in HeaderView */
+.header-view .button {
+    -fx-background-insets: 0, 1px;
+    -fx-background-radius: 0px;
+    -fx-background-color: -color-border-default, -color-bg-overlay;
+    -fx-border-width: 0px;
 }
-
-
-.dock-header-box {
-    -fx-background-color: -color-border-subtle, -color-bg-overlay;
+.header-view .button:hover {
+    -fx-background-color: -color-border-default, -color-bg-default;
 }
-.dock-header-box:top {
-    -fx-background-insets: 0, 0 0 1px 0;
+.header-view:top .button {
+    -fx-background-insets: 0, 0 0 1px 1px;
 }
-.dock-header-box:bottom {
-    -fx-background-insets: 0, 1px 0 0 0;
+.header-view:bottom .button {
+    -fx-background-insets: 0, 1px 0 0 1px;
 }
-.dock-header-box:left {
-    -fx-background-insets: 0, 0 1px 0 0;
+.header-view:left .button {
+    -fx-background-insets: 0, 1px 1px 0 0;
 }
-.dock-header-box:right {
-    -fx-background-insets: 0, 0 0 0 1px;
+.header-view:right .button {
+    -fx-background-insets: 0, 1px 0 0 1px;
 }
-/* TODO: Orientation variants
-.dock-header-box > .cut-off {
-    -fx-background-insets: 0 0 1px 0;
-    -fx-background-color: linear-gradient(from 0% 100% to 80% 100%, transparent, -color-bg-overlay);
-    -fx-border-insets: 0 -1px 0 0;
+.header-view:top .button-bar,
+.header-view:bottom .button-bar {
     -fx-border-width: 0 1px 0 0;
-    -fx-border-color: -color-border-subtle;
+    -fx-border-color: -color-border-default;
 }
-.dock-header-box > .actions {
-    -fx-background-color: transparent;
+.header-view:left .button-bar,
+.header-view:right .button-bar{
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: -color-border-default;
 }
-.dock-header-box > .actions > .icon {
-    -fx-shape: "M 0 0 L 10 18 L 20 0 z";
-    -fx-scale-shape: false;
-    -fx-background-color: -color-border-default;
-    -fx-background-insets: 5px;
+
+/* HeaderRegion (Wrapper) */
+.header-region-wrapper {
+    -fx-border-color: -color-border-default;
 }
-.dock-header-box > .actions:hover > .icon {
-    -fx-background-color: -color-accent-emphasis;
-}*/
-.dock-header {
-    -fx-background-color: -color-border-subtle, -color-bg-overlay;
-    -fx-padding: 0.3em 0.6em 0.3em 0.6em;
+.header-view:top .header-region-wrapper {
+    -fx-border-width: 1px 0 0 1px;
 }
-.dock-header:top {
+.header-view:bottom .header-region-wrapper {
+    -fx-border-width: 0 0 1px 1px;
+}
+.header-view:left .header-region-wrapper {
+    -fx-border-width: 1px 0 0 1px;
+}
+.header-view:right .header-region-wrapper {
+    -fx-border-width: 1px 1px 0 0;
+}
+
+/* HeaderRegion */
+.header-region {
+    -fx-background-color: -color-border-default, -color-bg-overlay;
+}
+.header-region:top {
     -fx-background-insets: 0, 0 0 1px 0;
 }
-.dock-header:bottom {
+.header-region:bottom {
     -fx-background-insets: 0, 1px 0 0 0;
 }
-.dock-header:left {
+.header-region:left {
     -fx-background-insets: 0, 0 1px 0 0;
 }
-.dock-header:right {
+.header-region:right {
     -fx-background-insets: 0, 0 0 0 1px;
 }
-.dock-header:hover {
+.header-region .content-wrapper {}
+
+/* Header */
+.header {
+    -fx-background-color: -color-border-default, -color-bg-overlay;
+}
+.header:top {
+    -fx-padding: 0.3em 0.6em 0.3em 0.6em;
+    -fx-background-insets: 0, 0 0 1px 0;
+}
+.header:bottom {
+    -fx-padding: 0.3em 0.6em 0.3em 0.6em;
+    -fx-background-insets: 0, 1px 0 0 0;
+}
+.header:left {
+    -fx-padding: 0.3em 0.4em 0.3em 0.4em;
+    -fx-background-insets: 0, 0 1px 0 0;
+}
+.header:right {
+    -fx-padding: 0.3em 0.4em 0.3em 0.4em;
+    -fx-background-insets: 0, 0 0 0 1px;
+}
+.header:hover {
     -fx-background-color: -color-border-subtle, -color-bg-subtle;
 }
-.dock-container .dock-header:selected {
+.header-view .header:selected {
     -fx-background-color: -color-bg-inset, -color-bg-default;
 }
-.dock-container:active .dock-header:selected {
+.header-view:active .header:selected {
     -fx-background-color: -color-accent-4, -color-bg-default;
 }
-.dock-header:selected:top {
+.header:selected:top {
     -fx-background-insets: 0, 0 0 2px 0;
 }
-.dock-header:selected:bottom {
+.header:selected:bottom {
     -fx-background-insets: 0, 2px 0 0 0;
 }
-.dock-header:selected:left {
+.header:selected:left {
     -fx-background-insets: 0, 0 2px 0 0;
 }
-.dock-header:selected:right {
+.header:selected:right {
     -fx-background-insets: 0, 0 0 0 2px;
 }
 .dock-ghost-zone {

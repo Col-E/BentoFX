@@ -38,12 +38,42 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 		this.autoPruneWhenEmptyProperty = new SimpleBooleanProperty(autoPrune);
 		this.canSplitProperty = new SimpleBooleanProperty(canSplit);
 
-		// TODO: When the side property updates we need to rebuild this view for the appropriate side
+		// Setup initial header view
+		setupHeaderView(bento, side, dockables);
+
+		// Refresh the header view when the side property updates
+		sideProperty.addListener((ob, old, cur) -> setupHeaderView(bento, cur, view.getDockables()));
+	}
+
+	private void setupHeaderView(@Nonnull Bento bento, @Nonnull Side side, @Nonnull List<Dockable> dockables) {
+		// Track existing view state.
+		Dockable oldSelected = null;
+		boolean wasFocused = false;
+		if (view != null) {
+			oldSelected = view.getSelectedDockable();
+			wasFocused = view.isFocusWithin();
+
+			// If the old view is collapsed, we need to uncollapse before changing the target side.
+			// This prevents soft-locking the user out of interacting with the updated layout.
+			if (view.isCollapsed())
+				view.toggleCollapsed();
+		}
+
+		// Create a new view for the given side.
 		view = new HeaderView(bento, side);
 		for (Dockable dockable : dockables)
 			view.addDockable(dockable);
-		selectedProperty.bind(view.selectedProperty());
 		layout.setCenter(view);
+
+		// Restore state from previous instance.
+		if (oldSelected != null)
+			view.selectDockable(oldSelected);
+		if (wasFocused)
+			view.getContentWrapper().requestFocus();
+
+		// Update selection to target the new view.
+		selectedProperty.unbind();
+		selectedProperty.bind(view.selectedProperty());
 	}
 
 	@Nullable

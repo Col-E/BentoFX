@@ -4,22 +4,29 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import javafx.beans.value.ObservableValue;
 import javafx.css.PseudoClass;
-import javafx.geometry.Orientation;
 import javafx.geometry.Side;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.DragEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.Dockable;
 import software.coley.bentofx.DockableDestination;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.content.Content;
+import software.coley.bentofx.content.TabbedContent;
 import software.coley.bentofx.layout.ContentLayout;
 import software.coley.bentofx.layout.SplitContentLayout;
 import software.coley.bentofx.util.BentoUtils;
@@ -33,18 +40,23 @@ public class HeaderView extends StackPane implements DockableDestination {
 	private final ContentWrapper contentWrapper;
 	private final HeaderRegion headerRegion;
 	private final Canvas canvas = new Canvas();
-	private final Side side;
-	private double lastWidth;
-	private double lastHeight;
 
 	public HeaderView(@Nonnull Bento bento, @Nonnull Side side) {
 		this.bento = bento;
-		this.side = side;
 
 		headerRegion = new HeaderRegion(bento, this, side);
 		contentWrapper = new ContentWrapper(bento, this);
 
-		getStyleClass().add("dock-container");
+		Button dockableListButton = createDockableListButton();
+		Button contentConfigButton = createContentConfigButton();
+
+		getStyleClass().add("header-view");
+		switch (side) {
+			case TOP -> pseudoClassStateChanged(Header.PSEUDO_SIDE_TOP, true);
+			case BOTTOM -> pseudoClassStateChanged(Header.PSEUDO_SIDE_BOTTOM, true);
+			case LEFT -> pseudoClassStateChanged(Header.PSEUDO_SIDE_LEFT, true);
+			case RIGHT -> pseudoClassStateChanged(Header.PSEUDO_SIDE_RIGHT, true);
+		}
 
 		// Track that this view has focus somewhere in the hierarchy.
 		// This will allow us to style the active view's subclasses specially.
@@ -58,16 +70,110 @@ public class HeaderView extends StackPane implements DockableDestination {
 
 		// Put the headers on the appropriate side, content in the center will be placed later
 		BorderPane layoutWrapper = new BorderPane();
+		BorderPane regionWrapper = new BorderPane(headerRegion);
+		regionWrapper.getStyleClass().add("header-region-wrapper");
 		layoutWrapper.setCenter(contentWrapper);
 		switch (side) {
-			case TOP -> layoutWrapper.setTop(headerRegion);
-			case BOTTOM -> layoutWrapper.setBottom(headerRegion);
-			case LEFT -> layoutWrapper.setLeft(headerRegion);
-			case RIGHT -> layoutWrapper.setRight(headerRegion);
+			case TOP -> {
+				HBox headerControls = new HBox(new Group(dockableListButton), contentConfigButton);
+				headerControls.getStyleClass().add("button-bar");
+				headerControls.setSpacing(-1);
+
+				dockableListButton.prefHeightProperty().bind(headerControls.heightProperty());
+				contentConfigButton.prefHeightProperty().bind(headerControls.heightProperty());
+
+				regionWrapper.setRight(headerControls);
+				layoutWrapper.setTop(regionWrapper);
+			}
+			case BOTTOM -> {
+				HBox headerControls = new HBox(new Group(dockableListButton), contentConfigButton);
+				headerControls.getStyleClass().add("button-bar");
+				headerControls.setSpacing(-1);
+
+				dockableListButton.prefHeightProperty().bind(headerControls.heightProperty());
+				contentConfigButton.prefHeightProperty().bind(headerControls.heightProperty());
+
+				regionWrapper.setRight(headerControls);
+				layoutWrapper.setBottom(regionWrapper);
+			}
+			case LEFT -> {
+				VBox headerControls = new VBox(new Group(dockableListButton), contentConfigButton);
+				headerControls.getStyleClass().add("button-bar");
+				headerControls.setSpacing(-1);
+
+				dockableListButton.prefWidthProperty().bind(headerControls.widthProperty());
+				contentConfigButton.prefWidthProperty().bind(headerControls.widthProperty());
+
+				regionWrapper.setBottom(headerControls);
+				layoutWrapper.setLeft(regionWrapper);
+			}
+			case RIGHT -> {
+				VBox headerControls = new VBox(new Group(dockableListButton), contentConfigButton);
+				headerControls.getStyleClass().add("button-bar");
+				headerControls.setSpacing(-1);
+
+				dockableListButton.prefWidthProperty().bind(headerControls.widthProperty());
+				contentConfigButton.prefWidthProperty().bind(headerControls.widthProperty());
+
+				regionWrapper.setBottom(headerControls);
+				layoutWrapper.setRight(regionWrapper);
+			}
 		}
 
 		// Put canvas on top
 		getChildren().addAll(layoutWrapper, canvas);
+	}
+
+	@Nonnull
+	private Button createDockableListButton() {
+		Button button = new Button("⌄");
+		button.setOnMousePressed(e -> {
+			// TODO: A name filter that appears when you begin to type would be nice
+			// TODO: Adding an "x" button to the right of each item to allow closing items would also be nice
+			ContextMenu menu = new ContextMenu();
+			menu.getItems().addAll(getDockables().stream().map(d -> {
+				MenuItem item = new MenuItem();
+				item.textProperty().bind(d.titleProperty());
+				item.graphicProperty().bind(d.iconFactoryProperty().map(ic -> ic.build(d)));
+				item.setOnAction(ignored -> selectDockable(d));
+				return item;
+			}).toList());
+			button.setContextMenu(menu);
+		});
+		button.setOnMouseClicked(e -> button.getContextMenu().show(button, e.getScreenX(), e.getScreenY()));
+		button.visibleProperty().bind(headerRegion.overflowingProperty());
+		return button;
+	}
+
+	@Nonnull
+	private Button createContentConfigButton() {
+		Button button = new Button("…");
+		button.setOnMousePressed(e -> {
+			Content content = getParentContent();
+
+			// TODO: Let user configure what to insert into here at the top
+			//  - example: recent files and such
+
+			if (content instanceof TabbedContent tabbedContent) {
+				ContextMenu menu = new ContextMenu();
+				for (Side side : Side.values()) {
+					Label graphic = new Label(side == tabbedContent.sideProperty().get() ? "✓" : " ");
+					MenuItem item = new MenuItem(side.name(), graphic);
+					item.setOnAction(ignored -> tabbedContent.sideProperty().set(side));
+					menu.getItems().add(item);
+				}
+				button.setContextMenu(menu);
+			} else {
+				button.setContextMenu(null);
+			}
+		});
+		button.setOnMouseClicked(e -> button.getContextMenu().show(button, e.getScreenX(), e.getScreenY()));
+		return button;
+	}
+
+	@Nonnull
+	public Region getContentWrapper() {
+		return contentWrapper;
 	}
 
 	@Nonnull
@@ -250,6 +356,8 @@ public class HeaderView extends StackPane implements DockableDestination {
 
 		private ContentWrapper(@Nonnull Bento bento, @Nonnull HeaderView parentView) {
 			this.parentView = parentView;
+
+			getStyleClass().add("content-wrapper");
 
 			// Always show selected content
 			parentView.headerRegion.selectedProperty().addListener((ob, old, cur) -> {

@@ -3,6 +3,7 @@ package software.coley.bentofx.header;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
@@ -42,7 +43,7 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 		this.parentView = parentView;
 		this.side = side;
 
-		getStyleClass().add("dock-header-box");
+		getStyleClass().add("header-region");
 		switch (side) {
 			case TOP -> pseudoClassStateChanged(Header.PSEUDO_SIDE_TOP, true);
 			case BOTTOM -> pseudoClassStateChanged(Header.PSEUDO_SIDE_BOTTOM, true);
@@ -120,6 +121,11 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 			itemPane.prefWidthProperty().unbind();
 			itemPane.prefHeightProperty().bind(heightProperty());
 		}
+	}
+
+	@Nonnull
+	public BooleanProperty overflowingProperty() {
+		return itemPane.overflowingProperty();
 	}
 
 	@Nonnull
@@ -264,7 +270,11 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 	public boolean addDockable(int index, @Nonnull Dockable dockable) {
 		if (getHeader(dockable) == null) {
 			Header header = new Header(bento, dockable, side);
+
 			itemPane.getChildren().add(index, header);
+
+			// Bind the header to fit its containing parent.
+			header.bindToParentDimensions();
 			itemPane.requestLayout();
 
 			// Handle selection.
@@ -275,7 +285,6 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 			else if (selectedDockable == dockable)
 				// If the newly created header wraps the current selected tab, mark it as selected.
 				header.setSelected(true);
-
 			return true;
 		}
 		return false;
@@ -309,6 +318,7 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 	public boolean selectDockable(@Nullable Dockable dockable) {
 		if (dockable == null) {
 			selectedProperty.set(null);
+			itemPane.keepInViewProperty().set(null);
 			return true;
 		} else if (getDockables().contains(dockable)) {
 			selectedProperty.set(dockable);
@@ -318,6 +328,9 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 			// some dockable content.
 			if (isCollapsed())
 				toggleCollapsed();
+
+			// Keep the selected dockable in view
+			itemPane.keepInViewProperty().set(getHeader(dockable));
 
 			return true;
 		}
