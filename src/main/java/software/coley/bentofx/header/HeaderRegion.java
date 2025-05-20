@@ -15,12 +15,11 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.dockable.Dockable;
-import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.content.TabbedContent;
-import software.coley.bentofx.impl.content.ImplTabbedContent;
+import software.coley.bentofx.dockable.Dockable;
+import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.layout.ContentLayout;
 import software.coley.bentofx.layout.RootContentLayout;
 import software.coley.bentofx.util.BentoUtils;
@@ -236,7 +235,7 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 				Side newContentSide = side;
 				if (newContentSide.isVertical() == droppedSide.isVertical())
 					newContentSide = Side.TOP;
-				ImplTabbedContent newContent = new ImplTabbedContent(parentLayout.getBento(), newContentSide, List.of(dockable));
+				TabbedContent newContent = bento.newContentBuilder().tabbed(newContentSide, dockable);
 				ContentLayout newLayout = parentLayout.asSplitWith(newContent, droppedSide);
 
 				// We want to put the new split layout where our current parent layout is.

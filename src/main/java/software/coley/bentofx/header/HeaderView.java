@@ -2,6 +2,11 @@ package software.coley.bentofx.header;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.BooleanPropertyBase;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.css.PseudoClass;
 import javafx.geometry.Side;
@@ -22,6 +27,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import software.coley.bentofx.Bento;
+import software.coley.bentofx.content.TabbedContentMenuFactory;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.Identifiable;
@@ -40,6 +46,7 @@ public class HeaderView extends StackPane implements DockableDestination {
 	private final ContentWrapper contentWrapper;
 	private final HeaderRegion headerRegion;
 	private final Canvas canvas = new Canvas();
+	private final ObjectProperty<TabbedContentMenuFactory> menuFactory = new SimpleObjectProperty<>();
 
 	public HeaderView(@Nonnull Bento bento, @Nonnull Side side) {
 		this.bento = bento;
@@ -74,8 +81,10 @@ public class HeaderView extends StackPane implements DockableDestination {
 		regionWrapper.getStyleClass().add("header-region-wrapper");
 		layoutWrapper.setCenter(contentWrapper);
 		switch (side) {
+			// TODO: Reduce duplicate code here
 			case TOP -> {
-				HBox headerControls = new HBox(new Group(dockableListButton), contentConfigButton);
+				HBox headerControls = new HBox(new Group(dockableListButton), new Group(contentConfigButton));
+				headerControls.visibleProperty().bind(dockableListButton.visibleProperty().or(contentConfigButton.visibleProperty()));
 				headerControls.getStyleClass().add("button-bar");
 				headerControls.setSpacing(-1);
 
@@ -86,7 +95,8 @@ public class HeaderView extends StackPane implements DockableDestination {
 				layoutWrapper.setTop(regionWrapper);
 			}
 			case BOTTOM -> {
-				HBox headerControls = new HBox(new Group(dockableListButton), contentConfigButton);
+				HBox headerControls = new HBox(new Group(dockableListButton), new Group(contentConfigButton));
+				headerControls.visibleProperty().bind(dockableListButton.visibleProperty().or(contentConfigButton.visibleProperty()));
 				headerControls.getStyleClass().add("button-bar");
 				headerControls.setSpacing(-1);
 
@@ -97,7 +107,8 @@ public class HeaderView extends StackPane implements DockableDestination {
 				layoutWrapper.setBottom(regionWrapper);
 			}
 			case LEFT -> {
-				VBox headerControls = new VBox(new Group(dockableListButton), contentConfigButton);
+				VBox headerControls = new VBox(new Group(dockableListButton), new Group(contentConfigButton));
+				headerControls.visibleProperty().bind(dockableListButton.visibleProperty().or(contentConfigButton.visibleProperty()));
 				headerControls.getStyleClass().add("button-bar");
 				headerControls.setSpacing(-1);
 
@@ -108,7 +119,8 @@ public class HeaderView extends StackPane implements DockableDestination {
 				layoutWrapper.setLeft(regionWrapper);
 			}
 			case RIGHT -> {
-				VBox headerControls = new VBox(new Group(dockableListButton), contentConfigButton);
+				VBox headerControls = new VBox(new Group(dockableListButton), new Group(contentConfigButton));
+				headerControls.visibleProperty().bind(dockableListButton.visibleProperty().or(contentConfigButton.visibleProperty()));
 				headerControls.getStyleClass().add("button-bar");
 				headerControls.setSpacing(-1);
 
@@ -149,25 +161,14 @@ public class HeaderView extends StackPane implements DockableDestination {
 	private Button createContentConfigButton() {
 		Button button = new Button("…");
 		button.setOnMousePressed(e -> {
-			Content content = getParentContent();
-
-			// TODO: Let user configure what to insert into here at the top
-			//  - example: recent files and such
-
-			if (content instanceof TabbedContent tabbedContent) {
-				ContextMenu menu = new ContextMenu();
-				for (Side side : Side.values()) {
-					Label graphic = new Label(side == tabbedContent.sideProperty().get() ? "✓" : " ");
-					MenuItem item = new MenuItem(side.name(), graphic);
-					item.setOnAction(ignored -> tabbedContent.sideProperty().set(side));
-					menu.getItems().add(item);
-				}
-				button.setContextMenu(menu);
+			if (getParentContent() instanceof TabbedContent tabbedContent) {
+				button.setContextMenu(menuFactory.get().build(tabbedContent));
 			} else {
 				button.setContextMenu(null);
 			}
 		});
 		button.setOnMouseClicked(e -> button.getContextMenu().show(button, e.getScreenX(), e.getScreenY()));
+		button.visibleProperty().bind(menuFactory.isNotNull());
 		return button;
 	}
 
@@ -179,6 +180,11 @@ public class HeaderView extends StackPane implements DockableDestination {
 	@Nonnull
 	public ObservableValue<? extends Dockable> selectedProperty() {
 		return headerRegion.selectedProperty();
+	}
+
+	@Nonnull
+	public ObjectProperty<TabbedContentMenuFactory> menuFactoryProperty() {
+		return menuFactory;
 	}
 
 	@Nullable

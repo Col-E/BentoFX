@@ -15,12 +15,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.builder.ContentBuilder;
 import software.coley.bentofx.builder.DockableBuilder;
 import software.coley.bentofx.builder.SplitContentLayoutArgs;
 import software.coley.bentofx.builder.TabbedContentArgs;
 import software.coley.bentofx.content.TabbedContent;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.layout.LeafContentLayout;
 import software.coley.bentofx.layout.RootContentLayout;
 import software.coley.bentofx.layout.SplitContentLayout;
@@ -71,6 +71,11 @@ public class BoxApp extends Application {
 						buildDockable(builder, 2, "Terminal").withClosable(false).withDragGroup(TOOLS),
 						buildDockable(builder, 3, "Problems").withClosable(false).withDragGroup(TOOLS)
 				)
+				.setMenuFactory(c -> {
+					ContextMenu menu = new ContextMenu();
+					addSideItems(menu, c);
+					return menu;
+				})
 				.setAutoPruneWhenEmpty(false)
 				.setCanSplit(false))
 		);
@@ -121,5 +126,14 @@ public class BoxApp extends Application {
 		};
 		icon.setEffect(new InnerShadow(BlurType.ONE_PASS_BOX, Color.BLACK, 2F, 10F, 0, 0));
 		return icon;
+	}
+
+	private static void addSideItems(@Nonnull ContextMenu menu, @Nonnull TabbedContent tabbedContent) {
+		for (Side side : Side.values()) {
+			Label graphic = new Label(side == tabbedContent.sideProperty().get() ? "✓" : " ");
+			MenuItem item = new MenuItem(side.name(), graphic);
+			item.setOnAction(ignored -> tabbedContent.sideProperty().set(side));
+			menu.getItems().add(item);
+		}
 	}
 }

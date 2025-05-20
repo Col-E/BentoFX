@@ -1,7 +1,9 @@
 package software.coley.bentofx.builder;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import javafx.geometry.Side;
+import software.coley.bentofx.content.TabbedContentMenuFactory;
 import software.coley.bentofx.dockable.Dockable;
 
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ public class TabbedContentArgs extends AbstractContentArgs<TabbedContentArgs> {
 	private boolean autoPruneWhenEmpty = true;
 	private boolean canSplit = true;
 	private Side side = Side.TOP;
+	private TabbedContentMenuFactory menuFactory;
 
 	@Nonnull
 	public List<Dockable> getDockables() {
@@ -66,6 +69,17 @@ public class TabbedContentArgs extends AbstractContentArgs<TabbedContentArgs> {
 	@Nonnull
 	public TabbedContentArgs setSide(@Nonnull Side side) {
 		this.side = side;
+		return this;
+	}
+
+	@Nullable
+	public TabbedContentMenuFactory getMenuFactory() {
+		return menuFactory;
+	}
+
+	@Nonnull
+	public TabbedContentArgs setMenuFactory(@Nullable TabbedContentMenuFactory menuFactory) {
+		this.menuFactory = menuFactory;
 		return this;
 	}
 }

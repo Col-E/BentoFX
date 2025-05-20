@@ -4,9 +4,9 @@ import jakarta.annotation.Nonnull;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.control.SplitPane;
-import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.content.TabbedContent;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.impl.content.ImplTabbedContent;
 import software.coley.bentofx.impl.layout.ImplLeafContentLayout;
@@ -141,6 +141,6 @@ public class ContentBuilder {
 
 	@Nonnull
 	public TabbedContent tabbed(@Nonnull TabbedContentArgs args) {
-		return new ImplTabbedContent(bento, args.getSide(), args.getDockables(), args.isAutoPruneWhenEmpty(), args.isCanSplit(), args.getIdentifier());
+		return new ImplTabbedContent(bento, args);
 	}
 }

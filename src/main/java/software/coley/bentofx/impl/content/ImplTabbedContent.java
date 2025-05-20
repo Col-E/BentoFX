@@ -10,12 +10,13 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Side;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.Identifiable;
+import software.coley.bentofx.builder.TabbedContentArgs;
 import software.coley.bentofx.content.TabbedContent;
+import software.coley.bentofx.content.TabbedContentMenuFactory;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderView;
-import software.coley.bentofx.util.BentoUtils;
 
 import java.util.List;
 
@@ -24,22 +25,22 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 	private final BooleanProperty canSplitProperty;
 	private final ObjectProperty<Dockable> selectedProperty;
 	private final ObjectProperty<Side> sideProperty;
+	private final ObjectProperty<TabbedContentMenuFactory> tabbedContentMenuFactoryProperty;
 	private final String identifier;
 	private HeaderView view;
 
-	public ImplTabbedContent(@Nonnull Bento bento, @Nonnull Side side, @Nonnull List<Dockable> dockables) {
-		this(bento, side, dockables, true, true, BentoUtils.newIdentifier());
-	}
+	public ImplTabbedContent(@Nonnull Bento bento, @Nonnull TabbedContentArgs args) {
+		Side side = args.getSide();
 
-	public ImplTabbedContent(@Nonnull Bento bento, @Nonnull Side side, @Nonnull List<Dockable> dockables, boolean autoPrune, boolean canSplit, @Nonnull String identifier) {
-		this.identifier = identifier;
+		this.identifier = args.getIdentifier();
 		this.sideProperty = new SimpleObjectProperty<>(side);
 		this.selectedProperty = new SimpleObjectProperty<>();
-		this.autoPruneWhenEmptyProperty = new SimpleBooleanProperty(autoPrune);
-		this.canSplitProperty = new SimpleBooleanProperty(canSplit);
+		this.autoPruneWhenEmptyProperty = new SimpleBooleanProperty(args.isAutoPruneWhenEmpty());
+		this.canSplitProperty = new SimpleBooleanProperty(args.isCanSplit());
+		this.tabbedContentMenuFactoryProperty = new SimpleObjectProperty<>(args.getMenuFactory());
 
 		// Setup initial header view
-		setupHeaderView(bento, side, dockables);
+		setupHeaderView(bento, side, args.getDockables());
 
 		// Refresh the header view when the side property updates
 		sideProperty.addListener((ob, old, cur) -> setupHeaderView(bento, cur, view.getDockables()));
@@ -53,6 +54,9 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 			oldSelected = view.getSelectedDockable();
 			wasFocused = view.isFocusWithin();
 
+			// Unbind prior properties.
+			view.menuFactoryProperty().unbind();
+
 			// If the old view is collapsed, we need to uncollapse before changing the target side.
 			// This prevents soft-locking the user out of interacting with the updated layout.
 			if (view.isCollapsed())
@@ -61,6 +65,7 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 
 		// Create a new view for the given side.
 		view = new HeaderView(bento, side);
+		view.menuFactoryProperty().bind(tabbedContentMenuFactoryProperty);
 		for (Dockable dockable : dockables)
 			view.addDockable(dockable);
 		layout.setCenter(view);
@@ -74,6 +79,16 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 		// Update selection to target the new view.
 		selectedProperty.unbind();
 		selectedProperty.bind(view.selectedProperty());
+	}
+
+	@Nonnull
+	public TabbedContentArgs toBuilderArgs() {
+		return new TabbedContentArgs()
+				.setAutoPruneWhenEmpty(autoPruneWhenEmptyProperty.get())
+				.setCanSplit(canSplitProperty.get())
+				.setSide(sideProperty.get())
+				.setMenuFactory(tabbedContentMenuFactoryProperty.get())
+				.setIdentifier(identifier);
 	}
 
 	@Nullable
@@ -142,5 +157,11 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 	@Override
 	public ReadOnlyObjectProperty<Dockable> selectedDockableProperty() {
 		return selectedProperty;
+	}
+
+	@Nonnull
+	@Override
+	public ObjectProperty<TabbedContentMenuFactory> menuFactoryProperty() {
+		return tabbedContentMenuFactoryProperty;
 	}
 }

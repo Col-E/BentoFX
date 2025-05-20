@@ -8,6 +8,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Side;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.header.HeaderRegion;
+import software.coley.bentofx.header.HeaderView;
 import software.coley.bentofx.layout.ContentLayout;
 import software.coley.bentofx.layout.RootContentLayout;
 import software.coley.bentofx.layout.SplitContentLayout;
@@ -106,4 +107,13 @@ non-sealed public interface TabbedContent extends Content {
 	 */
 	@Nonnull
 	ReadOnlyObjectProperty<Dockable> selectedDockableProperty();
+
+	/**
+	 * The menu factory on for tabbed content is what appears in the corner of the {@link HeaderView} display.
+	 * Generally, you would put things in the menu like controls to modify properties of this instance.
+	 *
+	 * @return Current menu factory.
+	 */
+	@Nonnull
+	ObjectProperty<TabbedContentMenuFactory> menuFactoryProperty();
 }
