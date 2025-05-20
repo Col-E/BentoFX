@@ -8,12 +8,14 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
+import software.coley.bentofx.Identifiable;
+import software.coley.bentofx.builder.DockableBuilder;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableCloseListener;
 import software.coley.bentofx.dockable.DockableIconFactory;
-import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.dockable.DockableMenuFactory;
-import software.coley.bentofx.builder.DockableBuilder;
+import software.coley.bentofx.header.Header;
+import software.coley.bentofx.path.DockablePath;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,7 @@ public class ImplDockable implements Dockable {
 	private final ObjectProperty<DockableMenuFactory> contextMenuFactoryProperty;
 	private final BooleanProperty cachedContextMenuProperty;
 	private List<DockableCloseListener> closeListeners;
+	private DockablePath priorPath;
 
 	public ImplDockable(@Nonnull DockableBuilder builder) {
 		identifier = builder.getIdentifier();
@@ -51,10 +54,10 @@ public class ImplDockable implements Dockable {
 	/**
 	 * Called when this dockable is removed from the scene with intent of permanent removal.
 	 */
-	public void onClose() {
+	public void onClose(@Nonnull DockablePath path) {
 		if (closeListeners != null) {
 			for (DockableCloseListener listener : closeListeners)
-				listener.onClose(this);
+				listener.onClose(path, this);
 
 			// Clear so that any repeated calls do not re-trigger listeners.
 			closeListeners = null;
@@ -139,5 +142,29 @@ public class ImplDockable implements Dockable {
 			closeListeners = new ArrayList<>(3);
 		closeListeners.add(listener);
 		return this;
+	}
+
+	/**
+	 * When {@link Header#removeFromParent(Header.RemovalReason)} is called with {@link Header.RemovalReason#MOVING}
+	 * this value gets set to the then-current path. Later when we observe this dockable being added someplace
+	 * we check if this value exists. If it does, this dockable has been moved rather than being freshly opened.
+	 *
+	 * @return Prior path of this dockable.
+	 */
+	@Nullable
+	public DockablePath getPriorPath() {
+		return priorPath;
+	}
+
+	/**
+	 * Set the last path this dockable was located at.
+	 *
+	 * @param path
+	 * 		Prior path of this dockable.
+	 *
+	 * @see #getPriorPath()
+	 */
+	public void setPriorPath(@Nullable DockablePath path) {
+		priorPath = path;
 	}
 }

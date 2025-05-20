@@ -2,10 +2,7 @@ package software.coley.bentofx.header;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.BooleanPropertyBase;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.css.PseudoClass;
@@ -17,7 +14,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.DragEvent;
 import javafx.scene.layout.BorderPane;
@@ -27,12 +23,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.content.TabbedContentMenuFactory;
-import software.coley.bentofx.dockable.Dockable;
-import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.content.TabbedContent;
+import software.coley.bentofx.content.TabbedContentMenuFactory;
+import software.coley.bentofx.dockable.Dockable;
+import software.coley.bentofx.dockable.DockableDestination;
+import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.layout.ContentLayout;
 import software.coley.bentofx.layout.SplitContentLayout;
 import software.coley.bentofx.util.BentoUtils;
@@ -41,14 +38,14 @@ import java.util.List;
 
 public class HeaderView extends StackPane implements DockableDestination {
 	public static final PseudoClass PSEUDO_ACTIVE = PseudoClass.getPseudoClass("active");
-	private final Bento bento;
+	private final ImplBento bento;
 	private final String identifier = BentoUtils.newIdentifier();
 	private final ContentWrapper contentWrapper;
 	private final HeaderRegion headerRegion;
 	private final Canvas canvas = new Canvas();
 	private final ObjectProperty<TabbedContentMenuFactory> menuFactory = new SimpleObjectProperty<>();
 
-	public HeaderView(@Nonnull Bento bento, @Nonnull Side side) {
+	public HeaderView(@Nonnull ImplBento bento, @Nonnull Side side) {
 		this.bento = bento;
 
 		headerRegion = new HeaderRegion(bento, this, side);

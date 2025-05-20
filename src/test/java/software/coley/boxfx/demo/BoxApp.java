@@ -37,6 +37,11 @@ public class BoxApp extends Application {
 		//  - For example, tool tabs in new windows making their TabbedContent#canSplitProperty = false
 
 		Bento bento = Bento.newBento();
+		bento.addDockableOpenListener((path, dockable) -> System.out.println("Opened: " + dockable.titleProperty().get()));
+		bento.addDockableMoveListener((oldPath, newPath, dockable) -> System.out.println("Moved: " + dockable.titleProperty().get()));
+		bento.addDockableCloseListener((path, dockable) -> System.out.println("Closed: " + dockable.titleProperty().get()));
+		bento.addDockableSelectListener((path, dockable) -> System.out.println("Select: " + dockable.titleProperty().get()));
+
 		ContentBuilder builder = bento.newContentBuilder();
 
 		TabbedContent toolTabs = builder.tabbed(new TabbedContentArgs()

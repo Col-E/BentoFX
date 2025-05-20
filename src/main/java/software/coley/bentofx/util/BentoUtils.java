@@ -183,7 +183,7 @@ public class BentoUtils {
 		if (node == null)
 			return null;
 		else if (type.isAssignableFrom(node.getClass()))
-			return (T) type;
+			return (T) node;
 
 		// Check parents.
 		Parent parent = node.getParent();

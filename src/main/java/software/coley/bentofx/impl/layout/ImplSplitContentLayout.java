@@ -125,6 +125,8 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 
 	@Override
 	public boolean replaceChildLayout(@Nonnull ContentLayout child, @Nonnull ContentLayout replacement) {
+		if (child == replacement)
+			return true;
 		int i = indexOfChild(child);
 		if (i >= 0 && i < getItems().size()) {
 			// Record existing child size.

@@ -14,14 +14,19 @@ import javafx.scene.Node;
 import javafx.scene.input.DragEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import software.coley.bentofx.Bento;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.content.TabbedContent;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableDestination;
+import software.coley.bentofx.dockable.DockableMoveListener;
+import software.coley.bentofx.dockable.DockableOpenListener;
+import software.coley.bentofx.dockable.DockableSelectListener;
+import software.coley.bentofx.impl.ImplBento;
+import software.coley.bentofx.impl.ImplDockable;
 import software.coley.bentofx.layout.ContentLayout;
 import software.coley.bentofx.layout.RootContentLayout;
+import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.util.BentoUtils;
 import software.coley.bentofx.util.DropTargetType;
 import software.coley.bentofx.util.LinearItemPane;
@@ -32,12 +37,12 @@ import java.util.List;
 
 public class HeaderRegion extends StackPane implements DockableDestination {
 	private final ObjectProperty<Dockable> selectedProperty = new SimpleObjectProperty<>();
-	private final Bento bento;
+	private final ImplBento bento;
 	private final HeaderView parentView;
 	private final LinearItemPane itemPane;
 	private final Side side;
 
-	public HeaderRegion(@Nonnull Bento bento, @Nonnull HeaderView parentView, @Nonnull Side side) {
+	public HeaderRegion(@Nonnull ImplBento bento, @Nonnull HeaderView parentView, @Nonnull Side side) {
 		this.bento = bento;
 		this.parentView = parentView;
 		this.side = side;
@@ -66,8 +71,15 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 			// Select new header
 			if (cur != null) {
 				Header header = getHeader(cur);
-				if (header != null)
+				if (header != null) {
 					header.setSelected(true);
+
+					// Call select listeners
+					DockablePath path = header.getPath();
+					if (path != null)
+						for (DockableSelectListener listener : bento.getSelectListeners())
+							listener.onSelect(path, path.dockable());
+				}
 			}
 		});
 
@@ -276,7 +288,7 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 			header.bindToParentDimensions();
 			itemPane.requestLayout();
 
-			// Handle selection.
+			// Handle initial selection state.
 			Dockable selectedDockable = selectedProperty.get();
 			if (selectedDockable == null)
 				// If this is the first tab being added, select it.
@@ -284,6 +296,21 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 			else if (selectedDockable == dockable)
 				// If the newly created header wraps the current selected tab, mark it as selected.
 				header.setSelected(true);
+
+			// Call open/move listeners
+			DockablePath path = header.getPath();
+			if (path != null) {
+				// If the dockable has a "prior" path where it once was it was moved, rather than being freshly opened.
+				DockablePath priorPath = ((ImplDockable) dockable).getPriorPath();
+				if (priorPath != null) {
+					for (DockableMoveListener listener : bento.getMoveListeners())
+						listener.onMove(priorPath, path, dockable);
+				} else {
+					for (DockableOpenListener listener : bento.getOpenListeners())
+						listener.onOpen(path, dockable);
+				}
+			}
+
 			return true;
 		}
 		return false;

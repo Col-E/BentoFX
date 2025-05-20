@@ -7,20 +7,20 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
-import software.coley.bentofx.Bento;
-import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.content.SingleContent;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.header.Header;
+import software.coley.bentofx.impl.ImplBento;
 
 public class ImplSingleContent extends ImplContentBase implements SingleContent {
 	private final ObjectProperty<Side> headerSideProperty = new SimpleObjectProperty<>();
-	private final Bento bento;
 	private final String identifier;
 	private final Dockable dockable;
 
-	public ImplSingleContent(@Nonnull Bento bento, @Nonnull Dockable dockable, @Nullable Side headerSide, @Nonnull String identifier) {
-		this.bento = bento;
+	public ImplSingleContent(@Nonnull ImplBento bento, @Nonnull Dockable dockable, @Nullable Side headerSide, @Nonnull String identifier) {
+		super(bento);
+
 		this.dockable = dockable;
 		this.identifier = identifier;
 

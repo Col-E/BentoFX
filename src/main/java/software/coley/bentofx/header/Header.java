@@ -28,11 +28,15 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import software.coley.bentofx.Bento;
+import software.coley.bentofx.content.Content;
 import software.coley.bentofx.dockable.Dockable;
+import software.coley.bentofx.dockable.DockableCloseListener;
 import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.dockable.DockableMenuFactory;
+import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.impl.ImplDockable;
+import software.coley.bentofx.path.ContentPath;
+import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.util.BentoUtils;
 import software.coley.bentofx.util.DragDropStage;
 import software.coley.bentofx.util.DropTargetType;
@@ -55,6 +59,7 @@ public class Header extends Group {
 	private final Pane graphicWrapper = new Pane();
 	private final BorderPane ghostWrapper = new BorderPane();
 	private final Dockable dockable;
+	private ImplBento bento;
 	private ContextMenu cachedContextMenu;
 
 	public Header(@Nonnull Dockable dockable, @Nonnull Side side) {
@@ -101,8 +106,10 @@ public class Header extends Group {
 		recomputeLayout(side);
 	}
 
-	public Header(@Nonnull Bento bento, @Nonnull Dockable dockable, @Nonnull Side side) {
+	public Header(@Nonnull ImplBento bento, @Nonnull Dockable dockable, @Nonnull Side side) {
 		this(dockable, side);
+
+		this.bento = bento;
 
 		// Hover support
 		addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
@@ -352,12 +359,39 @@ public class Header extends Group {
 
 		// Remove if parent destination (dockable container) exists.
 		DockableDestination destination = getParentDestination();
-		if (destination != null && destination.removeDockable(dockable)) {
-			if (reason == RemovalReason.CLOSING)
-				((ImplDockable) dockable).onClose();
-			cleanup();
+		if (destination != null) {
+			DockablePath path = getPath();
+			if (path != null && destination.removeDockable(dockable)) {
+				if (reason == RemovalReason.CLOSING) {
+					((ImplDockable) dockable).onClose(path);
+					if (bento != null)
+						for (DockableCloseListener listener : bento.getCloseListeners())
+							listener.onClose(path, dockable);
+				} else {
+					((ImplDockable) dockable).setPriorPath(path);
+				}
+				cleanup();
+				return true;
+			}
 		}
-		return true;
+		return false;
+	}
+
+	@Nullable
+	public DockablePath getPath() {
+		DockableDestination destination = getParentDestination();
+		if (destination == null)
+			return null;
+
+		Content content = destination.getParentContent();
+		if (content == null)
+			return null;
+
+		ContentPath contentPath = content.getPath();
+		if (contentPath == null)
+			return null;
+
+		return new DockablePath(contentPath, dockable);
 	}
 
 	@Nullable

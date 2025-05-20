@@ -9,7 +9,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Side;
 import javafx.scene.layout.Region;
-import software.coley.bentofx.Bento;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.builder.TabbedContentArgs;
 import software.coley.bentofx.content.TabbedContent;
@@ -17,6 +16,7 @@ import software.coley.bentofx.content.TabbedContentMenuFactory;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderView;
+import software.coley.bentofx.impl.ImplBento;
 
 import java.util.List;
 
@@ -29,7 +29,9 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 	private final String identifier;
 	private HeaderView view;
 
-	public ImplTabbedContent(@Nonnull Bento bento, @Nonnull TabbedContentArgs args) {
+	public ImplTabbedContent(@Nonnull ImplBento bento, @Nonnull TabbedContentArgs args) {
+		super(bento);
+
 		Side side = args.getSide();
 
 		this.identifier = args.getIdentifier();
@@ -40,13 +42,13 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 		this.tabbedContentMenuFactoryProperty = new SimpleObjectProperty<>(args.getMenuFactory());
 
 		// Setup initial header view
-		setupHeaderView(bento, side, args.getDockables());
+		setupHeaderView(side, args.getDockables());
 
 		// Refresh the header view when the side property updates
-		sideProperty.addListener((ob, old, cur) -> setupHeaderView(bento, cur, view.getDockables()));
+		sideProperty.addListener((ob, old, cur) -> setupHeaderView(cur, view.getDockables()));
 	}
 
-	private void setupHeaderView(@Nonnull Bento bento, @Nonnull Side side, @Nonnull List<Dockable> dockables) {
+	private void setupHeaderView(@Nonnull Side side, @Nonnull List<Dockable> dockables) {
 		// Track existing view state.
 		Dockable oldSelected = null;
 		boolean wasFocused = false;

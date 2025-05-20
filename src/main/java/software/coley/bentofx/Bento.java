@@ -13,7 +13,11 @@ import software.coley.bentofx.content.Content;
 import software.coley.bentofx.content.EmptyContent;
 import software.coley.bentofx.content.EmptyContentDisplayFactory;
 import software.coley.bentofx.dockable.Dockable;
+import software.coley.bentofx.dockable.DockableCloseListener;
 import software.coley.bentofx.dockable.DockableDestination;
+import software.coley.bentofx.dockable.DockableMoveListener;
+import software.coley.bentofx.dockable.DockableOpenListener;
+import software.coley.bentofx.dockable.DockableSelectListener;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.layout.ContentLayout;
@@ -222,6 +226,54 @@ public interface Bento {
 		}
 		return false;
 	}
+
+	/**
+	 * @param listener
+	 * 		Listener to add that observes new {@link Dockable} items being opened.
+	 */
+	void addDockableOpenListener(@Nonnull DockableOpenListener listener);
+
+	/**
+	 * @param listener
+	 * 		Listener to remove that observes new {@link Dockable} items being opened.
+	 */
+	boolean removeDockableOpenListener(@Nonnull DockableOpenListener listener);
+
+	/**
+	 * @param listener
+	 * 		Listener to add that observes existing {@link Dockable} items being moved to new {@link Content} locations.
+	 */
+	void addDockableMoveListener(@Nonnull DockableMoveListener listener);
+
+	/**
+	 * @param listener
+	 * 		Listener to remove that observes existing {@link Dockable} items being moved to new {@link Content} locations.
+	 */
+	boolean removeDockableMoveListener(@Nonnull DockableMoveListener listener);
+
+	/**
+	 * @param listener
+	 * 		Listener to add that observes existing {@link Dockable} items being closed.
+	 */
+	void addDockableCloseListener(@Nonnull DockableCloseListener listener);
+
+	/**
+	 * @param listener
+	 * 		Listener to remove that observes existing {@link Dockable} items being closed.
+	 */
+	boolean removeDockableCloseListener(@Nonnull DockableCloseListener listener);
+
+	/**
+	 * @param listener
+	 * 		Listener to add that observes existing {@link Dockable} items being selected.
+	 */
+	void addDockableSelectListener(@Nonnull DockableSelectListener listener);
+
+	/**
+	 * @param listener
+	 * 		Listener to remove that observes existing {@link Dockable} items being selected.
+	 */
+	boolean removeDockableSelectListener(@Nonnull DockableSelectListener listener);
 
 	/**
 	 * @return Path to the {@code bento.css} stylesheet.
