@@ -14,4 +14,14 @@ import java.util.List;
  */
 public record LayoutPath(@Nonnull RootContentLayout rootLayout,
                          @Nonnull List<ContentLayout> layouts) {
+	/**
+	 * The last layout in the path. If you used a search for a {@link ContentLayout} via its identifier
+	 * this will be the intended layout in the path with the requested identifier.
+	 *
+	 * @return The last layout in the path.
+	 */
+	@Nonnull
+	public ContentLayout tailLayout() {
+		return layouts.getLast();
+	}
 }

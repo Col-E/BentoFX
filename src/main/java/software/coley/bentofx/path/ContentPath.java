@@ -10,13 +10,13 @@ import java.util.List;
 /**
  * @param rootLayout
  * 		Root layout.
- * @param subLayouts
+ * @param layouts
  * 		Hierarchy of content layouts, with the first being the immediate child layout of the root and the last being the holder of the content.
  * @param content
  * 		Target path.
  */
 public record ContentPath(@Nonnull RootContentLayout rootLayout,
-                          @Nonnull List<ContentLayout> subLayouts,
+                          @Nonnull List<ContentLayout> layouts,
                           @Nonnull Content content) {
 	public ContentPath(@Nonnull LayoutPath layoutPath, @Nonnull Content content) {
 		this(layoutPath.rootLayout(), layoutPath.layouts(), content);

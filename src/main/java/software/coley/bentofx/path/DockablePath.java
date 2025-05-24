@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @param rootLayout
  * 		Root layout.
- * @param subLayouts
+ * @param layouts
  * 		Hierarchy of content layouts, with the first being the immediate child layout of the root and the last being the holder of the content.
  * @param content
  * 		Content holding the dockable.
@@ -19,10 +19,10 @@ import java.util.List;
  * 		Target dockable.
  */
 public record DockablePath(@Nonnull RootContentLayout rootLayout,
-                           @Nonnull List<ContentLayout> subLayouts,
+                           @Nonnull List<ContentLayout> layouts,
                            @Nonnull Content content,
                            @Nonnull Dockable dockable) {
 	public DockablePath(@Nonnull ContentPath contentPath, @Nonnull Dockable dockable) {
-		this(contentPath.rootLayout(), contentPath.subLayouts(), contentPath.content(), dockable);
+		this(contentPath.rootLayout(), contentPath.layouts(), contentPath.content(), dockable);
 	}
 }
