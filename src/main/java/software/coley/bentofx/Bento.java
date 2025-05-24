@@ -147,6 +147,41 @@ public interface Bento {
 	ObservableList<RootContentLayout> getRootLayouts();
 
 	/**
+	 * @return List of all {@link Dockable} instanced tracked in this instance.
+	 */
+	@Nonnull
+	default List<DockablePath> getAllDockables() {
+		List<DockablePath> paths = new ArrayList<>();
+		for (RootContentLayout root : getRootLayouts()) {
+			Queue<ContentLayout> layouts = new ArrayDeque<>();
+			layouts.add(root.getLayout());
+			while (!layouts.isEmpty()) {
+				ContentLayout layout = layouts.remove();
+				switch (layout) {
+					case LeafContentLayout leaf -> {
+						switch (leaf.getContent()) {
+							case EmptyContent ignored -> {}
+							case SingleContent singleContent -> {
+								ContentPath contentPath = singleContent.getPath();
+								if (contentPath != null)
+									paths.add(new DockablePath(contentPath, singleContent.getDockable()));
+							}
+							case TabbedContent tabbedContent -> {
+								ContentPath contentPath = tabbedContent.getPath();
+								if (contentPath != null)
+									for (Dockable dockable : tabbedContent.getDockables())
+										paths.add(new DockablePath(contentPath, dockable));
+							}
+						}
+					}
+					case SplitContentLayout ignored -> layouts.addAll(layout.getChildLayouts());
+				}
+			}
+		}
+		return paths;
+	}
+
+	/**
 	 * Attempts to find a given {@link ContentLayout} from any child of any depth belonging to this bento instance.
 	 * If a {@code null} is returned, then the given layout does not exist in any child belonging to this bento instance.
 	 *
