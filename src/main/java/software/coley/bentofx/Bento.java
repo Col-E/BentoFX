@@ -21,13 +21,16 @@ import software.coley.bentofx.dockable.DockableSelectListener;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.layout.ContentLayout;
+import software.coley.bentofx.layout.LeafContentLayout;
 import software.coley.bentofx.layout.RootContentLayout;
+import software.coley.bentofx.layout.SplitContentLayout;
 import software.coley.bentofx.path.ContentPath;
 import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.path.LayoutPath;
 import software.coley.bentofx.util.BentoUtils;
 
 import java.net.URL;
+import java.util.function.Supplier;
 
 /**
  * Controller for dockable content and layouts.
@@ -84,6 +87,51 @@ public interface Bento {
 	 */
 	@Nonnull
 	Stage newStageForDroppedHeader(@Nonnull DockableDestination source, @Nonnull Header header);
+
+	/**
+	 * @param identifier
+	 * 		The identifier of some {@link ContentLayout} to find and replace.
+	 * @param replacementProvider
+	 * 		Supplier of a {@link ContentLayout} to replace the existing layout with.
+	 *
+	 * @return {@code true} when the existing layout was found and replaced.
+	 */
+	default boolean replaceContentLayout(@Nonnull String identifier, @Nonnull Supplier<ContentLayout> replacementProvider) {
+		LayoutPath path = findLayout(identifier);
+		if (path == null || path.layouts().isEmpty())
+			return false;
+
+		ContentLayout target = path.layouts().getLast();
+		ContentLayout parentLayout = target.getParentLayout();
+		if (parentLayout == null)
+			return false;
+
+		parentLayout.replaceChildLayout(target, replacementProvider.get());
+		return true;
+	}
+
+	/**
+	 * @param identifier
+	 * 		The identifier of some {@link Content} to find and replace.
+	 * @param replacementProvider
+	 * 		Supplier of a {@link Content} to replace the existing content with.
+	 *
+	 * @return {@code true} when the existing content was found and replaced.
+	 */
+	default boolean replaceContent(@Nonnull String identifier, @Nonnull Supplier<Content> replacementProvider) {
+		ContentPath path = findContent(identifier);
+		if (path == null || path.layouts().isEmpty())
+			return false;
+
+		ContentLayout parent = path.layouts().getLast();
+		switch (parent) {
+			case LeafContentLayout leafContentLayout -> leafContentLayout.setContent(replacementProvider.get());
+			case SplitContentLayout ignored ->
+					throw new IllegalStateException(SplitContentLayout.class.getSimpleName() +
+							" should never have a direct child " + Content.class.getSimpleName());
+		}
+		return true;
+	}
 
 	/**
 	 * @return Unmodifiable list of all tracked {@link RootContentLayout}
