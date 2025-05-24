@@ -5,6 +5,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import software.coley.bentofx.Bento;
+import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.layout.RootContentLayout;
 
@@ -12,7 +13,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
- * Stage subtype created by {@link Bento#newStageForDroppedHeader(Header)}.
+ * Stage subtype created by {@link Bento#newStageForDroppedHeader(DockableDestination, Header)}.
  *
  * @author Matt Coley
  */

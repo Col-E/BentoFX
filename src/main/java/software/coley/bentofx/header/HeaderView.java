@@ -360,18 +360,22 @@ public class HeaderView extends StackPane implements DockableDestination {
 		private ContentWrapper(@Nonnull Bento bento, @Nonnull HeaderView parentView) {
 			this.parentView = parentView;
 
-			getStyleClass().add("content-wrapper");
+			getStyleClass().add("node-wrapper");
 
 			// Always show selected content
 			parentView.headerRegion.selectedProperty().addListener((ob, old, cur) -> {
+				// Always clear binding before handling any kind of update
+				centerProperty().unbind();
+
 				if (cur != null) {
+					// Bind the current selected dockable's content.
 					centerProperty().bind(cur.nodeProperty());
-					
+
+					// If the new content is focusable, focus it.
 					Node center = getCenter();
 					if (center != null && center.isFocusTraversable())
 						center.requestFocus();
 				} else {
-					centerProperty().unbind();
 					ContentLayout parentLayout = getParentLayout();
 					if (parentLayout != null) {
 						// Replace the content with the "empty-content" template.

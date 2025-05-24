@@ -147,7 +147,7 @@
 .header-region:right {
     -fx-background-insets: 0, 0 0 0 1px;
 }
-.header-region .content-wrapper {}
+.header-region .node-wrapper {}
 
 /* Header */
 .header {

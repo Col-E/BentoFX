@@ -77,6 +77,8 @@ public class ImplBento implements Bento {
 		ContentBuilder builder = newContentBuilder();
 		LeafContentLayout layout = builder.leaf(builder.tabbed(Side.TOP, header.getDockable()));
 		Region region = builder.root(layout).getBackingRegion();
+
+		// TODO: Need to allow users to control the creation of stages/scenes
 		Stage stage = new DragDropStage(true);
 		Scene scene = new Scene(region, source.getBackingRegion().getWidth(), source.getBackingRegion().getHeight());
 		stage.setScene(scene);
