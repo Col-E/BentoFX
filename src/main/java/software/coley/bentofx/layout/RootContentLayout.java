@@ -3,11 +3,11 @@ package software.coley.bentofx.layout;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.RegionBacked;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.content.EmptyContent;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.path.ContentPath;
 import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.path.LayoutPath;
@@ -108,7 +108,7 @@ public interface RootContentLayout extends Identifiable, RegionBacked {
 	}
 
 	/**
-	 * Attempts to remove a given dockable from any child {@link Content} of any depth belonging to this root.
+	 * Attempts to remove the given dockable from any child {@link Content} of any depth belonging to this root.
 	 * Be aware, this method will bypass {@link Dockable#closableProperty()}.
 	 *
 	 * @param dockable
@@ -118,6 +118,18 @@ public interface RootContentLayout extends Identifiable, RegionBacked {
 	 */
 	default boolean removeDockable(@Nonnull Dockable dockable) {
 		return getLayout().removeDockable(dockable);
+	}
+
+	/**
+	 * Attempts to close the given dockable from any child {@link Content} of any depth belonging to this root.
+	 *
+	 * @param dockable
+	 * 		Dockable to close.
+	 *
+	 * @return {@code true} if closed. {@code false} if not closed.
+	 */
+	default boolean closeDockable(@Nonnull Dockable dockable) {
+		return getLayout().closeDockable(dockable);
 	}
 
 	/**

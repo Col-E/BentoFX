@@ -166,7 +166,7 @@ public sealed interface ContentLayout extends Identifiable, RegionBacked, BentoB
 	DockablePath findDockable(@Nonnull PathBuilder builder, @Nonnull String identifier);
 
 	/**
-	 * Attempts to remove a given dockable from any child {@link Content} of any depth belonging to this layout.
+	 * Attempts to remove the given dockable from any child {@link Content} of any depth belonging to this layout.
 	 * Be aware, this method will bypass {@link Dockable#closableProperty()}.
 	 *
 	 * @param dockable
@@ -175,6 +175,16 @@ public sealed interface ContentLayout extends Identifiable, RegionBacked, BentoB
 	 * @return {@code true} if removed. {@code false} if not removed.
 	 */
 	boolean removeDockable(@Nonnull Dockable dockable);
+
+	/**
+	 * Attempts to close the given dockable from any child {@link Content} of any depth belonging to this layout.
+	 *
+	 * @param dockable
+	 * 		Dockable to close.
+	 *
+	 * @return {@code true} if close. {@code false} if not close.
+	 */
+	boolean closeDockable(@Nonnull Dockable dockable);
 
 	/**
 	 * @param content

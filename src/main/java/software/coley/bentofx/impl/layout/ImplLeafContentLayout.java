@@ -5,12 +5,12 @@ import jakarta.annotation.Nullable;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.content.EmptyContent;
 import software.coley.bentofx.content.SingleContent;
 import software.coley.bentofx.content.TabbedContent;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.layout.ContentLayout;
 import software.coley.bentofx.layout.LeafContentLayout;
 import software.coley.bentofx.path.ContentPath;
@@ -108,19 +108,27 @@ public class ImplLeafContentLayout extends BorderPane implements LeafContentLayo
 	@Override
 	public boolean removeDockable(@Nonnull Dockable dockable) {
 		Content content = getContent();
-		switch (content) {
+		return switch (content) {
 			case SingleContent singleContent -> {
 				if (singleContent.getDockable() == dockable) {
 					setContent(null);
-					return true;
+					yield true;
 				}
+				yield false;
 			}
-			case TabbedContent tabbedContent -> {
-				return tabbedContent.removeDockable(dockable);
-			}
-			case EmptyContent ignored -> {/* no-op */}
-		}
-		return false;
+			case TabbedContent tabbedContent -> tabbedContent.removeDockable(dockable);
+			case EmptyContent ignored -> false;
+		};
+	}
+
+	@Override
+	public boolean closeDockable(@Nonnull Dockable dockable) {
+		Content content = getContent();
+		return switch (content) {
+			case TabbedContent tabbedContent -> tabbedContent.closeDockable(dockable);
+			case SingleContent ignored -> false;
+			case EmptyContent ignored -> false;
+		};
 	}
 
 	@Override

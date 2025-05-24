@@ -51,8 +51,23 @@ non-sealed public interface TabbedContent extends Content {
 	 *
 	 * @return {@code true} when removed successfully.
 	 * {@code false} when not removed <i>(Due to not being present)</i>.
+	 *
+	 * @see #closeDockable(Dockable)
 	 */
 	boolean removeDockable(@Nonnull Dockable dockable);
+
+	/**
+	 * Closes the given dockable as if triggered by the user.
+	 *
+	 * @param dockable
+	 * 		Dockable to close.
+	 *
+	 * @return {@code true} when closed successfully.
+	 * {@code false} when not closed <i>(Due to not being present or closable)</i>.
+	 *
+	 * @see #removeDockable(Dockable)
+	 */
+	boolean closeDockable(@Nonnull Dockable dockable);
 
 	/**
 	 * @return {@code true} when this content contains zero {@link Dockable} items.

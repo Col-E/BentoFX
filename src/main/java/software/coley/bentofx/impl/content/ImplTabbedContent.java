@@ -17,6 +17,9 @@ import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderView;
 import software.coley.bentofx.impl.ImplBento;
+import software.coley.bentofx.impl.ImplDockable;
+import software.coley.bentofx.path.ContentPath;
+import software.coley.bentofx.path.DockablePath;
 
 import java.util.List;
 
@@ -130,6 +133,22 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 	@Override
 	public boolean removeDockable(@Nonnull Dockable dockable) {
 		return view.removeDockable(dockable);
+	}
+
+	@Override
+	public boolean closeDockable(@Nonnull Dockable dockable) {
+		if (!dockable.closableProperty().get())
+			return false;
+
+		ContentPath contentPath = getPath();
+		if (contentPath == null)
+			return false;
+
+		if (!removeDockable(dockable))
+			return false;
+
+		((ImplDockable) dockable).onClose(new DockablePath(contentPath, dockable));
+		return true;
 	}
 
 	@Override

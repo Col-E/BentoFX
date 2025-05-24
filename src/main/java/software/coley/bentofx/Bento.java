@@ -12,6 +12,8 @@ import software.coley.bentofx.builder.DockableBuilder;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.content.EmptyContent;
 import software.coley.bentofx.content.EmptyContentDisplayFactory;
+import software.coley.bentofx.content.SingleContent;
+import software.coley.bentofx.content.TabbedContent;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableCloseListener;
 import software.coley.bentofx.dockable.DockableDestination;
@@ -30,6 +32,10 @@ import software.coley.bentofx.path.LayoutPath;
 import software.coley.bentofx.util.BentoUtils;
 
 import java.net.URL;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
 import java.util.function.Supplier;
 
 /**
@@ -259,17 +265,35 @@ public interface Bento {
 	}
 
 	/**
-	 * Attempts to remove a given dockable from any child {@link Content} of any depth belonging to this bento instance.
+	 * Attempts to remove the given dockable from any child {@link Content} of any depth belonging to this bento instance.
 	 * Be aware, this method will bypass {@link Dockable#closableProperty()}.
 	 *
 	 * @param dockable
 	 * 		Dockable to remove.
 	 *
 	 * @return {@code true} if removed. {@code false} if not removed.
+	 * @see #closeDockable(Dockable)
 	 */
 	default boolean removeDockable(@Nonnull Dockable dockable) {
 		for (RootContentLayout layout : getRootLayouts()) {
 			if (layout.removeDockable(dockable))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Attempts to close the given dockable from any child {@link Content} of any depth belonging to this bento instance.
+	 *
+	 * @param dockable
+	 * 		Dockable to remove.
+	 *
+	 * @return {@code true} if closed. {@code false} if not closed.
+	 * @see #removeDockable(Dockable)
+	 */
+	default boolean closeDockable(@Nonnull Dockable dockable) {
+		for (RootContentLayout layout : getRootLayouts()) {
+			if (layout.closeDockable(dockable))
 				return true;
 		}
 		return false;

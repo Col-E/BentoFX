@@ -124,6 +124,14 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 	}
 
 	@Override
+	public boolean closeDockable(@Nonnull Dockable dockable) {
+		for (ContentLayout childLayout : getChildLayouts())
+			if (childLayout.closeDockable(dockable))
+				return true;
+		return false;
+	}
+
+	@Override
 	public boolean replaceChildLayout(@Nonnull ContentLayout child, @Nonnull ContentLayout replacement) {
 		if (child == replacement)
 			return true;
