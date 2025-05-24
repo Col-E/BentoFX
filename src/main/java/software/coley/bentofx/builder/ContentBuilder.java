@@ -1,13 +1,16 @@
 package software.coley.bentofx.builder;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.control.SplitPane;
 import software.coley.bentofx.content.Content;
+import software.coley.bentofx.content.SingleContent;
 import software.coley.bentofx.content.TabbedContent;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.impl.ImplBento;
+import software.coley.bentofx.impl.content.ImplSingleContent;
 import software.coley.bentofx.impl.content.ImplTabbedContent;
 import software.coley.bentofx.impl.layout.ImplLeafContentLayout;
 import software.coley.bentofx.impl.layout.ImplRootContentLayout;
@@ -110,17 +113,17 @@ public class ContentBuilder {
 	}
 
 	@Nonnull
-	public LeafContentLayout leaf(@Nonnull Content content) {
+	public LeafContentLayout leaf(@Nullable Content content) {
 		return leaf(content, true);
 	}
 
 	@Nonnull
-	public LeafContentLayout fitLeaf(@Nonnull Content content) {
+	public LeafContentLayout fitLeaf(@Nullable Content content) {
 		return leaf(content, false);
 	}
 
 	@Nonnull
-	public LeafContentLayout leaf(@Nonnull Content content, boolean resizeWithParent) {
+	public LeafContentLayout leaf(@Nullable Content content, boolean resizeWithParent) {
 		return leaf(new LeafContentLayoutArgs().setContent(content).setResizeWithParent(resizeWithParent));
 	}
 
@@ -130,6 +133,14 @@ public class ContentBuilder {
 		if (!args.isResizeWithParent())
 			SplitPane.setResizableWithParent(layout.getBackingRegion(), false);
 		return layout;
+	}
+
+	@Nonnull
+	public SingleContent single(@Nonnull SingleContentArgs args) {
+		Dockable dockable = args.getDockable();
+		if (dockable == null)
+			throw new IllegalArgumentException("Single content requires a dockable");
+		return new ImplSingleContent(bento, dockable, args.getSide(), args.getIdentifier());
 	}
 
 	@Nonnull
