@@ -109,7 +109,7 @@ public class BoxApp extends Application {
 		return builder.dockable()
 				.withTitle(title)
 				.withIconFactory(dockable -> makeIcon(i))
-				.withContent(content)
+				.withNode(content)
 				.withCachedContextMenu(true)
 				.withContextMenuFactory(dockable -> new ContextMenu(
 						new MenuItem("Menu for : " + dockable.titleProperty().get()),

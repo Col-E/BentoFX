@@ -365,11 +365,13 @@ public class HeaderView extends StackPane implements DockableDestination {
 			// Always show selected content
 			parentView.headerRegion.selectedProperty().addListener((ob, old, cur) -> {
 				if (cur != null) {
-					Node node = cur.getNode();
-					setCenter(node);
-					if (node.isFocusTraversable())
-						node.requestFocus();
+					centerProperty().bind(cur.nodeProperty());
+					
+					Node center = getCenter();
+					if (center != null && center.isFocusTraversable())
+						center.requestFocus();
 				} else {
+					centerProperty().unbind();
 					ContentLayout parentLayout = getParentLayout();
 					if (parentLayout != null) {
 						// Replace the content with the "empty-content" template.

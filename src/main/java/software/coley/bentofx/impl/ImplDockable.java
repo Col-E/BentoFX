@@ -23,7 +23,7 @@ import java.util.List;
 public class ImplDockable implements Dockable {
 	private final String identifier;
 	private final int dragGroup;
-	private final Node content;
+	private final ObjectProperty<Node> nodeProperty;
 	private final StringProperty titleProperty;
 	private final ObjectProperty<Tooltip> tooltipProperty;
 	private final ObjectProperty<DockableIconFactory> iconFactoryProperty;
@@ -37,7 +37,7 @@ public class ImplDockable implements Dockable {
 
 	public ImplDockable(@Nonnull DockableBuilder builder) {
 		identifier = builder.getIdentifier();
-		content = builder.getContent();
+		nodeProperty = builder.nodeProperty();
 		titleProperty = builder.titleProperty();
 		tooltipProperty = builder.tooltipProperty();
 		iconFactoryProperty = builder.iconFactoryProperty();
@@ -78,8 +78,8 @@ public class ImplDockable implements Dockable {
 
 	@Nonnull
 	@Override
-	public Node getNode() {
-		return content;
+	public ObjectProperty<Node> nodeProperty() {
+		return nodeProperty;
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package software.coley.bentofx.dockable;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import javafx.scene.Node;
-import software.coley.bentofx.dockable.Dockable;
 
 /**
  * Factory to create a {@link Node} graphic for some given {@link Dockable}.

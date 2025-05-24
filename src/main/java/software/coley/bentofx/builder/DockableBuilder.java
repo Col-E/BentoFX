@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import software.coley.bentofx.dockable.Dockable;
@@ -17,6 +18,7 @@ import software.coley.bentofx.dockable.DockableMenuFactory;
 import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.impl.ImplDockable;
 import software.coley.bentofx.util.BentoUtils;
+import software.coley.bentofx.util.ConstantIcon;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +26,7 @@ import java.util.List;
 
 public class DockableBuilder {
 	private final ImplBento bento;
+	private final ObjectProperty<Node> nodeProperty = new SimpleObjectProperty<>();
 	private final StringProperty titleProperty = new SimpleStringProperty();
 	private final ObjectProperty<Tooltip> tooltipProperty = new SimpleObjectProperty<>();
 	private final ObjectProperty<DockableIconFactory> iconFactoryProperty = new SimpleObjectProperty<>();
@@ -35,7 +38,6 @@ public class DockableBuilder {
 	private List<DockableCloseListener> closeListeners;
 	private String identifier = BentoUtils.newIdentifier();
 	private int dragGroup;
-	private Node content;
 
 	public DockableBuilder(@Nonnull ImplBento bento) {
 		this.bento = bento;
@@ -54,8 +56,14 @@ public class DockableBuilder {
 	}
 
 	@Nonnull
-	public DockableBuilder withContent(@Nullable Node content) {
-		this.content = content;
+	public DockableBuilder withNode(@Nullable Node node) {
+		this.nodeProperty.set(node);
+		return this;
+	}
+
+	@Nonnull
+	public DockableBuilder withNode(@Nonnull ObservableValue<Node> nodeValue) {
+		this.nodeProperty.bind(nodeValue);
 		return this;
 	}
 
@@ -66,8 +74,29 @@ public class DockableBuilder {
 	}
 
 	@Nonnull
+	public DockableBuilder withTitle(@Nonnull ObservableValue<String> title) {
+		titleProperty.bind(title);
+		return this;
+	}
+
+	@Nonnull
 	public DockableBuilder withTooltip(@Nullable Tooltip tooltip) {
 		tooltipProperty.set(tooltip);
+		return this;
+	}
+
+	@Nonnull
+	public DockableBuilder withTooltip(@Nonnull ObservableValue<Tooltip> tooltip) {
+		tooltipProperty.bind(tooltip);
+		return this;
+	}
+
+	@Nonnull
+	public DockableBuilder withIcon(@Nullable Node icon) {
+		if (icon == null)
+			iconFactoryProperty.set(null);
+		else
+			iconFactoryProperty.set(new ConstantIcon(icon));
 		return this;
 	}
 
@@ -78,8 +107,20 @@ public class DockableBuilder {
 	}
 
 	@Nonnull
+	public DockableBuilder withIconFactory(@Nonnull ObservableValue<DockableIconFactory> factory) {
+		iconFactoryProperty.bind(factory);
+		return this;
+	}
+
+	@Nonnull
 	public DockableBuilder withContextMenuFactory(@Nullable DockableMenuFactory factory) {
 		contextMenuFactoryProperty.set(factory);
+		return this;
+	}
+
+	@Nonnull
+	public DockableBuilder withContextMenuFactory(@Nonnull ObservableValue<DockableMenuFactory> factory) {
+		contextMenuFactoryProperty.bind(factory);
 		return this;
 	}
 
@@ -92,6 +133,12 @@ public class DockableBuilder {
 	@Nonnull
 	public DockableBuilder withClosable(boolean closable) {
 		closableProperty.set(closable);
+		return this;
+	}
+
+	@Nonnull
+	public DockableBuilder withClosable(@Nonnull ObservableValue<Boolean> closable) {
+		closableProperty.bind(closable);
 		return this;
 	}
 
@@ -110,9 +157,26 @@ public class DockableBuilder {
 	}
 
 	@Nonnull
+	public DockableBuilder withCanBeDragged(@Nonnull ObservableValue<Boolean> draggable) {
+		canBeDraggedProperty.bind(draggable);
+		return this;
+	}
+
+	@Nonnull
 	public DockableBuilder withCanBeDroppedToNewWindow(boolean droppable) {
 		canBeDroppedToNewWindowProperty.set(droppable);
 		return this;
+	}
+
+	@Nonnull
+	public DockableBuilder withCanBeDroppedToNewWindow(@Nonnull ObservableValue<Boolean> droppable) {
+		canBeDroppedToNewWindowProperty.bind(droppable);
+		return this;
+	}
+
+	@Nonnull
+	public ObjectProperty<Node> nodeProperty() {
+		return nodeProperty;
 	}
 
 	@Nonnull
@@ -167,11 +231,6 @@ public class DockableBuilder {
 		return identifier;
 	}
 
-	public Node getContent() {
-		// Effectively non-null but only enforced in 'build()'
-		return content;
-	}
-
 	public int getDragGroup() {
 		return dragGroup;
 	}
@@ -180,8 +239,6 @@ public class DockableBuilder {
 	public Dockable build() {
 		if (identifier == null)
 			throw new IllegalArgumentException("Missing identifier");
-		if (content == null)
-			throw new IllegalArgumentException("Missing content");
 		return new ImplDockable(this);
 	}
 }

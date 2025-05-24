@@ -26,7 +26,7 @@ public class ImplSingleContent extends ImplContentBase implements SingleContent 
 
 		headerSideProperty.set(headerSide);
 		headerSideProperty.addListener((ob, old, cur) -> refreshHeader());
-		layout.setCenter(dockable.getNode());
+		layout.centerProperty().bind(dockable.nodeProperty());
 
 		refreshHeader();
 	}

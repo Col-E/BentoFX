@@ -13,6 +13,7 @@ import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.content.Content;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderView;
+import software.coley.bentofx.util.ConstantIcon;
 
 /**
  * Outline of some item to display, generally tied to a {@link Header} inside a {@link HeaderView}.
@@ -24,7 +25,7 @@ public interface Dockable extends Identifiable {
 	 * @return Content to display when this dockable is active in its parent {@link Content}.
 	 */
 	@Nonnull
-	Node getNode();
+	ObjectProperty<Node> nodeProperty();
 
 	/**
 	 * Drag groups are arbitrary integers. By default, any dockable's group is {@code 0}.
@@ -112,6 +113,21 @@ public interface Dockable extends Identifiable {
 	@Nonnull
 	default Dockable withTooltip(@Nullable Tooltip tooltip) {
 		tooltipProperty().set(tooltip);
+		return this;
+	}
+
+	/**
+	 * @param icon
+	 * 		Icon to set.
+	 *
+	 * @return Self.
+	 */
+	@Nonnull
+	default Dockable withIcon(@Nullable Node icon) {
+		if (icon == null)
+			iconFactoryProperty().set(null);
+		else
+			iconFactoryProperty().set(new ConstantIcon(icon));
 		return this;
 	}
 
