@@ -21,9 +21,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import software.coley.bentofx.Bento;
+import software.coley.bentofx.content.TabbedContent;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableDestination;
-import software.coley.bentofx.content.TabbedContent;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderView;
 import software.coley.bentofx.impl.content.ImplTabbedContent;
@@ -84,6 +84,47 @@ public class BentoUtils {
 		if (path.content() instanceof ImplTabbedContent tabbedContent)
 			return tabbedContent.getHeader(path.dockable());
 		return null;
+	}
+
+	/**
+	 * Finds a node's associated {@link Dockable} and selects it within a {@link TabbedContent}.
+	 *
+	 * @param node
+	 * 		Some node that belongs to a {@link Dockable}.
+	 *
+	 * @return {@code true} when selection was completed.
+	 * {@code false} when the node's respective dockable could not be selected.
+	 */
+	public static boolean selectInTabbedParent(@Nullable Node node) {
+		if (node == null)
+			return false;
+
+		TabbedContent content = getParent(node, TabbedContent.class);
+		if (content == null)
+			return false;
+
+		for (Dockable dockable : content.getDockables())
+			if (dockable.nodeProperty().get() instanceof Parent dockableParent && containsChild(dockableParent, node))
+				return content.selectDockable(dockable);
+
+		return false;
+	}
+
+	/**
+	 * @param parent
+	 * 		Some parent.
+	 * @param child
+	 * 		Some child.
+	 *
+	 * @return {@code true} when the parent contains the child at any depth.
+	 */
+	public static boolean containsChild(@Nonnull Parent parent, @Nonnull Node child) {
+		while (child != null) {
+			child = child.getParent();
+			if (child == parent)
+				return true;
+		}
+		return false;
 	}
 
 	/**
