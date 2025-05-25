@@ -23,68 +23,6 @@ import java.util.List;
  */
 non-sealed public interface TabbedContent extends Content {
 	/**
-	 * @return Unmodifiable list of current dockables in this content.
-	 */
-	@Nonnull
-	List<Dockable> getDockables();
-
-	/**
-	 * Adds the given dockable.
-	 * <p/>
-	 * Note: This ignores any restrictions such as cross-contamination of {@link Dockable#getDragGroup()}.
-	 *
-	 * @param dockable
-	 * 		Dockable to add.
-	 *
-	 * @return {@code true} when added successfully.
-	 * {@code false} when not added <i>(Due to already being present)</i>.
-	 */
-	boolean addDockable(@Nonnull Dockable dockable);
-
-	/**
-	 * Removes the given dockable.
-	 * <p/>
-	 * Note: This ignores any restrictions such as {@link Dockable#closableProperty()}.
-	 *
-	 * @param dockable
-	 * 		Dockable to remove.
-	 *
-	 * @return {@code true} when removed successfully.
-	 * {@code false} when not removed <i>(Due to not being present)</i>.
-	 *
-	 * @see #closeDockable(Dockable)
-	 */
-	boolean removeDockable(@Nonnull Dockable dockable);
-
-	/**
-	 * Closes the given dockable as if triggered by the user.
-	 *
-	 * @param dockable
-	 * 		Dockable to close.
-	 *
-	 * @return {@code true} when closed successfully.
-	 * {@code false} when not closed <i>(Due to not being present or closable)</i>.
-	 *
-	 * @see #removeDockable(Dockable)
-	 */
-	boolean closeDockable(@Nonnull Dockable dockable);
-
-	/**
-	 * @return {@code true} when this content contains zero {@link Dockable} items.
-	 */
-	default boolean isEmpty() {
-		return getDockables().isEmpty();
-	}
-
-	/**
-	 * @param dockable
-	 * 		Dockable to select.
-	 *
-	 * @return {@code true} when selected. {@code false} when not selected <i>(Due to not being present)</i>.
-	 */
-	boolean selectDockable(@Nullable Dockable dockable);
-
-	/**
 	 * The auto-prune property, when {@code true}, will automatically this content from the
 	 * parent {@link ContentLayout} when becoming {@link #isEmpty() empty}.
 	 * <p/>
