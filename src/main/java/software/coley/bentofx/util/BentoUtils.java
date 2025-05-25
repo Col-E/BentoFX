@@ -111,6 +111,30 @@ public class BentoUtils {
 	}
 
 	/**
+	 * Finds a node's associated {@link Dockable} and attempts to close it within a {@link TabbedContent}.
+	 *
+	 * @param node
+	 * 		Some node that belongs to a {@link Dockable}.
+	 *
+	 * @return {@code true} when closure was completed.
+	 * {@code false} when the node's respective dockable could not be closed.
+	 */
+	public static boolean closeInTabbedParent(@Nullable Node node) {
+		if (node == null)
+			return false;
+
+		TabbedContent content = getParent(node, TabbedContent.class);
+		if (content == null)
+			return false;
+
+		for (Dockable dockable : content.getDockables())
+			if (dockable.nodeProperty().get() instanceof Parent dockableParent && containsChild(dockableParent, node))
+				return content.closeDockable(dockable);
+
+		return false;
+	}
+
+	/**
 	 * @param parent
 	 * 		Some parent.
 	 * @param child
