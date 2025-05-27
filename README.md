@@ -91,10 +91,10 @@ follows the same behavior.
 ```java
 // Full code can be found in the "src/test" directory
 Bento bento = Bento.newBento();
-ContentBuilder builder = bento.newContentBuilder();
+LayoutBuilder builder = bento.newLayoutBuilder();
 DockLayout layout = builder.vsplit(
     builder.hsplit(
-        builder.fitLeaf(builder.tabbed(new TabbedContentArgs()
+        builder.fitLeaf(builder.tabbed(new TabbedSpaceArgs()
             .setSide(Side.LEFT)
             .addDockables(
                 buildDockable(builder, 1, "Workspace").withClosable(false).withDragGroup(TOOLS),
@@ -112,7 +112,7 @@ DockLayout layout = builder.vsplit(
             makeDockable(builder, 5, "Class5")
         ))
     ),
-    builder.fitLeaf(builder.tabbed(new TabbedContentArgs()
+    builder.fitLeaf(builder.tabbed(new TabbedSpaceArgs()
         .setSide(Side.BOTTOM)
         .addDockables(
             buildDockable(builder, 1, "Logging").withClosable(false).withDragGroup(TOOLS),
