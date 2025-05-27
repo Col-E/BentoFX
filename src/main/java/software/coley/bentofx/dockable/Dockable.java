@@ -28,6 +28,12 @@ public interface Dockable extends Identifiable {
 	ObjectProperty<Node> nodeProperty();
 
 	/**
+	 * @return Current parent dock space that holds this dockable.
+	 */
+	@Nonnull
+	ObjectProperty<DockSpace> spaceProperty();
+
+	/**
 	 * Drag groups are arbitrary integers. By default, any dockable's group is {@code 0}.
 	 * Any two dockables that have different groups cannot be dragged by the user to reside in the same {@link DockSpace}.
 	 *

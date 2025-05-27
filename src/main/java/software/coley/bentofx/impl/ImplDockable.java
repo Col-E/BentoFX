@@ -4,6 +4,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
@@ -16,6 +17,7 @@ import software.coley.bentofx.dockable.DockableIconFactory;
 import software.coley.bentofx.dockable.DockableMenuFactory;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.path.DockablePath;
+import software.coley.bentofx.space.DockSpace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ public class ImplDockable implements Dockable {
 	private final String identifier;
 	private final int dragGroup;
 	private final ObjectProperty<Node> nodeProperty;
+	private final ObjectProperty<DockSpace> spaceProperty = new SimpleObjectProperty<>();
 	private final StringProperty titleProperty;
 	private final ObjectProperty<Tooltip> tooltipProperty;
 	private final ObjectProperty<DockableIconFactory> iconFactoryProperty;
@@ -80,6 +83,12 @@ public class ImplDockable implements Dockable {
 	@Override
 	public ObjectProperty<Node> nodeProperty() {
 		return nodeProperty;
+	}
+
+	@Nonnull
+	@Override
+	public ObjectProperty<DockSpace> spaceProperty() {
+		return spaceProperty;
 	}
 
 	@Override

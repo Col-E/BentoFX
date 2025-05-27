@@ -15,8 +15,6 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import software.coley.bentofx.Identifiable;
-import software.coley.bentofx.space.DockSpace;
-import software.coley.bentofx.space.TabbedDockSpace;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.dockable.DockableMoveListener;
@@ -27,6 +25,8 @@ import software.coley.bentofx.impl.ImplDockable;
 import software.coley.bentofx.layout.DockLayout;
 import software.coley.bentofx.layout.RootDockLayout;
 import software.coley.bentofx.path.DockablePath;
+import software.coley.bentofx.space.DockSpace;
+import software.coley.bentofx.space.TabbedDockSpace;
 import software.coley.bentofx.util.BentoUtils;
 import software.coley.bentofx.util.DropTargetType;
 import software.coley.bentofx.util.LinearItemPane;
@@ -288,6 +288,9 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 			header.bindToParentDimensions();
 			itemPane.requestLayout();
 
+			// Update dockable's space property.
+			dockable.spaceProperty().set(getParentSpace());
+
 			// Handle initial selection state.
 			Dockable selectedDockable = selectedProperty.get();
 			if (selectedDockable == null)
@@ -332,6 +335,10 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 						parentView.selectDockable(dockables.get(nextSelectionIndex));
 					else
 						selectedProperty.set(null);
+
+					// Update dockable's space property.
+					dockable.spaceProperty().set(null);
+
 					return true;
 				}
 				index++;

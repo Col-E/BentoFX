@@ -15,15 +15,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.builder.LayoutBuilder;
 import software.coley.bentofx.builder.DockableBuilder;
+import software.coley.bentofx.builder.LayoutBuilder;
 import software.coley.bentofx.builder.SplitLayoutArgs;
 import software.coley.bentofx.builder.TabbedSpaceArgs;
-import software.coley.bentofx.space.TabbedDockSpace;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.layout.LeafDockLayout;
 import software.coley.bentofx.layout.RootDockLayout;
 import software.coley.bentofx.layout.SplitDockLayout;
+import software.coley.bentofx.space.TabbedDockSpace;
 
 public class BoxApp extends Application {
 	private static final int TOOLS = 1;
@@ -35,8 +35,10 @@ public class BoxApp extends Application {
 
 		// TODO: Allow making dockables configure their containing DockableDestination/DockLayout when splitting/new-windowing
 		//  - For example, tool tabs in new windows making their TabbedDockSpace#canSplitProperty = false
+		//  - Can kinda do it with dockable#spaceProperty() listener
 
 		Bento bento = Bento.newBento();
+		bento.setEmptyDisplayFactory(parentLayout -> new Label("You closed all the classes"));
 		bento.addDockableOpenListener((path, dockable) -> System.out.println("Opened: " + dockable.titleProperty().get()));
 		bento.addDockableMoveListener((oldPath, newPath, dockable) -> System.out.println("Moved: " + dockable.titleProperty().get()));
 		bento.addDockableCloseListener((path, dockable) -> System.out.println("Closed: " + dockable.titleProperty().get()));
@@ -45,6 +47,7 @@ public class BoxApp extends Application {
 		LayoutBuilder builder = bento.newLayoutBuilder();
 
 		TabbedDockSpace toolTabs = builder.tabbed(new TabbedSpaceArgs()
+				.setIdentifier("left-tool-tabs")
 				.setSide(Side.LEFT)
 				.addDockables(
 						buildDockable(builder, 1, "Workspace").withClosable(false).withDragGroup(TOOLS),
@@ -54,12 +57,16 @@ public class BoxApp extends Application {
 				.setAutoPruneWhenEmpty(false)
 				.setCanSplit(false));
 		TabbedDockSpace workTabs = builder.tabbed(
-				Side.TOP,
-				makeDockable(builder, 1, "Class1"),
-				makeDockable(builder, 2, "Class2"),
-				makeDockable(builder, 3, "Class3").withClosable(false),
-				makeDockable(builder, 4, "Class4"),
-				makeDockable(builder, 5, "Class5")
+				new TabbedSpaceArgs().setSide(Side.TOP)
+						.setIdentifier("class-tabs")
+						.setAutoPruneWhenEmpty(false)
+						.addDockables(
+								makeDockable(builder, 1, "Class1"),
+								makeDockable(builder, 2, "Class2"),
+								makeDockable(builder, 3, "Class3"),
+								makeDockable(builder, 4, "Class4"),
+								makeDockable(builder, 5, "Class5")
+						)
 		);
 		SplitDockLayout topSplit = builder.split(new SplitLayoutArgs()
 				.setOrientation(Orientation.HORIZONTAL)
@@ -70,6 +77,7 @@ public class BoxApp extends Application {
 				.setChildrenSizes(200)
 		);
 		LeafDockLayout bottomLeaf = builder.fitLeaf(builder.tabbed(new TabbedSpaceArgs()
+				.setIdentifier("bottom-tool-tabs")
 				.setSide(Side.BOTTOM)
 				.addDockables(
 						buildDockable(builder, 1, "Logging").withClosable(false).withDragGroup(TOOLS),

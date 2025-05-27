@@ -71,9 +71,12 @@ public class ImplTabbedDockSpace extends ImplDockSpaceBase implements TabbedDock
 		// Create a new view for the given side.
 		view = new HeaderView(bento, side);
 		view.menuFactoryProperty().bind(tabbedSpaceMenuFactoryProperty);
+		layout.setCenter(view);
+
+		// Populate the dockable tabs.
+		// We must do this AFTER the header view is added to the layout so that our Dockable#spaceProperty() tracking is accurate.
 		for (Dockable dockable : dockables)
 			view.addDockable(dockable);
-		layout.setCenter(view);
 
 		// Restore state from previous instance.
 		if (oldSelected != null)
