@@ -39,10 +39,10 @@ public class BoxApp extends Application {
 
 		Bento bento = Bento.newBento();
 		bento.setEmptyDisplayFactory(parentLayout -> new Label("You closed all the classes"));
-		bento.addDockableOpenListener((path, dockable) -> System.out.println("Opened: " + dockable.titleProperty().get()));
-		bento.addDockableMoveListener((oldPath, newPath, dockable) -> System.out.println("Moved: " + dockable.titleProperty().get()));
-		bento.addDockableCloseListener((path, dockable) -> System.out.println("Closed: " + dockable.titleProperty().get()));
-		bento.addDockableSelectListener((path, dockable) -> System.out.println("Select: " + dockable.titleProperty().get()));
+		bento.addDockableOpenListener((path, dockable) -> System.out.println("Opened: " + dockable.getTitle()));
+		bento.addDockableMoveListener((oldPath, newPath, dockable) -> System.out.println("Moved: " + dockable.getTitle()));
+		bento.addDockableCloseListener((path, dockable) -> System.out.println("Closed: " + dockable.getTitle()));
+		bento.addDockableSelectListener((path, dockable) -> System.out.println("Select: " + dockable.getTitle()));
 
 		LayoutBuilder builder = bento.newLayoutBuilder();
 
@@ -120,7 +120,7 @@ public class BoxApp extends Application {
 				.withNode(label)
 				.withCachedContextMenu(true)
 				.withContextMenuFactory(dockable -> new ContextMenu(
-						new MenuItem("Menu for : " + dockable.titleProperty().get()),
+						new MenuItem("Menu for : " + dockable.getTitle()),
 						new SeparatorMenuItem(),
 						new MenuItem("Stuff")));
 	}

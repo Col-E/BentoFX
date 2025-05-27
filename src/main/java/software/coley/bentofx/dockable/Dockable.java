@@ -9,11 +9,14 @@ import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.Pane;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.space.DockSpace;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderView;
 import software.coley.bentofx.util.ConstantIcon;
+
+import java.util.Objects;
 
 /**
  * Outline of some item to display, generally tied to a {@link Header} inside a {@link HeaderView}.
@@ -26,6 +29,14 @@ public interface Dockable extends Identifiable {
 	 */
 	@Nonnull
 	ObjectProperty<Node> nodeProperty();
+
+	/**
+	 * @return Content to display when this dockable is active in its parent {@link DockSpace}.
+	 */
+	@Nonnull
+	default Node getNode() {
+		return Objects.requireNonNull(nodeProperty().get(), "Dockable does not have a node specified");
+	}
 
 	/**
 	 * @return Current parent dock space that holds this dockable.
@@ -55,6 +66,14 @@ public interface Dockable extends Identifiable {
 	 */
 	@Nonnull
 	StringProperty titleProperty();
+
+	/**
+	 * @return This dockable's display text when represented by a {@link Header}.
+	 */
+	@Nonnull
+	default String getTitle() {
+		return Objects.requireNonNullElse(titleProperty().get(), "");
+	}
 
 	/**
 	 * @return This dockable's tooltip when hovered as a {@link Header}.
