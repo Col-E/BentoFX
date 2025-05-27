@@ -39,6 +39,14 @@ public interface Dockable extends Identifiable {
 	}
 
 	/**
+	 * @param node
+	 * 		Content to display when this dockable is active in its parent {@link DockSpace}.
+	 */
+	default void setNode(@Nonnull Node node) {
+		nodeProperty().set(node);
+	}
+
+	/**
 	 * @return Current parent dock space that holds this dockable.
 	 */
 	@Nonnull

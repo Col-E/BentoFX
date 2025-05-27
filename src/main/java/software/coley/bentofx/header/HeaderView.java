@@ -24,14 +24,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.Identifiable;
-import software.coley.bentofx.space.DockSpace;
-import software.coley.bentofx.space.TabbedDockSpace;
-import software.coley.bentofx.space.TabbedSpaceMenuFactory;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.layout.DockLayout;
 import software.coley.bentofx.layout.SplitDockLayout;
+import software.coley.bentofx.space.DockSpace;
+import software.coley.bentofx.space.TabbedDockSpace;
+import software.coley.bentofx.space.TabbedSpaceMenuFactory;
 import software.coley.bentofx.util.BentoUtils;
 
 import java.util.List;
@@ -364,11 +364,15 @@ public class HeaderView extends StackPane implements DockableDestination {
 
 			// Always show selected content
 			parentView.headerRegion.selectedProperty().addListener((ob, old, cur) -> {
-				// Always clear binding before handling any kind of update
-
 				if (cur != null) {
-					// Set the current selected dockable's content.
-					setCenter(cur.nodeProperty().get());
+					// Bind the current selected dockable's content.
+					// - We need to ensure that the dockable's prior containing display unbinds it as a child.
+					//   - https://bugs.openjdk.org/browse/JDK-8137251
+					//   - This control will unbind its prior value when we tell it to bind the new value
+					ObjectProperty<Node> dockableNode = cur.nodeProperty();
+					if (dockableNode.get().getParent() instanceof ContentWrapper otherParent)
+						otherParent.centerProperty().unbind();
+					centerProperty().bind(dockableNode);
 
 					// If the new content is focusable, focus it.
 					Node center = getCenter();
