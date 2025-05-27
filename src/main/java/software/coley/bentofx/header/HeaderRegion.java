@@ -15,8 +15,8 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import software.coley.bentofx.Identifiable;
-import software.coley.bentofx.content.Content;
-import software.coley.bentofx.content.TabbedContent;
+import software.coley.bentofx.space.DockSpace;
+import software.coley.bentofx.space.TabbedDockSpace;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.dockable.DockableMoveListener;
@@ -24,8 +24,8 @@ import software.coley.bentofx.dockable.DockableOpenListener;
 import software.coley.bentofx.dockable.DockableSelectListener;
 import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.impl.ImplDockable;
-import software.coley.bentofx.layout.ContentLayout;
-import software.coley.bentofx.layout.RootContentLayout;
+import software.coley.bentofx.layout.DockLayout;
+import software.coley.bentofx.layout.RootDockLayout;
 import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.util.BentoUtils;
 import software.coley.bentofx.util.DropTargetType;
@@ -90,7 +90,7 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 		// Drag support
 		BentoUtils.setupCommonDragSupport(this, false);
 		setOnDragDropped(e -> {
-			// Ensure the origin is a header, and the target is a content-region.
+			// Ensure the origin is a header, and the target is a region that can be dropped into.
 			Header headerSource = BentoUtils.getHeader(bento, e);
 			if (headerSource == null)
 				return;
@@ -110,16 +110,16 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 		itemPane.getChildren().addListener((ListChangeListener<Node>) c -> {
 			if (itemPane.getChildren().isEmpty()) {
 				// Skip if auto-prune is disabled
-				if (getParentContent() instanceof TabbedContent tabbedParent && !tabbedParent.autoPruneWhenEmptyProperty().get())
+				if (getParentSpace() instanceof TabbedDockSpace tabbedParent && !tabbedParent.autoPruneWhenEmptyProperty().get())
 					return;
 
 				// Prune from layout
-				ContentLayout contentParent = getParentLayout();
-				if (contentParent != null)
+				DockLayout parentLayout = getParentLayout();
+				if (parentLayout != null)
 					// We put this in a "runLater" because otherwise dragging a header from a region with only one item
 					// would instantly prune it, preventing the eventual drop handler from showing the header in the
-					// new content-layout space.
-					Platform.runLater(contentParent::removeFromParent);
+					// new docking layout.
+					Platform.runLater(parentLayout::removeFromParent);
 			}
 		});
 	}
@@ -154,14 +154,14 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 
 	@Nullable
 	@Override
-	public Content getParentContent() {
-		return BentoUtils.getParent(this, Content.class);
+	public DockSpace getParentSpace() {
+		return BentoUtils.getParent(this, DockSpace.class);
 	}
 
 	@Nullable
 	@Override
-	public ContentLayout getParentLayout() {
-		return BentoUtils.getParent(this, ContentLayout.class);
+	public DockLayout getParentLayout() {
+		return BentoUtils.getParent(this, DockLayout.class);
 	}
 
 	@Nonnull
@@ -187,7 +187,7 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 
 	@Override
 	public boolean canSplit() {
-		return getParentContent() instanceof TabbedContent parentTabbed
+		return getParentSpace() instanceof TabbedDockSpace parentTabbed
 				&& parentTabbed.canSplitProperty().get();
 	}
 
@@ -236,7 +236,7 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 			}
 		} else {
 			// Must be able to remove the source header from its parent.
-			ContentLayout parentLayout = getParentLayout();
+			DockLayout parentLayout = getParentLayout();
 			if (parentLayout != null && source.removeFromParent(Header.RemovalReason.MOVING)) {
 				// Create a new tabbed region. The side will be the same side as ours if it will result
 				// in a visually consistent header-region. IE, a vertical split with two LEFT/RIGHT sides.
@@ -244,14 +244,14 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 				// In this case we will default to using the TOP side.
 				//
 				// The split will always be across the orientation of the dropped side.
-				Side newContentSide = side;
-				if (newContentSide.isVertical() == droppedSide.isVertical())
-					newContentSide = Side.TOP;
-				TabbedContent newContent = bento.newContentBuilder().tabbed(newContentSide, dockable);
-				ContentLayout newLayout = parentLayout.asSplitWith(newContent, droppedSide);
+				Side newSide = side;
+				if (newSide.isVertical() == droppedSide.isVertical())
+					newSide = Side.TOP;
+				TabbedDockSpace newSpace = bento.newLayoutBuilder().tabbed(newSide, dockable);
+				DockLayout newLayout = parentLayout.asSplitWith(newSpace, droppedSide);
 
 				// We want to put the new split layout where our current parent layout is.
-				ContentLayout parentParentLayout = parentLayout.getParentLayout();
+				DockLayout parentParentLayout = parentLayout.getParentLayout();
 				if (parentParentLayout != null) {
 					// We just tell the parent of our parent to replace it.
 					BentoUtils.completeDnd(event, dockable, DropTargetType.REGION);
@@ -260,7 +260,7 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 				} else {
 					// We have no parent-of-parent, so our parent must belong to the root.
 					// Have the root replace its layout.
-					RootContentLayout rootLayout = parentLayout.getRootLayout();
+					RootDockLayout rootLayout = parentLayout.getRootLayout();
 					if (rootLayout != null) {
 						BentoUtils.completeDnd(event, dockable, DropTargetType.REGION);
 						rootLayout.setLayout(newLayout);
@@ -350,8 +350,8 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 			selectedProperty.set(dockable);
 
 			// If we were collapsed, ensure we restore the previous expected
-			// dimensions of this content-layout now that we're showing
-			// some dockable content.
+			// dimensions of this docking layout now that we're showing
+			// some dockable content again.
 			if (isCollapsed())
 				toggleCollapsed();
 

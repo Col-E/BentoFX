@@ -1,4 +1,4 @@
-package software.coley.bentofx.content;
+package software.coley.bentofx.space;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author Matt Coley
  */
-non-sealed public interface SingleContent extends Content {
+non-sealed public interface SingleDockSpace extends DockSpace {
 	/**
 	 * @return Side where the dockable's header is shown.
 	 */
@@ -35,7 +35,7 @@ non-sealed public interface SingleContent extends Content {
 
 	@Override
 	default boolean addDockable(@Nonnull Dockable dockable) {
-		// Not supported as this content is created with a single item, and only supports showing a single item.
+		// Not supported as this space is created with a single item, and only supports showing a single item.
 		return false;
 	}
 

@@ -6,15 +6,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.impl.ImplBento;
-import software.coley.bentofx.layout.ContentLayout;
-import software.coley.bentofx.layout.RootContentLayout;
+import software.coley.bentofx.layout.DockLayout;
+import software.coley.bentofx.layout.RootDockLayout;
 
-public class ImplRootContentLayout extends BorderPane implements RootContentLayout {
+public class ImplRootDockLayout extends BorderPane implements RootDockLayout {
 	private final ImplBento bento;
 	private final String identifier;
-	private ContentLayout layout;
+	private DockLayout layout;
 
-	public ImplRootContentLayout(@Nonnull ImplBento bento, @Nonnull ContentLayout layout, @Nonnull String identifier) {
+	public ImplRootDockLayout(@Nonnull ImplBento bento, @Nonnull DockLayout layout, @Nonnull String identifier) {
 		this.bento = bento;
 		this.identifier = identifier;
 
@@ -51,19 +51,19 @@ public class ImplRootContentLayout extends BorderPane implements RootContentLayo
 	}
 
 	@Override
-	public void setLayout(@Nonnull ContentLayout layout) {
+	public void setLayout(@Nonnull DockLayout layout) {
 		this.layout = layout;
 		setCenter(layout.getBackingRegion());
 	}
 
 	@Nonnull
 	@Override
-	public ContentLayout getLayout() {
+	public DockLayout getLayout() {
 		return layout;
 	}
 
 	@Override
 	public void clearLayout() {
-		setLayout(new ImplLeafContentLayout(bento, null));
+		setLayout(new ImplLeafDockLayout(bento, null));
 	}
 }

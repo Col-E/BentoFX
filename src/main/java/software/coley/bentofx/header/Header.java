@@ -28,14 +28,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import software.coley.bentofx.content.Content;
+import software.coley.bentofx.space.DockSpace;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableCloseListener;
 import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.dockable.DockableMenuFactory;
 import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.impl.ImplDockable;
-import software.coley.bentofx.path.ContentPath;
+import software.coley.bentofx.path.SpacePath;
 import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.util.BentoUtils;
 import software.coley.bentofx.util.DragDropStage;
@@ -131,7 +131,7 @@ public class Header extends Group {
 					if (d.getSelectedDockable() != dockable) {
 						d.selectDockable(dockable);
 					} else {
-						// Clicked already supported content, (un)collapse it.
+						// Clicked already selected dockable, (un)collapse it.
 						d.toggleCollapsed();
 					}
 				});
@@ -383,15 +383,15 @@ public class Header extends Group {
 		if (destination == null)
 			return null;
 
-		Content content = destination.getParentContent();
-		if (content == null)
+		DockSpace space = destination.getParentSpace();
+		if (space == null)
 			return null;
 
-		ContentPath contentPath = content.getPath();
-		if (contentPath == null)
+		SpacePath spacePath = space.getPath();
+		if (spacePath == null)
 			return null;
 
-		return new DockablePath(contentPath, dockable);
+		return new DockablePath(spacePath, dockable);
 	}
 
 	@Nullable

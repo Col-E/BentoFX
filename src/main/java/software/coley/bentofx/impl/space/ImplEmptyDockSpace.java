@@ -1,4 +1,4 @@
-package software.coley.bentofx.impl.content;
+package software.coley.bentofx.impl.space;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -6,12 +6,12 @@ import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.Identifiable;
-import software.coley.bentofx.content.EmptyContent;
+import software.coley.bentofx.space.EmptyDockSpace;
 
-public class ImplEmptyContent extends BorderPane implements EmptyContent {
+public class ImplEmptyDockSpace extends BorderPane implements EmptyDockSpace {
 	private final String identifier;
 
-	public ImplEmptyContent(@Nonnull String identifier, @Nonnull Node display) {
+	public ImplEmptyDockSpace(@Nonnull String identifier, @Nonnull Node display) {
 		this.identifier = identifier;
 
 		setCenter(display);

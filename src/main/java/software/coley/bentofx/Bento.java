@@ -7,13 +7,13 @@ import javafx.scene.Node;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.stage.Stage;
-import software.coley.bentofx.builder.ContentBuilder;
+import software.coley.bentofx.builder.LayoutBuilder;
 import software.coley.bentofx.builder.DockableBuilder;
-import software.coley.bentofx.content.Content;
-import software.coley.bentofx.content.EmptyContent;
-import software.coley.bentofx.content.EmptyContentDisplayFactory;
-import software.coley.bentofx.content.SingleContent;
-import software.coley.bentofx.content.TabbedContent;
+import software.coley.bentofx.space.DockSpace;
+import software.coley.bentofx.space.EmptyDockSpace;
+import software.coley.bentofx.space.EmptyDisplayFactory;
+import software.coley.bentofx.space.SingleDockSpace;
+import software.coley.bentofx.space.TabbedDockSpace;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableCloseListener;
 import software.coley.bentofx.dockable.DockableDestination;
@@ -22,11 +22,11 @@ import software.coley.bentofx.dockable.DockableOpenListener;
 import software.coley.bentofx.dockable.DockableSelectListener;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.impl.ImplBento;
-import software.coley.bentofx.layout.ContentLayout;
-import software.coley.bentofx.layout.LeafContentLayout;
-import software.coley.bentofx.layout.RootContentLayout;
-import software.coley.bentofx.layout.SplitContentLayout;
-import software.coley.bentofx.path.ContentPath;
+import software.coley.bentofx.layout.DockLayout;
+import software.coley.bentofx.layout.LeafDockLayout;
+import software.coley.bentofx.layout.RootDockLayout;
+import software.coley.bentofx.layout.SplitDockLayout;
+import software.coley.bentofx.path.SpacePath;
 import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.path.LayoutPath;
 import software.coley.bentofx.util.BentoUtils;
@@ -39,7 +39,7 @@ import java.util.Queue;
 import java.util.function.Supplier;
 
 /**
- * Controller for dockable content and layouts.
+ * Controller for docking supported layouts and spaces.
  *
  * @author Matt Coley
  */
@@ -53,10 +53,10 @@ public interface Bento {
 	}
 
 	/**
-	 * @return New builder to create {@link RootContentLayout}, {@link ContentLayout} and {@link Content} instances.
+	 * @return New builder to create {@link RootDockLayout}, {@link DockLayout} and {@link DockSpace} instances.
 	 */
 	@Nonnull
-	ContentBuilder newContentBuilder();
+	LayoutBuilder newLayoutBuilder();
 
 	/**
 	 * @return New builder to create {@link Dockable} instances.
@@ -65,23 +65,23 @@ public interface Bento {
 	DockableBuilder newDockableBuilder();
 
 	/**
-	 * Create a new empty content instance with some configurable {@link Node} content.
+	 * Create a new empty space instance with some configurable {@link Node} content.
 	 *
 	 * @param parentLayout
-	 * 		Parent layout to contain the new {@link EmptyContent}.
+	 * 		Parent layout to contain the new {@link EmptyDockSpace}.
 	 *
-	 * @return A new empty content instance.
+	 * @return A new empty space instance.
 	 *
-	 * @see #setEmptyDisplayFactory(EmptyContentDisplayFactory)
+	 * @see #setEmptyDisplayFactory(EmptyDisplayFactory)
 	 */
 	@Nonnull
-	Content newEmptyContent(@Nonnull ContentLayout parentLayout);
+	DockSpace newEmptySpace(@Nonnull DockLayout parentLayout);
 
 	/**
 	 * @param factory
-	 * 		Factory to create content for {@link EmptyContent} when placed into the UI.
+	 * 		Factory to create a display for {@link EmptyDockSpace} when placed into the UI.
 	 */
-	void setEmptyDisplayFactory(@Nullable EmptyContentDisplayFactory factory);
+	void setEmptyDisplayFactory(@Nullable EmptyDisplayFactory factory);
 
 	/**
 	 * @param source
@@ -96,19 +96,19 @@ public interface Bento {
 
 	/**
 	 * @param identifier
-	 * 		The identifier of some {@link ContentLayout} to find and replace.
+	 * 		The identifier of some {@link DockLayout} to find and replace.
 	 * @param replacementProvider
-	 * 		Supplier of a {@link ContentLayout} to replace the existing layout with.
+	 * 		Supplier of a {@link DockLayout} to replace the existing layout with.
 	 *
 	 * @return {@code true} when the existing layout was found and replaced.
 	 */
-	default boolean replaceContentLayout(@Nonnull String identifier, @Nonnull Supplier<ContentLayout> replacementProvider) {
+	default boolean replaceLayout(@Nonnull String identifier, @Nonnull Supplier<DockLayout> replacementProvider) {
 		LayoutPath path = findLayout(identifier);
 		if (path == null || path.layouts().isEmpty())
 			return false;
 
-		ContentLayout target = path.layouts().getLast();
-		ContentLayout parentLayout = target.getParentLayout();
+		DockLayout target = path.layouts().getLast();
+		DockLayout parentLayout = target.getParentLayout();
 		if (parentLayout == null)
 			return false;
 
@@ -118,33 +118,33 @@ public interface Bento {
 
 	/**
 	 * @param identifier
-	 * 		The identifier of some {@link Content} to find and replace.
+	 * 		The identifier of some {@link DockSpace} to find and replace.
 	 * @param replacementProvider
-	 * 		Supplier of a {@link Content} to replace the existing content with.
+	 * 		Supplier of a {@link DockSpace} to replace the existing space with.
 	 *
-	 * @return {@code true} when the existing content was found and replaced.
+	 * @return {@code true} when the existing space was found and replaced.
 	 */
-	default boolean replaceContent(@Nonnull String identifier, @Nonnull Supplier<Content> replacementProvider) {
-		ContentPath path = findContent(identifier);
+	default boolean replaceSpace(@Nonnull String identifier, @Nonnull Supplier<DockSpace> replacementProvider) {
+		SpacePath path = findSpace(identifier);
 		if (path == null || path.layouts().isEmpty())
 			return false;
 
-		ContentLayout parent = path.layouts().getLast();
+		DockLayout parent = path.layouts().getLast();
 		switch (parent) {
-			case LeafContentLayout leafContentLayout -> leafContentLayout.setContent(replacementProvider.get());
-			case SplitContentLayout ignored ->
-					throw new IllegalStateException(SplitContentLayout.class.getSimpleName() +
-							" should never have a direct child " + Content.class.getSimpleName());
+			case LeafDockLayout leaf -> leaf.setSpace(replacementProvider.get());
+			case SplitDockLayout ignored ->
+					throw new IllegalStateException(SplitDockLayout.class.getSimpleName() +
+							" should never have a direct child " + DockSpace.class.getSimpleName());
 		}
 		return true;
 	}
 
 	/**
-	 * @return Unmodifiable list of all tracked {@link RootContentLayout}
+	 * @return Unmodifiable list of all tracked {@link RootDockLayout}
 	 * created by this bento instance that are present in any active scenes.
 	 */
 	@Nonnull
-	ObservableList<RootContentLayout> getRootLayouts();
+	ObservableList<RootDockLayout> getRootLayouts();
 
 	/**
 	 * @return List of all {@link Dockable} instanced tracked in this instance.
@@ -152,29 +152,29 @@ public interface Bento {
 	@Nonnull
 	default List<DockablePath> getAllDockables() {
 		List<DockablePath> paths = new ArrayList<>();
-		for (RootContentLayout root : getRootLayouts()) {
-			Queue<ContentLayout> layouts = new ArrayDeque<>();
+		for (RootDockLayout root : getRootLayouts()) {
+			Queue<DockLayout> layouts = new ArrayDeque<>();
 			layouts.add(root.getLayout());
 			while (!layouts.isEmpty()) {
-				ContentLayout layout = layouts.remove();
+				DockLayout layout = layouts.remove();
 				switch (layout) {
-					case LeafContentLayout leaf -> {
-						switch (leaf.getContent()) {
-							case EmptyContent ignored -> {}
-							case SingleContent singleContent -> {
-								ContentPath contentPath = singleContent.getPath();
-								if (contentPath != null)
-									paths.add(new DockablePath(contentPath, singleContent.getDockable()));
+					case LeafDockLayout leaf -> {
+						switch (leaf.getSpace()) {
+							case EmptyDockSpace ignored -> {}
+							case SingleDockSpace single -> {
+								SpacePath spacePath = single.getPath();
+								if (spacePath != null)
+									paths.add(new DockablePath(spacePath, single.getDockable()));
 							}
-							case TabbedContent tabbedContent -> {
-								ContentPath contentPath = tabbedContent.getPath();
-								if (contentPath != null)
-									for (Dockable dockable : tabbedContent.getDockables())
-										paths.add(new DockablePath(contentPath, dockable));
+							case TabbedDockSpace tabbed -> {
+								SpacePath spacePath = tabbed.getPath();
+								if (spacePath != null)
+									for (Dockable dockable : tabbed.getDockables())
+										paths.add(new DockablePath(spacePath, dockable));
 							}
 						}
 					}
-					case SplitContentLayout ignored -> layouts.addAll(layout.getChildLayouts());
+					case SplitDockLayout ignored -> layouts.addAll(layout.getChildLayouts());
 				}
 			}
 		}
@@ -182,31 +182,31 @@ public interface Bento {
 	}
 
 	/**
-	 * Attempts to find a given {@link ContentLayout} from any child of any depth belonging to this bento instance.
+	 * Attempts to find a given {@link DockLayout} from any child of any depth belonging to this bento instance.
 	 * If a {@code null} is returned, then the given layout does not exist in any child belonging to this bento instance.
 	 *
 	 * @param layout
 	 * 		Some layout to find.
 	 *
-	 * @return The path to the {@link ContentLayout} if found, otherwise {@code null}.
+	 * @return The path to the {@link DockLayout} if found, otherwise {@code null}.
 	 */
 	@Nullable
-	default LayoutPath findLayout(@Nonnull ContentLayout layout) {
+	default LayoutPath findLayout(@Nonnull DockLayout layout) {
 		return findLayout(layout.getIdentifier());
 	}
 
 	/**
-	 * Attempts to find a given {@link ContentLayout} from any child of any depth belonging to this bento instance.
-	 * The identifier will be matched against {@link ContentLayout#getIdentifier()}.
+	 * Attempts to find a given {@link DockLayout} from any child of any depth belonging to this bento instance.
+	 * The identifier will be matched against {@link DockLayout#getIdentifier()}.
 	 *
 	 * @param identifier
-	 * 		The identifier of some {@link ContentLayout} to find.
+	 * 		The identifier of some {@link DockLayout} to find.
 	 *
-	 * @return The path to the {@link ContentLayout} if found, otherwise {@code null}.
+	 * @return The path to the {@link DockLayout} if found, otherwise {@code null}.
 	 */
 	@Nullable
 	default LayoutPath findLayout(@Nonnull String identifier) {
-		for (RootContentLayout layout : getRootLayouts()) {
+		for (RootDockLayout layout : getRootLayouts()) {
 			LayoutPath path = layout.findLayout(identifier);
 			if (path != null)
 				return path;
@@ -215,33 +215,33 @@ public interface Bento {
 	}
 
 	/**
-	 * Attempts to find a given {@link Content} from any child {@link ContentLayout} of any depth belonging to this bento instance.
-	 * If a {@code null} is returned, then the given content does not exist in any child {@link ContentLayout}
+	 * Attempts to find a given {@link DockSpace} from any child {@link DockLayout} of any depth belonging to this bento instance.
+	 * If a {@code null} is returned, then the given space does not exist in any child {@link DockLayout}
 	 * belonging to this bento instance.
 	 *
-	 * @param content
-	 * 		Some content to find.
+	 * @param space
+	 * 		Some dock space to find.
 	 *
 	 * @return The path to the {@link Dockable} if found, otherwise {@code null}.
 	 */
 	@Nullable
-	default ContentPath findContent(@Nonnull Content content) {
-		return findContent(content.getIdentifier());
+	default SpacePath findSpace(@Nonnull DockSpace space) {
+		return findSpace(space.getIdentifier());
 	}
 
 	/**
-	 * Attempts to find a given {@link Content} from any child {@link ContentLayout} of any depth belonging to this bento instance.
-	 * The identifier will be matched against {@link Content#getIdentifier()}.
+	 * Attempts to find a given {@link DockSpace} from any child {@link DockLayout} of any depth belonging to this bento instance.
+	 * The identifier will be matched against {@link DockSpace#getIdentifier()}.
 	 *
 	 * @param identifier
-	 * 		The identifier of some {@link Content} to find.
+	 * 		The identifier of some {@link DockSpace} to find.
 	 *
-	 * @return The path to the {@link Content} if found, otherwise {@code null}.
+	 * @return The path to the {@link DockSpace} if found, otherwise {@code null}.
 	 */
 	@Nullable
-	default ContentPath findContent(@Nonnull String identifier) {
-		for (RootContentLayout layout : getRootLayouts()) {
-			ContentPath path = layout.findContent(identifier);
+	default SpacePath findSpace(@Nonnull String identifier) {
+		for (RootDockLayout layout : getRootLayouts()) {
+			SpacePath path = layout.findSpace(identifier);
 			if (path != null)
 				return path;
 		}
@@ -250,8 +250,8 @@ public interface Bento {
 
 	/**
 	 * Attempts to find a {@link Dockable}, based on the identifier present in the event's {@link Dragboard},
-	 * contained within any child {@link Content} of any depth belonging to this bento instance.
-	 * If a {@code null} is returned, then the given dockable does not exist in any child {@link ContentLayout}
+	 * contained within any child {@link DockSpace} of any depth belonging to this bento instance.
+	 * If a {@code null} is returned, then the given dockable does not exist in any child {@link DockLayout}
 	 * belonging to this bento instance.
 	 *
 	 * @param event
@@ -266,8 +266,8 @@ public interface Bento {
 	}
 
 	/**
-	 * Attempts to find a given {@link Dockable} from any child {@link Content} of any depth belonging to this bento instance.
-	 * If a {@code null} is returned, then the given dockable does not exist in any child {@link ContentLayout}
+	 * Attempts to find a given {@link Dockable} from any child {@link DockSpace} of any depth belonging to this bento instance.
+	 * If a {@code null} is returned, then the given dockable does not exist in any child {@link DockLayout}
 	 * belonging to this bento instance.
 	 *
 	 * @param dockable
@@ -281,7 +281,7 @@ public interface Bento {
 	}
 
 	/**
-	 * Attempts to find a given {@link Dockable} from any child {@link Content} of any depth belonging to this bento instance.
+	 * Attempts to find a given {@link Dockable} from any child {@link DockSpace} of any depth belonging to this bento instance.
 	 * The identifier will be matched against {@link Dockable#getIdentifier()}.
 	 *
 	 * @param identifier
@@ -291,7 +291,7 @@ public interface Bento {
 	 */
 	@Nullable
 	default DockablePath findDockable(@Nonnull String identifier) {
-		for (RootContentLayout layout : getRootLayouts()) {
+		for (RootDockLayout layout : getRootLayouts()) {
 			DockablePath path = layout.findDockable(identifier);
 			if (path != null)
 				return path;
@@ -300,7 +300,7 @@ public interface Bento {
 	}
 
 	/**
-	 * Attempts to remove the given dockable from any child {@link Content} of any depth belonging to this bento instance.
+	 * Attempts to remove the given dockable from any child {@link DockSpace} of any depth belonging to this bento instance.
 	 * Be aware, this method will bypass {@link Dockable#closableProperty()}.
 	 *
 	 * @param dockable
@@ -310,7 +310,7 @@ public interface Bento {
 	 * @see #closeDockable(Dockable)
 	 */
 	default boolean removeDockable(@Nonnull Dockable dockable) {
-		for (RootContentLayout layout : getRootLayouts()) {
+		for (RootDockLayout layout : getRootLayouts()) {
 			if (layout.removeDockable(dockable))
 				return true;
 		}
@@ -318,7 +318,7 @@ public interface Bento {
 	}
 
 	/**
-	 * Attempts to close the given dockable from any child {@link Content} of any depth belonging to this bento instance.
+	 * Attempts to close the given dockable from any child {@link DockSpace} of any depth belonging to this bento instance.
 	 *
 	 * @param dockable
 	 * 		Dockable to remove.
@@ -327,7 +327,7 @@ public interface Bento {
 	 * @see #removeDockable(Dockable)
 	 */
 	default boolean closeDockable(@Nonnull Dockable dockable) {
-		for (RootContentLayout layout : getRootLayouts()) {
+		for (RootDockLayout layout : getRootLayouts()) {
 			if (layout.closeDockable(dockable))
 				return true;
 		}
@@ -348,13 +348,13 @@ public interface Bento {
 
 	/**
 	 * @param listener
-	 * 		Listener to add that observes existing {@link Dockable} items being moved to new {@link Content} locations.
+	 * 		Listener to add that observes existing {@link Dockable} items being moved to new {@link DockSpace} locations.
 	 */
 	void addDockableMoveListener(@Nonnull DockableMoveListener listener);
 
 	/**
 	 * @param listener
-	 * 		Listener to remove that observes existing {@link Dockable} items being moved to new {@link Content} locations.
+	 * 		Listener to remove that observes existing {@link Dockable} items being moved to new {@link DockSpace} locations.
 	 */
 	boolean removeDockableMoveListener(@Nonnull DockableMoveListener listener);
 

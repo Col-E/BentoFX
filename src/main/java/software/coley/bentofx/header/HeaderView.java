@@ -24,14 +24,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.Identifiable;
-import software.coley.bentofx.content.Content;
-import software.coley.bentofx.content.TabbedContent;
-import software.coley.bentofx.content.TabbedContentMenuFactory;
+import software.coley.bentofx.space.DockSpace;
+import software.coley.bentofx.space.TabbedDockSpace;
+import software.coley.bentofx.space.TabbedSpaceMenuFactory;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.impl.ImplBento;
-import software.coley.bentofx.layout.ContentLayout;
-import software.coley.bentofx.layout.SplitContentLayout;
+import software.coley.bentofx.layout.DockLayout;
+import software.coley.bentofx.layout.SplitDockLayout;
 import software.coley.bentofx.util.BentoUtils;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class HeaderView extends StackPane implements DockableDestination {
 	private final ContentWrapper contentWrapper;
 	private final HeaderRegion headerRegion;
 	private final Canvas canvas = new Canvas();
-	private final ObjectProperty<TabbedContentMenuFactory> menuFactory = new SimpleObjectProperty<>();
+	private final ObjectProperty<TabbedSpaceMenuFactory> menuFactory = new SimpleObjectProperty<>();
 
 	public HeaderView(@Nonnull ImplBento bento, @Nonnull Side side) {
 		this.bento = bento;
@@ -52,7 +52,7 @@ public class HeaderView extends StackPane implements DockableDestination {
 		contentWrapper = new ContentWrapper(bento, this);
 
 		Button dockableListButton = createDockableListButton();
-		Button contentConfigButton = createContentConfigButton();
+		Button spaceConfigButton = createSpaceConfigButton();
 
 		getStyleClass().add("header-view");
 		switch (side) {
@@ -80,49 +80,49 @@ public class HeaderView extends StackPane implements DockableDestination {
 		switch (side) {
 			// TODO: Reduce duplicate code here
 			case TOP -> {
-				HBox headerControls = new HBox(new Group(dockableListButton), new Group(contentConfigButton));
-				headerControls.visibleProperty().bind(dockableListButton.visibleProperty().or(contentConfigButton.visibleProperty()));
+				HBox headerControls = new HBox(new Group(dockableListButton), new Group(spaceConfigButton));
+				headerControls.visibleProperty().bind(dockableListButton.visibleProperty().or(spaceConfigButton.visibleProperty()));
 				headerControls.getStyleClass().add("button-bar");
 				headerControls.setSpacing(-1);
 
 				dockableListButton.prefHeightProperty().bind(headerControls.heightProperty());
-				contentConfigButton.prefHeightProperty().bind(headerControls.heightProperty());
+				spaceConfigButton.prefHeightProperty().bind(headerControls.heightProperty());
 
 				regionWrapper.setRight(headerControls);
 				layoutWrapper.setTop(regionWrapper);
 			}
 			case BOTTOM -> {
-				HBox headerControls = new HBox(new Group(dockableListButton), new Group(contentConfigButton));
-				headerControls.visibleProperty().bind(dockableListButton.visibleProperty().or(contentConfigButton.visibleProperty()));
+				HBox headerControls = new HBox(new Group(dockableListButton), new Group(spaceConfigButton));
+				headerControls.visibleProperty().bind(dockableListButton.visibleProperty().or(spaceConfigButton.visibleProperty()));
 				headerControls.getStyleClass().add("button-bar");
 				headerControls.setSpacing(-1);
 
 				dockableListButton.prefHeightProperty().bind(headerControls.heightProperty());
-				contentConfigButton.prefHeightProperty().bind(headerControls.heightProperty());
+				spaceConfigButton.prefHeightProperty().bind(headerControls.heightProperty());
 
 				regionWrapper.setRight(headerControls);
 				layoutWrapper.setBottom(regionWrapper);
 			}
 			case LEFT -> {
-				VBox headerControls = new VBox(new Group(dockableListButton), new Group(contentConfigButton));
-				headerControls.visibleProperty().bind(dockableListButton.visibleProperty().or(contentConfigButton.visibleProperty()));
+				VBox headerControls = new VBox(new Group(dockableListButton), new Group(spaceConfigButton));
+				headerControls.visibleProperty().bind(dockableListButton.visibleProperty().or(spaceConfigButton.visibleProperty()));
 				headerControls.getStyleClass().add("button-bar");
 				headerControls.setSpacing(-1);
 
 				dockableListButton.prefWidthProperty().bind(headerControls.widthProperty());
-				contentConfigButton.prefWidthProperty().bind(headerControls.widthProperty());
+				spaceConfigButton.prefWidthProperty().bind(headerControls.widthProperty());
 
 				regionWrapper.setBottom(headerControls);
 				layoutWrapper.setLeft(regionWrapper);
 			}
 			case RIGHT -> {
-				VBox headerControls = new VBox(new Group(dockableListButton), new Group(contentConfigButton));
-				headerControls.visibleProperty().bind(dockableListButton.visibleProperty().or(contentConfigButton.visibleProperty()));
+				VBox headerControls = new VBox(new Group(dockableListButton), new Group(spaceConfigButton));
+				headerControls.visibleProperty().bind(dockableListButton.visibleProperty().or(spaceConfigButton.visibleProperty()));
 				headerControls.getStyleClass().add("button-bar");
 				headerControls.setSpacing(-1);
 
 				dockableListButton.prefWidthProperty().bind(headerControls.widthProperty());
-				contentConfigButton.prefWidthProperty().bind(headerControls.widthProperty());
+				spaceConfigButton.prefWidthProperty().bind(headerControls.widthProperty());
 
 				regionWrapper.setBottom(headerControls);
 				layoutWrapper.setRight(regionWrapper);
@@ -155,11 +155,11 @@ public class HeaderView extends StackPane implements DockableDestination {
 	}
 
 	@Nonnull
-	private Button createContentConfigButton() {
+	private Button createSpaceConfigButton() {
 		Button button = new Button("…");
 		button.setOnMousePressed(e -> {
-			if (getParentContent() instanceof TabbedContent tabbedContent) {
-				button.setContextMenu(menuFactory.get().build(tabbedContent));
+			if (getParentSpace() instanceof TabbedDockSpace tabbed) {
+				button.setContextMenu(menuFactory.get().build(tabbed));
 			} else {
 				button.setContextMenu(null);
 			}
@@ -180,7 +180,7 @@ public class HeaderView extends StackPane implements DockableDestination {
 	}
 
 	@Nonnull
-	public ObjectProperty<TabbedContentMenuFactory> menuFactoryProperty() {
+	public ObjectProperty<TabbedSpaceMenuFactory> menuFactoryProperty() {
 		return menuFactory;
 	}
 
@@ -211,14 +211,14 @@ public class HeaderView extends StackPane implements DockableDestination {
 
 	@Nullable
 	@Override
-	public Content getParentContent() {
-		return BentoUtils.getOrParent(getParent(), Content.class);
+	public DockSpace getParentSpace() {
+		return BentoUtils.getOrParent(getParent(), DockSpace.class);
 	}
 
 	@Nullable
 	@Override
-	public ContentLayout getParentLayout() {
-		return BentoUtils.getOrParent(getParent(), ContentLayout.class);
+	public DockLayout getParentLayout() {
+		return BentoUtils.getOrParent(getParent(), DockLayout.class);
 	}
 
 	@Nonnull
@@ -314,8 +314,8 @@ public class HeaderView extends StackPane implements DockableDestination {
 
 	@Override
 	public boolean toggleCollapsed() {
-		SplitContentLayout parentSplitLayout = BentoUtils.getOrParent(this, SplitContentLayout.class);
-		ContentLayout parentLayout = BentoUtils.getOrParent(this, ContentLayout.class);
+		SplitDockLayout parentSplitLayout = BentoUtils.getOrParent(this, SplitDockLayout.class);
+		DockLayout parentLayout = BentoUtils.getOrParent(this, DockLayout.class);
 
 		// Skip if there is no parent split or parent layout.
 		if (parentSplitLayout == null || parentLayout == null)
@@ -326,8 +326,8 @@ public class HeaderView extends StackPane implements DockableDestination {
 
 	@Override
 	public boolean isCollapsed() {
-		SplitContentLayout parentSplitLayout = BentoUtils.getOrParent(this, SplitContentLayout.class);
-		ContentLayout parentLayout = BentoUtils.getOrParent(this, ContentLayout.class);
+		SplitDockLayout parentSplitLayout = BentoUtils.getOrParent(this, SplitDockLayout.class);
+		DockLayout parentLayout = BentoUtils.getOrParent(this, DockLayout.class);
 
 		// Skip if there is no parent split or parent layout.
 		if (parentSplitLayout == null || parentLayout == null)
@@ -376,11 +376,11 @@ public class HeaderView extends StackPane implements DockableDestination {
 					if (center != null && center.isFocusTraversable())
 						center.requestFocus();
 				} else {
-					ContentLayout parentLayout = getParentLayout();
+					DockLayout parentLayout = getParentLayout();
 					if (parentLayout != null) {
 						// Replace the content with the "empty-content" template.
-						Content replacementContent = parentView.bento.newEmptyContent(parentLayout);
-						setCenter(replacementContent.getBackingRegion());
+						DockSpace replacement = parentView.bento.newEmptySpace(parentLayout);
+						setCenter(replacement.getBackingRegion());
 					} else {
 						// Shouldn't happen unless the header-view doesn't belong to a scene graph.
 						// In that case it doesn't really matter anyways.
@@ -392,7 +392,7 @@ public class HeaderView extends StackPane implements DockableDestination {
 			// Setup drag-n-drop
 			BentoUtils.setupCommonDragSupport(this, true);
 			setOnDragDropped(e -> {
-				// Ensure the origin is a header, and the target is a content-region.
+				// Ensure the origin is a header, and the target is a region that can be dropped into.
 				Header headerSource = BentoUtils.getHeader(bento, e);
 				if (headerSource == null)
 					return;
@@ -412,13 +412,13 @@ public class HeaderView extends StackPane implements DockableDestination {
 
 		@Nullable
 		@Override
-		public Content getParentContent() {
-			return parentView.getParentContent();
+		public DockSpace getParentSpace() {
+			return parentView.getParentSpace();
 		}
 
 		@Nullable
 		@Override
-		public ContentLayout getParentLayout() {
+		public DockLayout getParentLayout() {
 			return parentView.getParentLayout();
 		}
 

@@ -21,13 +21,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.content.TabbedContent;
+import software.coley.bentofx.space.TabbedDockSpace;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderView;
-import software.coley.bentofx.impl.content.ImplTabbedContent;
-import software.coley.bentofx.layout.ContentLayout;
+import software.coley.bentofx.impl.space.ImplTabbedDockSpace;
+import software.coley.bentofx.layout.DockLayout;
 import software.coley.bentofx.path.DockablePath;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class BentoUtils {
 	}
 
 	/**
-	 * This goofy method exists because {@link DragEvent#getGestureSource()} is {@code null} when content
+	 * This goofy method exists because {@link DragEvent#getGestureSource()} is {@code null} when anything
 	 * is dragged between two separate {@link Stage}s. When that occurs we need some way to recover the {@link Header}.
 	 *
 	 * @param bento
@@ -81,13 +81,13 @@ public class BentoUtils {
 		DockablePath path = bento.findDockable(event);
 		if (path == null)
 			return null;
-		if (path.content() instanceof ImplTabbedContent tabbedContent)
-			return tabbedContent.getHeader(path.dockable());
+		if (path.space() instanceof ImplTabbedDockSpace tabbed)
+			return tabbed.getHeader(path.dockable());
 		return null;
 	}
 
 	/**
-	 * Finds a node's associated {@link Dockable} and selects it within a {@link TabbedContent}.
+	 * Finds a node's associated {@link Dockable} and selects it within a {@link TabbedDockSpace}.
 	 *
 	 * @param node
 	 * 		Some node that belongs to a {@link Dockable}.
@@ -99,19 +99,19 @@ public class BentoUtils {
 		if (node == null)
 			return false;
 
-		TabbedContent content = getParent(node, TabbedContent.class);
-		if (content == null)
+		TabbedDockSpace space = getParent(node, TabbedDockSpace.class);
+		if (space == null)
 			return false;
 
-		for (Dockable dockable : content.getDockables())
+		for (Dockable dockable : space.getDockables())
 			if (dockable.nodeProperty().get() instanceof Parent dockableParent && containsChild(dockableParent, node))
-				return content.selectDockable(dockable);
+				return space.selectDockable(dockable);
 
 		return false;
 	}
 
 	/**
-	 * Finds a node's associated {@link Dockable} and attempts to close it within a {@link TabbedContent}.
+	 * Finds a node's associated {@link Dockable} and attempts to close it within a {@link TabbedDockSpace}.
 	 *
 	 * @param node
 	 * 		Some node that belongs to a {@link Dockable}.
@@ -123,13 +123,13 @@ public class BentoUtils {
 		if (node == null)
 			return false;
 
-		TabbedContent content = getParent(node, TabbedContent.class);
-		if (content == null)
+		TabbedDockSpace space = getParent(node, TabbedDockSpace.class);
+		if (space == null)
 			return false;
 
-		for (Dockable dockable : content.getDockables())
+		for (Dockable dockable : space.getDockables())
 			if (dockable.nodeProperty().get() instanceof Parent dockableParent && containsChild(dockableParent, node))
-				return content.closeDockable(dockable);
+				return space.closeDockable(dockable);
 
 		return false;
 	}
@@ -527,12 +527,12 @@ public class BentoUtils {
 	 *     at javafx.graphics/com.sun.javafx.scene.NodeHelper.pickNodeLocal(NodeHelper.java:128)
 	 *     at javafx.graphics/javafx.scene.Node.pickNode(Node.java:5203)
 	 * }</pre>
-	 * The 3rd party manipulation is leading to a state where their {@link Node} inside a {@link TabbedContent}
+	 * The 3rd party manipulation is leading to a state where their {@link Node} inside a {@link TabbedDockSpace}
 	 * is trying to re-parent itself when temporarily removed with drag-n-drop behavior.
 	 * The easiest fix is the make it so that the picking logic in {@code Node.pickNode} skips it.
 	 * If you encounter this problem, just call this method on your misbehaving 3rd party control.
 	 * <p/>
-	 * We will be using this on all {@link ContentLayout} implementations to ensure this does not ever happen.
+	 * We will be using this on all {@link DockLayout} implementations to ensure this does not ever happen.
 	 *
 	 * @param node
 	 * 		Node to disable when it has no parent.

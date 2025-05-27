@@ -11,20 +11,20 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.builder.ContentBuilder;
+import software.coley.bentofx.builder.LayoutBuilder;
 import software.coley.bentofx.builder.DockableBuilder;
-import software.coley.bentofx.content.Content;
-import software.coley.bentofx.content.EmptyContentDisplayFactory;
+import software.coley.bentofx.space.DockSpace;
+import software.coley.bentofx.space.EmptyDisplayFactory;
 import software.coley.bentofx.dockable.DockableCloseListener;
 import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.dockable.DockableMoveListener;
 import software.coley.bentofx.dockable.DockableOpenListener;
 import software.coley.bentofx.dockable.DockableSelectListener;
 import software.coley.bentofx.header.Header;
-import software.coley.bentofx.impl.content.ImplEmptyContent;
-import software.coley.bentofx.layout.ContentLayout;
-import software.coley.bentofx.layout.LeafContentLayout;
-import software.coley.bentofx.layout.RootContentLayout;
+import software.coley.bentofx.impl.space.ImplEmptyDockSpace;
+import software.coley.bentofx.layout.DockLayout;
+import software.coley.bentofx.layout.LeafDockLayout;
+import software.coley.bentofx.layout.RootDockLayout;
 import software.coley.bentofx.util.BentoUtils;
 import software.coley.bentofx.util.DragDropStage;
 
@@ -36,19 +36,19 @@ public class ImplBento implements Bento {
 	private final List<DockableMoveListener> moveListeners = new CopyOnWriteArrayList<>();
 	private final List<DockableCloseListener> closeListeners = new CopyOnWriteArrayList<>();
 	private final List<DockableSelectListener> selectListeners = new CopyOnWriteArrayList<>();
-	private final ObservableList<RootContentLayout> rootLayouts = FXCollections.observableArrayList();
-	private EmptyContentDisplayFactory emptyDisplayFactory = EmptyContentDisplayFactory.BLANK;
+	private final ObservableList<RootDockLayout> rootLayouts = FXCollections.observableArrayList();
+	private EmptyDisplayFactory emptyDisplayFactory = EmptyDisplayFactory.BLANK;
 
 	@Nonnull
 	@Override
-	public ObservableList<RootContentLayout> getRootLayouts() {
+	public ObservableList<RootDockLayout> getRootLayouts() {
 		return FXCollections.unmodifiableObservableList(rootLayouts);
 	}
 
 	@Nonnull
 	@Override
-	public ContentBuilder newContentBuilder() {
-		return new ContentBuilder(this);
+	public LayoutBuilder newLayoutBuilder() {
+		return new LayoutBuilder(this);
 	}
 
 	@Nonnull
@@ -59,23 +59,23 @@ public class ImplBento implements Bento {
 
 	@Nonnull
 	@Override
-	public Content newEmptyContent(@Nonnull ContentLayout parentLayout) {
+	public DockSpace newEmptySpace(@Nonnull DockLayout parentLayout) {
 		Node display = emptyDisplayFactory.build(parentLayout);
-		return new ImplEmptyContent(BentoUtils.newIdentifier(), display);
+		return new ImplEmptyDockSpace(BentoUtils.newIdentifier(), display);
 	}
 
 	@Override
-	public void setEmptyDisplayFactory(@Nullable EmptyContentDisplayFactory factory) {
+	public void setEmptyDisplayFactory(@Nullable EmptyDisplayFactory factory) {
 		if (factory == null)
-			factory = EmptyContentDisplayFactory.BLANK;
+			factory = EmptyDisplayFactory.BLANK;
 		emptyDisplayFactory = factory;
 	}
 
 	@Nonnull
 	@Override
 	public Stage newStageForDroppedHeader(@Nonnull DockableDestination source, @Nonnull Header header) {
-		ContentBuilder builder = newContentBuilder();
-		LeafContentLayout layout = builder.leaf(builder.tabbed(Side.TOP, header.getDockable()));
+		LayoutBuilder builder = newLayoutBuilder();
+		LeafDockLayout layout = builder.leaf(builder.tabbed(Side.TOP, header.getDockable()));
 		Region region = builder.root(layout).getBackingRegion();
 
 		// TODO: Need to allow users to control the creation of stages/scenes
@@ -160,12 +160,12 @@ public class ImplBento implements Bento {
 		return selectListeners;
 	}
 
-	public void registerRoot(@Nonnull RootContentLayout layout) {
+	public void registerRoot(@Nonnull RootDockLayout layout) {
 		if (!rootLayouts.contains(layout))
 			rootLayouts.add(layout);
 	}
 
-	public void unregisterRoot(@Nonnull RootContentLayout layout) {
+	public void unregisterRoot(@Nonnull RootDockLayout layout) {
 		rootLayouts.remove(layout);
 	}
 }

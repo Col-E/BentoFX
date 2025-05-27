@@ -8,12 +8,12 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.RegionBacked;
-import software.coley.bentofx.content.Content;
+import software.coley.bentofx.space.DockSpace;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderRegion;
 import software.coley.bentofx.header.HeaderView;
-import software.coley.bentofx.layout.ContentLayout;
-import software.coley.bentofx.layout.SplitContentLayout;
+import software.coley.bentofx.layout.DockLayout;
+import software.coley.bentofx.layout.SplitDockLayout;
 
 import java.util.List;
 
@@ -24,16 +24,16 @@ import java.util.List;
  */
 public interface DockableDestination extends RegionBacked, Identifiable {
 	/**
-	 * @return First immediate {@link Content}.
+	 * @return First immediate {@link DockSpace}.
 	 */
 	@Nullable
-	Content getParentContent();
+	DockSpace getParentSpace();
 
 	/**
-	 * @return First immediate {@link ContentLayout}.
+	 * @return First immediate {@link DockLayout}.
 	 */
 	@Nullable
-	ContentLayout getParentLayout();
+	DockLayout getParentLayout();
 
 	/**
 	 * @return Contained {@link Dockable} items.
@@ -56,7 +56,7 @@ public interface DockableDestination extends RegionBacked, Identifiable {
 	boolean canReceiveDragGroup(int dragGroup);
 
 	/**
-	 * @return {@code true} if this region allows splitting this space into {@link SplitContentLayout}.
+	 * @return {@code true} if this region allows splitting this space into {@link SplitDockLayout}.
 	 */
 	boolean canSplit();
 
@@ -157,7 +157,7 @@ public interface DockableDestination extends RegionBacked, Identifiable {
 
 	/**
 	 * Toggle this destination being <i>"collapsed"</i>.
-	 * This is only supported if this space is on the edge of a parent {@link SplitContentLayout}.
+	 * This is only supported if this space is on the edge of a parent {@link SplitDockLayout}.
 	 *
 	 * @return {@code true} when toggled successfully.
 	 *

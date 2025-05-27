@@ -1,4 +1,4 @@
-package software.coley.bentofx.impl.content;
+package software.coley.bentofx.impl.space;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -8,17 +8,17 @@ import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.Identifiable;
-import software.coley.bentofx.content.SingleContent;
+import software.coley.bentofx.space.SingleDockSpace;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.impl.ImplBento;
 
-public class ImplSingleContent extends ImplContentBase implements SingleContent {
+public class ImplSingleDockSpace extends ImplDockSpaceBase implements SingleDockSpace {
 	private final ObjectProperty<Side> headerSideProperty = new SimpleObjectProperty<>();
 	private final String identifier;
 	private final Dockable dockable;
 
-	public ImplSingleContent(@Nonnull ImplBento bento, @Nonnull Dockable dockable, @Nullable Side headerSide, @Nonnull String identifier) {
+	public ImplSingleDockSpace(@Nonnull ImplBento bento, @Nonnull Dockable dockable, @Nullable Side headerSide, @Nonnull String identifier) {
 		super(bento);
 
 		this.dockable = dockable;

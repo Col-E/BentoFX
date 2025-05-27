@@ -10,7 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Tooltip;
 import software.coley.bentofx.Identifiable;
-import software.coley.bentofx.content.Content;
+import software.coley.bentofx.space.DockSpace;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderView;
 import software.coley.bentofx.util.ConstantIcon;
@@ -22,14 +22,14 @@ import software.coley.bentofx.util.ConstantIcon;
  */
 public interface Dockable extends Identifiable {
 	/**
-	 * @return Content to display when this dockable is active in its parent {@link Content}.
+	 * @return Content to display when this dockable is active in its parent {@link DockSpace}.
 	 */
 	@Nonnull
 	ObjectProperty<Node> nodeProperty();
 
 	/**
 	 * Drag groups are arbitrary integers. By default, any dockable's group is {@code 0}.
-	 * Any two dockables that have different groups cannot be dragged by the user to reside in the same {@link Content}.
+	 * Any two dockables that have different groups cannot be dragged by the user to reside in the same {@link DockSpace}.
 	 *
 	 * @return This dockable's group.
 	 */

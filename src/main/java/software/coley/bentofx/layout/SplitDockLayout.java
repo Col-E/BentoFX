@@ -6,11 +6,11 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 
 /**
- * Outlines a middle level layout that holds a multiple child {@link ContentLayout} separated with a {@link SplitPane}.
+ * Outlines a middle level layout that holds a multiple child {@link DockLayout} separated with a {@link SplitPane}.
  *
  * @author Matt Coley
  */
-non-sealed public interface SplitContentLayout extends ContentLayout {
+non-sealed public interface SplitDockLayout extends DockLayout {
 	/**
 	 * @return Split orientation property.
 	 */
@@ -25,7 +25,7 @@ non-sealed public interface SplitContentLayout extends ContentLayout {
 	 * @param size
 	 * 		New size <i>(In pixels)</i> to grant the given child in the containing {@link SplitPane}.
 	 */
-	void setChildSize(@Nonnull ContentLayout childLayout, double size);
+	void setChildSize(@Nonnull DockLayout childLayout, double size);
 
 	/**
 	 * Reallocates the size of a given child in the containing {@link SplitPane}.
@@ -35,7 +35,7 @@ non-sealed public interface SplitContentLayout extends ContentLayout {
 	 * @param percent
 	 * 		New size <i>(In percent)</i> to grant the given child in the containing {@link SplitPane}.
 	 */
-	void setChildPercent(@Nonnull ContentLayout childLayout, double percent);
+	void setChildPercent(@Nonnull DockLayout childLayout, double percent);
 
 	/**
 	 * Disables dividers in the contained {@link SplitPane} so that the given child layout cannot be resized.
@@ -46,9 +46,9 @@ non-sealed public interface SplitContentLayout extends ContentLayout {
 	 *        {@code true} to allow the user to resize the given child.
 	 *        {@code false} to prevent resizing.
 	 *
-	 * @see #isChildResizable(ContentLayout)
+	 * @see #isChildResizable(DockLayout)
 	 */
-	void setChildResizable(@Nonnull ContentLayout childLayout, boolean resizable);
+	void setChildResizable(@Nonnull DockLayout childLayout, boolean resizable);
 
 	/**
 	 * @param childLayout
@@ -56,9 +56,9 @@ non-sealed public interface SplitContentLayout extends ContentLayout {
 	 *
 	 * @return Current resizable state of the given child layout.
 	 *
-	 * @see #setChildResizable(ContentLayout, boolean)
+	 * @see #setChildResizable(DockLayout, boolean)
 	 */
-	boolean isChildResizable(@Nonnull ContentLayout childLayout);
+	boolean isChildResizable(@Nonnull DockLayout childLayout);
 
 	/**
 	 * @param childLayout
@@ -69,7 +69,7 @@ non-sealed public interface SplitContentLayout extends ContentLayout {
 	 * @return {@code true} when the state has changed to the requested state or already is in the given state.
 	 * {@code false} when the state couldn't be changed.
 	 */
-	boolean setChildCollapsed(@Nonnull ContentLayout childLayout, boolean collapsed);
+	boolean setChildCollapsed(@Nonnull DockLayout childLayout, boolean collapsed);
 
 	/**
 	 * @param childLayout
@@ -77,5 +77,5 @@ non-sealed public interface SplitContentLayout extends ContentLayout {
 	 *
 	 * @return Collapsed state.
 	 */
-	boolean isChildCollapsed(@Nonnull ContentLayout childLayout);
+	boolean isChildCollapsed(@Nonnull DockLayout childLayout);
 }

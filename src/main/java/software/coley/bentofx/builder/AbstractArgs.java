@@ -3,7 +3,7 @@ package software.coley.bentofx.builder;
 import jakarta.annotation.Nonnull;
 import software.coley.bentofx.util.BentoUtils;
 
-public abstract class AbstractContentArgs<T extends AbstractContentArgs<T>> {
+public abstract class AbstractArgs<T extends AbstractArgs<T>> {
 	private String identifier = BentoUtils.newIdentifier();
 
 	@Nonnull

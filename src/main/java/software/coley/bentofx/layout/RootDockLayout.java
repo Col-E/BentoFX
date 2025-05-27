@@ -5,44 +5,44 @@ import jakarta.annotation.Nullable;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.RegionBacked;
-import software.coley.bentofx.content.Content;
-import software.coley.bentofx.content.EmptyContent;
+import software.coley.bentofx.space.DockSpace;
+import software.coley.bentofx.space.EmptyDockSpace;
 import software.coley.bentofx.dockable.Dockable;
-import software.coley.bentofx.path.ContentPath;
+import software.coley.bentofx.path.SpacePath;
 import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.path.LayoutPath;
 import software.coley.bentofx.path.PathBuilder;
 
 /**
- * This is the top level of any docking-enabled layout. By itself it acts very similar to {@link LeafContentLayout}
- * except that this houses a {@link ContentLayout} as its sole child.
+ * This is the top level of any docking-enabled layout. By itself it acts very similar to {@link LeafDockLayout}
+ * except that this houses a {@link DockLayout} as its sole child.
  *
  * @author Matt Coley
- * @see Bento#newContentBuilder()
+ * @see Bento#newLayoutBuilder()
  */
-public interface RootContentLayout extends Identifiable, RegionBacked {
+public interface RootDockLayout extends Identifiable, RegionBacked {
 	/**
-	 * Attempts to find a given {@link ContentLayout} from any child of any depth belonging to this root.
+	 * Attempts to find a given {@link DockLayout} from any child of any depth belonging to this root.
 	 * If a {@code null} is returned, then the given layout does not exist in any child belonging to this root.
 	 *
 	 * @param layout
 	 * 		Some layout to find.
 	 *
-	 * @return The path to the {@link ContentLayout} if found, otherwise {@code null}.
+	 * @return The path to the {@link DockLayout} if found, otherwise {@code null}.
 	 */
 	@Nullable
-	default LayoutPath findLayout(@Nonnull ContentLayout layout) {
+	default LayoutPath findLayout(@Nonnull DockLayout layout) {
 		return findLayout(layout.getIdentifier());
 	}
 
 	/**
-	 * Attempts to find a given {@link ContentLayout} from any child of any depth belonging to this root.
-	 * The identifier will be matched against {@link ContentLayout#getIdentifier()}.
+	 * Attempts to find a given {@link DockLayout} from any child of any depth belonging to this root.
+	 * The identifier will be matched against {@link DockLayout#getIdentifier()}.
 	 *
 	 * @param identifier
-	 * 		The identifier of some {@link ContentLayout} to find.
+	 * 		The identifier of some {@link DockLayout} to find.
 	 *
-	 * @return The path to the {@link ContentLayout} if found, otherwise {@code null}.
+	 * @return The path to the {@link DockLayout} if found, otherwise {@code null}.
 	 */
 	@Nullable
 	default LayoutPath findLayout(@Nonnull String identifier) {
@@ -50,37 +50,37 @@ public interface RootContentLayout extends Identifiable, RegionBacked {
 	}
 
 	/**
-	 * Attempts to find a given {@link Content} from any child {@link ContentLayout} of any depth belonging to this root.
-	 * If a {@code null} is returned, then the given content does not exist in any child {@link ContentLayout}
+	 * Attempts to find a given {@link DockSpace} from any child {@link DockLayout} of any depth belonging to this root.
+	 * If a {@code null} is returned, then the given content does not exist in any child {@link DockLayout}
 	 * belonging to this root.
 	 *
-	 * @param content
-	 * 		Some content to find.
+	 * @param space
+	 * 		Some space to find.
 	 *
 	 * @return The path to the {@link Dockable} if found, otherwise {@code null}.
 	 */
 	@Nullable
-	default ContentPath findContent(@Nonnull Content content) {
-		return findContent(content.getIdentifier());
+	default SpacePath findSpace(@Nonnull DockSpace space) {
+		return findSpace(space.getIdentifier());
 	}
 
 	/**
-	 * Attempts to find a given {@link Content} from any child {@link ContentLayout} of any depth belonging to this root.
-	 * The identifier will be matched against {@link Content#getIdentifier()}.
+	 * Attempts to find a given {@link DockSpace} from any child {@link DockLayout} of any depth belonging to this root.
+	 * The identifier will be matched against {@link DockSpace#getIdentifier()}.
 	 *
 	 * @param identifier
-	 * 		The identifier of some {@link Content} to find.
+	 * 		The identifier of some {@link DockSpace} to find.
 	 *
-	 * @return The path to the {@link Content} if found, otherwise {@code null}.
+	 * @return The path to the {@link DockSpace} if found, otherwise {@code null}.
 	 */
 	@Nullable
-	default ContentPath findContent(@Nonnull String identifier) {
-		return getLayout().findContent(newPathBuilder(), identifier);
+	default SpacePath findSpace(@Nonnull String identifier) {
+		return getLayout().findSpace(newPathBuilder(), identifier);
 	}
 
 	/**
-	 * Attempts to find a given {@link Dockable} from any child {@link Content} of any depth belonging to this root.
-	 * If a {@code null} is returned, then the given dockable does not exist in any child {@link ContentLayout}
+	 * Attempts to find a given {@link Dockable} from any child {@link DockSpace} of any depth belonging to this root.
+	 * If a {@code null} is returned, then the given dockable does not exist in any child {@link DockLayout}
 	 * belonging to this root.
 	 *
 	 * @param dockable
@@ -94,7 +94,7 @@ public interface RootContentLayout extends Identifiable, RegionBacked {
 	}
 
 	/**
-	 * Attempts to find a given {@link Dockable} from any child {@link Content} of any depth belonging to this root.
+	 * Attempts to find a given {@link Dockable} from any child {@link DockSpace} of any depth belonging to this root.
 	 * The identifier will be matched against {@link Dockable#getIdentifier()}.
 	 *
 	 * @param identifier
@@ -108,7 +108,7 @@ public interface RootContentLayout extends Identifiable, RegionBacked {
 	}
 
 	/**
-	 * Attempts to remove the given dockable from any child {@link Content} of any depth belonging to this root.
+	 * Attempts to remove the given dockable from any child {@link DockSpace} of any depth belonging to this root.
 	 * Be aware, this method will bypass {@link Dockable#closableProperty()}.
 	 *
 	 * @param dockable
@@ -121,7 +121,7 @@ public interface RootContentLayout extends Identifiable, RegionBacked {
 	}
 
 	/**
-	 * Attempts to close the given dockable from any child {@link Content} of any depth belonging to this root.
+	 * Attempts to close the given dockable from any child {@link DockSpace} of any depth belonging to this root.
 	 *
 	 * @param dockable
 	 * 		Dockable to close.
@@ -138,17 +138,17 @@ public interface RootContentLayout extends Identifiable, RegionBacked {
 	 * @param layout
 	 * 		The new child layout to assign.
 	 */
-	void setLayout(@Nonnull ContentLayout layout);
+	void setLayout(@Nonnull DockLayout layout);
 
 	/**
 	 * @return The current child layout.
 	 */
 	@Nonnull
-	ContentLayout getLayout();
+	DockLayout getLayout();
 
 	/**
-	 * Removes any {@link #getLayout() child layot} and replaces it with a {@link LeafContentLayout}
-	 * containing a single {@link EmptyContent}.
+	 * Removes any {@link #getLayout() child layot} and replaces it with a {@link LeafDockLayout}
+	 * containing a single {@link EmptyDockSpace}.
 	 */
 	void clearLayout();
 

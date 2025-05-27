@@ -15,15 +15,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.builder.ContentBuilder;
+import software.coley.bentofx.builder.LayoutBuilder;
 import software.coley.bentofx.builder.DockableBuilder;
-import software.coley.bentofx.builder.SplitContentLayoutArgs;
-import software.coley.bentofx.builder.TabbedContentArgs;
-import software.coley.bentofx.content.TabbedContent;
+import software.coley.bentofx.builder.SplitLayoutArgs;
+import software.coley.bentofx.builder.TabbedSpaceArgs;
+import software.coley.bentofx.space.TabbedDockSpace;
 import software.coley.bentofx.dockable.Dockable;
-import software.coley.bentofx.layout.LeafContentLayout;
-import software.coley.bentofx.layout.RootContentLayout;
-import software.coley.bentofx.layout.SplitContentLayout;
+import software.coley.bentofx.layout.LeafDockLayout;
+import software.coley.bentofx.layout.RootDockLayout;
+import software.coley.bentofx.layout.SplitDockLayout;
 
 public class BoxApp extends Application {
 	private static final int TOOLS = 1;
@@ -33,8 +33,8 @@ public class BoxApp extends Application {
 		stage.setWidth(1000);
 		stage.setHeight(700);
 
-		// TODO: Allow making dockables configure their containing DockableDestination/ContentLayout when splitting/new-windowing
-		//  - For example, tool tabs in new windows making their TabbedContent#canSplitProperty = false
+		// TODO: Allow making dockables configure their containing DockableDestination/DockLayout when splitting/new-windowing
+		//  - For example, tool tabs in new windows making their TabbedDockSpace#canSplitProperty = false
 
 		Bento bento = Bento.newBento();
 		bento.addDockableOpenListener((path, dockable) -> System.out.println("Opened: " + dockable.titleProperty().get()));
@@ -42,9 +42,9 @@ public class BoxApp extends Application {
 		bento.addDockableCloseListener((path, dockable) -> System.out.println("Closed: " + dockable.titleProperty().get()));
 		bento.addDockableSelectListener((path, dockable) -> System.out.println("Select: " + dockable.titleProperty().get()));
 
-		ContentBuilder builder = bento.newContentBuilder();
+		LayoutBuilder builder = bento.newLayoutBuilder();
 
-		TabbedContent toolTabs = builder.tabbed(new TabbedContentArgs()
+		TabbedDockSpace toolTabs = builder.tabbed(new TabbedSpaceArgs()
 				.setSide(Side.LEFT)
 				.addDockables(
 						buildDockable(builder, 1, "Workspace").withClosable(false).withDragGroup(TOOLS),
@@ -53,7 +53,7 @@ public class BoxApp extends Application {
 				)
 				.setAutoPruneWhenEmpty(false)
 				.setCanSplit(false));
-		TabbedContent workTabs = builder.tabbed(
+		TabbedDockSpace workTabs = builder.tabbed(
 				Side.TOP,
 				makeDockable(builder, 1, "Class1"),
 				makeDockable(builder, 2, "Class2"),
@@ -61,7 +61,7 @@ public class BoxApp extends Application {
 				makeDockable(builder, 4, "Class4"),
 				makeDockable(builder, 5, "Class5")
 		);
-		SplitContentLayout topSplit = builder.split(new SplitContentLayoutArgs()
+		SplitDockLayout topSplit = builder.split(new SplitLayoutArgs()
 				.setOrientation(Orientation.HORIZONTAL)
 				.addChildren(
 						builder.fitLeaf(toolTabs),
@@ -69,7 +69,7 @@ public class BoxApp extends Application {
 				)
 				.setChildrenSizes(200)
 		);
-		LeafContentLayout bottomLeaf = builder.fitLeaf(builder.tabbed(new TabbedContentArgs()
+		LeafDockLayout bottomLeaf = builder.fitLeaf(builder.tabbed(new TabbedSpaceArgs()
 				.setSide(Side.BOTTOM)
 				.addDockables(
 						buildDockable(builder, 1, "Logging").withClosable(false).withDragGroup(TOOLS),
@@ -84,12 +84,12 @@ public class BoxApp extends Application {
 				.setAutoPruneWhenEmpty(false)
 				.setCanSplit(false))
 		);
-		SplitContentLayout layout = builder.split(new SplitContentLayoutArgs()
+		SplitDockLayout layout = builder.split(new SplitLayoutArgs()
 				.setOrientation(Orientation.VERTICAL)
 				.addChildren(topSplit, bottomLeaf)
 				.setChildrenPercentages(-1, 0.2) // The negative first value lets us specifically only configure the 2nd child
 		);
-		RootContentLayout root = builder.root(layout);
+		RootDockLayout root = builder.root(layout);
 		Scene scene = new Scene(root.getBackingRegion());
 		scene.getStylesheets().add(Bento.getCssPath());
 		stage.setScene(scene);
@@ -98,18 +98,18 @@ public class BoxApp extends Application {
 	}
 
 	@Nonnull
-	private Dockable makeDockable(@Nonnull ContentBuilder builder, int i, @Nonnull String title) {
+	private Dockable makeDockable(@Nonnull LayoutBuilder builder, int i, @Nonnull String title) {
 		return buildDockable(builder, i, title).build();
 	}
 
 	@Nonnull
-	private DockableBuilder buildDockable(@Nonnull ContentBuilder builder, int i, @Nonnull String title) {
-		Label content = new Label("<" + title + ":" + i + ">");
-		content.setFocusTraversable(true); // Set to facilitate detection of 'focusWithinProperty()' in TabbedContent implementations
+	private DockableBuilder buildDockable(@Nonnull LayoutBuilder builder, int i, @Nonnull String title) {
+		Label label = new Label("<" + title + ":" + i + ">");
+		label.setFocusTraversable(true); // Set to facilitate detection of 'focusWithinProperty()' in TabbedDockSpace implementations
 		return builder.dockable()
 				.withTitle(title)
 				.withIconFactory(dockable -> makeIcon(i))
-				.withNode(content)
+				.withNode(label)
 				.withCachedContextMenu(true)
 				.withContextMenuFactory(dockable -> new ContextMenu(
 						new MenuItem("Menu for : " + dockable.titleProperty().get()),
@@ -133,11 +133,11 @@ public class BoxApp extends Application {
 		return icon;
 	}
 
-	private static void addSideItems(@Nonnull ContextMenu menu, @Nonnull TabbedContent tabbedContent) {
+	private static void addSideItems(@Nonnull ContextMenu menu, @Nonnull TabbedDockSpace tabbed) {
 		for (Side side : Side.values()) {
-			Label graphic = new Label(side == tabbedContent.sideProperty().get() ? "✓" : " ");
+			Label graphic = new Label(side == tabbed.sideProperty().get() ? "✓" : " ");
 			MenuItem item = new MenuItem(side.name(), graphic);
-			item.setOnAction(ignored -> tabbedContent.sideProperty().set(side));
+			item.setOnAction(ignored -> tabbed.sideProperty().set(side));
 			menu.getItems().add(item);
 		}
 	}

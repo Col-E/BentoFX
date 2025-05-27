@@ -12,16 +12,16 @@ import software.coley.bentofx.Bento;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.RegionBacked;
-import software.coley.bentofx.content.EmptyContent;
-import software.coley.bentofx.content.SingleContent;
-import software.coley.bentofx.content.TabbedContent;
+import software.coley.bentofx.space.EmptyDockSpace;
+import software.coley.bentofx.space.SingleDockSpace;
+import software.coley.bentofx.space.TabbedDockSpace;
 import software.coley.bentofx.header.Header;
-import software.coley.bentofx.impl.content.ImplSingleContent;
-import software.coley.bentofx.impl.content.ImplTabbedContent;
-import software.coley.bentofx.layout.ContentLayout;
-import software.coley.bentofx.layout.LeafContentLayout;
-import software.coley.bentofx.layout.SplitContentLayout;
-import software.coley.bentofx.path.ContentPath;
+import software.coley.bentofx.impl.space.ImplSingleDockSpace;
+import software.coley.bentofx.impl.space.ImplTabbedDockSpace;
+import software.coley.bentofx.layout.DockLayout;
+import software.coley.bentofx.layout.LeafDockLayout;
+import software.coley.bentofx.layout.SplitDockLayout;
+import software.coley.bentofx.path.SpacePath;
 import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.path.LayoutPath;
 import software.coley.bentofx.path.PathBuilder;
@@ -33,21 +33,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("NullableProblems") // Mute the shading of "orientationProperty" not being annotated
-public class ImplSplitContentLayout extends SplitPane implements SplitContentLayout {
+public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 	private static final Selector DIVIDER_SELECTOR = Selector.createSelector(".split-pane-divider");
 	private final Bento bento;
 	private final List<ChildData> children;
 	private final String identifier;
 
-	public ImplSplitContentLayout(@Nonnull Bento bento, @Nonnull Orientation orientation, @Nonnull ContentLayout... childLayouts) {
+	public ImplSplitDockLayout(@Nonnull Bento bento, @Nonnull Orientation orientation, @Nonnull DockLayout... childLayouts) {
 		this(bento, orientation, Arrays.asList(childLayouts), BentoUtils.newIdentifier());
 	}
 
-	public ImplSplitContentLayout(@Nonnull Bento bento, @Nonnull Orientation orientation, @Nonnull List<ContentLayout> childLayouts) {
+	public ImplSplitDockLayout(@Nonnull Bento bento, @Nonnull Orientation orientation, @Nonnull List<DockLayout> childLayouts) {
 		this(bento, orientation, childLayouts, BentoUtils.newIdentifier());
 	}
 
-	public ImplSplitContentLayout(@Nonnull Bento bento, @Nonnull Orientation orientation, @Nonnull List<ContentLayout> childLayouts, @Nonnull String identifier) {
+	public ImplSplitDockLayout(@Nonnull Bento bento, @Nonnull Orientation orientation, @Nonnull List<DockLayout> childLayouts, @Nonnull String identifier) {
 		this.bento = bento;
 		this.identifier = identifier;
 		this.children = childLayouts.stream()
@@ -58,10 +58,10 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 
 		orientationProperty().set(orientation);
 
-		List<Region> contentLayoutRegions = childLayouts.stream()
+		List<Region> layoutRegions = childLayouts.stream()
 				.map(RegionBacked::getBackingRegion)
 				.toList();
-		getItems().addAll(contentLayoutRegions);
+		getItems().addAll(layoutRegions);
 	}
 
 	@Nonnull
@@ -85,7 +85,7 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 	@Nullable
 	@Override
 	public LayoutPath findLayout(@Nonnull PathBuilder builder, @Nonnull String id) {
-		for (ContentLayout childLayout : getChildLayouts()) {
+		for (DockLayout childLayout : getChildLayouts()) {
 			LayoutPath path = childLayout.findLayout(builder.inside(childLayout), id);
 			if (path != null)
 				return path;
@@ -95,9 +95,9 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 
 	@Nullable
 	@Override
-	public ContentPath findContent(@Nonnull PathBuilder builder, @Nonnull String id) {
-		for (ContentLayout childLayout : getChildLayouts()) {
-			ContentPath path = childLayout.findContent(builder.inside(childLayout), id);
+	public SpacePath findSpace(@Nonnull PathBuilder builder, @Nonnull String id) {
+		for (DockLayout childLayout : getChildLayouts()) {
+			SpacePath path = childLayout.findSpace(builder.inside(childLayout), id);
 			if (path != null)
 				return path;
 		}
@@ -107,7 +107,7 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 	@Nullable
 	@Override
 	public DockablePath findDockable(@Nonnull PathBuilder builder, @Nonnull String id) {
-		for (ContentLayout childLayout : getChildLayouts()) {
+		for (DockLayout childLayout : getChildLayouts()) {
 			DockablePath path = childLayout.findDockable(builder.inside(childLayout), id);
 			if (path != null)
 				return path;
@@ -117,7 +117,7 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 
 	@Override
 	public boolean removeDockable(@Nonnull Dockable dockable) {
-		for (ContentLayout childLayout : getChildLayouts())
+		for (DockLayout childLayout : getChildLayouts())
 			if (childLayout.removeDockable(dockable))
 				return true;
 		return false;
@@ -125,14 +125,14 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 
 	@Override
 	public boolean closeDockable(@Nonnull Dockable dockable) {
-		for (ContentLayout childLayout : getChildLayouts())
+		for (DockLayout childLayout : getChildLayouts())
 			if (childLayout.closeDockable(dockable))
 				return true;
 		return false;
 	}
 
 	@Override
-	public boolean replaceChildLayout(@Nonnull ContentLayout child, @Nonnull ContentLayout replacement) {
+	public boolean replaceChildLayout(@Nonnull DockLayout child, @Nonnull DockLayout replacement) {
 		if (child == replacement)
 			return true;
 		int i = indexOfChild(child);
@@ -155,7 +155,7 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 	}
 
 	@Override
-	public boolean removeChildLayout(@Nonnull ContentLayout child) {
+	public boolean removeChildLayout(@Nonnull DockLayout child) {
 		int i = indexOfChild(child);
 		if (i >= 0 && i < getItems().size()) {
 			children.remove(i);
@@ -163,7 +163,7 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 
 			// Propagate scene graph simplification upwards.
 			if (children.size() == 1) {
-				ContentLayout parentLayout = getParentLayout();
+				DockLayout parentLayout = getParentLayout();
 				if (parentLayout != null)
 					parentLayout.replaceChildLayout(this, children.getFirst().layout);
 			} else if (children.isEmpty())
@@ -176,12 +176,12 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 
 	@Nonnull
 	@Override
-	public List<ContentLayout> getChildLayouts() {
+	public List<DockLayout> getChildLayouts() {
 		return children.stream().map(c -> c.layout).toList();
 	}
 
 	@Override
-	public void setChildSize(@Nonnull ContentLayout childLayout, double size) {
+	public void setChildSize(@Nonnull DockLayout childLayout, double size) {
 		BentoUtils.scheduleWhenShown(this, split -> {
 			int i = indexOfChild(childLayout);
 			double max = orientationProperty().get() == Orientation.HORIZONTAL ? getWidth() : getHeight();
@@ -199,7 +199,7 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 	}
 
 	@Override
-	public void setChildPercent(@Nonnull ContentLayout childLayout, double percent) {
+	public void setChildPercent(@Nonnull DockLayout childLayout, double percent) {
 		BentoUtils.scheduleWhenShown(this, split -> {
 			int i = indexOfChild(childLayout);
 
@@ -214,7 +214,7 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 	}
 
 	@Override
-	public void setChildResizable(@Nonnull ContentLayout childLayout, boolean resizable) {
+	public void setChildResizable(@Nonnull DockLayout childLayout, boolean resizable) {
 		// Get our direct children that are dividers.
 		List<Node> dividers = getChildren().stream().filter(DIVIDER_SELECTOR::applies).toList();
 		if (dividers.isEmpty())
@@ -239,7 +239,7 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 	}
 
 	@Override
-	public boolean isChildResizable(@Nonnull ContentLayout childLayout) {
+	public boolean isChildResizable(@Nonnull DockLayout childLayout) {
 		List<Node> dividers = BentoUtils.getChildren(this, ".split-pane-divider");
 		if (dividers.isEmpty())
 			return true;
@@ -263,7 +263,7 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 	}
 
 	@Override
-	public boolean setChildCollapsed(@Nonnull ContentLayout childLayout, boolean collapsed) {
+	public boolean setChildCollapsed(@Nonnull DockLayout childLayout, boolean collapsed) {
 		ChildData data = getChildData(childLayout);
 		if (data == null)
 			return false;
@@ -279,12 +279,12 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 		// Get the appropriate "side" the child holds for its contents.
 		// We essentially just want to get where the "Header" children in the child are positioned.
 		Side childSide = switch (childLayout) {
-			case LeafContentLayout leafContentLayout -> switch (leafContentLayout.getContent()) {
-				case EmptyContent ignored -> null;
-				case SingleContent singleContent -> singleContent.headerSideProperty().get();
-				case TabbedContent tabbedContent -> tabbedContent.sideProperty().get();
+			case LeafDockLayout leaf -> switch (leaf.getSpace()) {
+				case EmptyDockSpace ignored -> null;
+				case SingleDockSpace single -> single.headerSideProperty().get();
+				case TabbedDockSpace tabbed -> tabbed.sideProperty().get();
 			};
-			case SplitContentLayout ignored -> null;
+			case SplitDockLayout ignored -> null;
 		};
 
 		// Skip if the child layout doesn't have any computable side for its headers (or lack thereof).
@@ -315,9 +315,9 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 			if (i <= children.size() - 2 && children.get(i + 1).collapsed)
 				return false;
 
-			// Remove/collapse content if possible.
-			LeafContentLayout leaf = (LeafContentLayout) childLayout;
-			if (leaf.getContent() instanceof ImplTabbedContent tabbedChild) {
+			// Remove/collapse space if possible.
+			LeafDockLayout leaf = (LeafDockLayout) childLayout;
+			if (leaf.getSpace() instanceof ImplTabbedDockSpace tabbedChild) {
 				Dockable dockable = tabbedChild.selectedDockableProperty().get();
 				if (dockable == null)
 					return false;
@@ -342,7 +342,7 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 				tabbedChild.selectDockable(null);
 				data.collapsed = true;
 				return true;
-			} else if (leaf.getContent() instanceof ImplSingleContent singleChild) {
+			} else if (leaf.getSpace() instanceof ImplSingleDockSpace singleChild) {
 				Header childHeader = singleChild.getHeader();
 				if (childHeader == null)
 					return false;
@@ -362,7 +362,7 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 	}
 
 	@Override
-	public boolean isChildCollapsed(@Nonnull ContentLayout childLayout) {
+	public boolean isChildCollapsed(@Nonnull DockLayout childLayout) {
 		for (ChildData child : children)
 			if (child.layout == childLayout)
 				return child.collapsed;
@@ -375,7 +375,7 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 		return bento;
 	}
 
-	private int indexOfChild(@Nonnull ContentLayout childLayout) {
+	private int indexOfChild(@Nonnull DockLayout childLayout) {
 		for (int i = 0; i < children.size(); i++)
 			if (children.get(i).layout == childLayout)
 				return i;
@@ -383,7 +383,7 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 	}
 
 	@Nullable
-	private ChildData getChildData(@Nonnull ContentLayout childLayout) {
+	private ChildData getChildData(@Nonnull DockLayout childLayout) {
 		for (ChildData child : children)
 			if (child.layout == childLayout)
 				return child;
@@ -391,15 +391,15 @@ public class ImplSplitContentLayout extends SplitPane implements SplitContentLay
 	}
 
 	/**
-	 * Mutable data holder for some given {@link ContentLayout} child.
+	 * Mutable data holder for some given {@link DockLayout} child.
 	 */
 	private static class ChildData {
-		private final ContentLayout layout;
+		private final DockLayout layout;
 		private double lastWidth;
 		private double lastHeight;
 		private boolean collapsed;
 
-		private ChildData(@Nonnull ContentLayout layout) {
+		private ChildData(@Nonnull DockLayout layout) {
 			this.layout = layout;
 		}
 	}

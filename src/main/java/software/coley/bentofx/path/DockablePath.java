@@ -1,10 +1,10 @@
 package software.coley.bentofx.path;
 
 import jakarta.annotation.Nonnull;
-import software.coley.bentofx.content.Content;
+import software.coley.bentofx.space.DockSpace;
 import software.coley.bentofx.dockable.Dockable;
-import software.coley.bentofx.layout.ContentLayout;
-import software.coley.bentofx.layout.RootContentLayout;
+import software.coley.bentofx.layout.DockLayout;
+import software.coley.bentofx.layout.RootDockLayout;
 
 import java.util.List;
 
@@ -12,17 +12,17 @@ import java.util.List;
  * @param rootLayout
  * 		Root layout.
  * @param layouts
- * 		Hierarchy of content layouts, with the first being the immediate child layout of the root and the last being the holder of the content.
- * @param content
- * 		Content holding the dockable.
+ * 		Hierarchy of layouts, with the first being the immediate child layout of the root and the last being the holder of the space.
+ * @param space
+ * 		Space holding the dockable.
  * @param dockable
  * 		Target dockable.
  */
-public record DockablePath(@Nonnull RootContentLayout rootLayout,
-                           @Nonnull List<ContentLayout> layouts,
-                           @Nonnull Content content,
+public record DockablePath(@Nonnull RootDockLayout rootLayout,
+                           @Nonnull List<DockLayout> layouts,
+                           @Nonnull DockSpace space,
                            @Nonnull Dockable dockable) {
-	public DockablePath(@Nonnull ContentPath contentPath, @Nonnull Dockable dockable) {
-		this(contentPath.rootLayout(), contentPath.layouts(), contentPath.content(), dockable);
+	public DockablePath(@Nonnull SpacePath spacePath, @Nonnull Dockable dockable) {
+		this(spacePath.rootLayout(), spacePath.layouts(), spacePath.space(), dockable);
 	}
 }

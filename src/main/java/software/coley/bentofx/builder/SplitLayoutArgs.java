@@ -2,14 +2,14 @@ package software.coley.bentofx.builder;
 
 import jakarta.annotation.Nonnull;
 import javafx.geometry.Orientation;
-import software.coley.bentofx.layout.ContentLayout;
+import software.coley.bentofx.layout.DockLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SplitContentLayoutArgs extends AbstractContentLayoutArgs<SplitContentLayoutArgs> {
-	private final List<ContentLayout> children = new ArrayList<>();
+public class SplitLayoutArgs extends AbstractLayoutArgs<SplitLayoutArgs> {
+	private final List<DockLayout> children = new ArrayList<>();
 	private final List<Double> childrenSizes = new ArrayList<>();
 	private final List<Double> childrenPercentages = new ArrayList<>();
 	private Orientation orientation = Orientation.HORIZONTAL;
@@ -20,23 +20,23 @@ public class SplitContentLayoutArgs extends AbstractContentLayoutArgs<SplitConte
 	}
 
 	@Nonnull
-	public SplitContentLayoutArgs setOrientation(@Nonnull Orientation orientation) {
+	public SplitLayoutArgs setOrientation(@Nonnull Orientation orientation) {
 		this.orientation = orientation;
 		return this;
 	}
 
 	@Nonnull
-	public List<ContentLayout> getChildren() {
+	public List<DockLayout> getChildren() {
 		return children;
 	}
 
 	@Nonnull
-	public SplitContentLayoutArgs addChildren(@Nonnull ContentLayout... children) {
+	public SplitLayoutArgs addChildren(@Nonnull DockLayout... children) {
 		return addChildren(Arrays.asList(children));
 	}
 
 	@Nonnull
-	public SplitContentLayoutArgs addChildren(@Nonnull List<? extends ContentLayout> children) {
+	public SplitLayoutArgs addChildren(@Nonnull List<? extends DockLayout> children) {
 		this.children.addAll(children);
 		return this;
 	}
@@ -47,7 +47,7 @@ public class SplitContentLayoutArgs extends AbstractContentLayoutArgs<SplitConte
 	}
 
 	@Nonnull
-	public SplitContentLayoutArgs setChildrenSizes(double... sizes) {
+	public SplitLayoutArgs setChildrenSizes(double... sizes) {
 		childrenSizes.clear();
 		for (double size : sizes)
 			childrenSizes.add(size);
@@ -60,7 +60,7 @@ public class SplitContentLayoutArgs extends AbstractContentLayoutArgs<SplitConte
 	}
 
 	@Nonnull
-	public SplitContentLayoutArgs setChildrenPercentages(double... percentages) {
+	public SplitLayoutArgs setChildrenPercentages(double... percentages) {
 		childrenPercentages.clear();
 		for (double percentage : percentages)
 			childrenPercentages.add(percentage);

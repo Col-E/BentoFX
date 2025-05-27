@@ -2,40 +2,40 @@ package software.coley.bentofx.path;
 
 import jakarta.annotation.Nonnull;
 import software.coley.bentofx.dockable.Dockable;
-import software.coley.bentofx.content.Content;
-import software.coley.bentofx.layout.ContentLayout;
-import software.coley.bentofx.layout.RootContentLayout;
+import software.coley.bentofx.space.DockSpace;
+import software.coley.bentofx.layout.DockLayout;
+import software.coley.bentofx.layout.RootDockLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class PathBuilder {
-	private final RootContentLayout rootContentLayout;
-	private final List<ContentLayout> contentLayouts;
-	private Content content;
+	private final RootDockLayout rootDockLayout;
+	private final List<DockLayout> dockLayouts;
+	private DockSpace space;
 	private Dockable dockable;
 
-	public PathBuilder(@Nonnull RootContentLayout rootContentLayout) {
-		this(rootContentLayout, Collections.emptyList());
+	public PathBuilder(@Nonnull RootDockLayout rootDockLayout) {
+		this(rootDockLayout, Collections.emptyList());
 	}
 
-	public PathBuilder(@Nonnull RootContentLayout rootContentLayout, @Nonnull List<ContentLayout> contentLayouts) {
-		this.rootContentLayout = rootContentLayout;
-		this.contentLayouts = contentLayouts;
-	}
-
-	@Nonnull
-	public PathBuilder inside(@Nonnull ContentLayout layout) {
-		List<ContentLayout> newContentLayouts = new ArrayList<>(contentLayouts.size() + 1);
-		newContentLayouts.addAll(contentLayouts);
-		newContentLayouts.add(layout);
-		return new PathBuilder(rootContentLayout, newContentLayouts);
+	public PathBuilder(@Nonnull RootDockLayout rootDockLayout, @Nonnull List<DockLayout> dockLayouts) {
+		this.rootDockLayout = rootDockLayout;
+		this.dockLayouts = dockLayouts;
 	}
 
 	@Nonnull
-	public PathBuilder withContent(@Nonnull Content content) {
-		this.content = content;
+	public PathBuilder inside(@Nonnull DockLayout layout) {
+		List<DockLayout> newDockLayouts = new ArrayList<>(dockLayouts.size() + 1);
+		newDockLayouts.addAll(dockLayouts);
+		newDockLayouts.add(layout);
+		return new PathBuilder(rootDockLayout, newDockLayouts);
+	}
+
+	@Nonnull
+	public PathBuilder withSpace(@Nonnull DockSpace space) {
+		this.space = space;
 		return this;
 	}
 
@@ -47,22 +47,22 @@ public class PathBuilder {
 
 	@Nonnull
 	public LayoutPath buildLayoutPath() {
-		return new LayoutPath(rootContentLayout, contentLayouts);
+		return new LayoutPath(rootDockLayout, dockLayouts);
 	}
 
 	@Nonnull
-	public ContentPath buildContentPath() {
-		if (content == null)
-			throw new IllegalStateException("Incomplete path, missing 'Content' type");
-		return new ContentPath(rootContentLayout, contentLayouts, content);
+	public SpacePath buildSpacePath() {
+		if (space == null)
+			throw new IllegalStateException("Incomplete path, missing 'Space' type");
+		return new SpacePath(rootDockLayout, dockLayouts, space);
 	}
 
 	@Nonnull
 	public DockablePath buildDockablePath() {
-		if (content == null)
-			throw new IllegalStateException("Incomplete path, missing 'Content' type");
+		if (space == null)
+			throw new IllegalStateException("Incomplete path, missing 'Space' type");
 		if (dockable == null)
 			throw new IllegalStateException("Incomplete path, missing 'Dockable' type");
-		return new DockablePath(rootContentLayout, contentLayouts, content, dockable);
+		return new DockablePath(rootDockLayout, dockLayouts, space, dockable);
 	}
 }

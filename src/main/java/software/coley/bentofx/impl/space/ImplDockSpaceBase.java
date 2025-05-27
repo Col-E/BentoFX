@@ -1,4 +1,4 @@
-package software.coley.bentofx.impl.content;
+package software.coley.bentofx.impl.space;
 
 import jakarta.annotation.Nonnull;
 import javafx.scene.canvas.Canvas;
@@ -6,12 +6,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import software.coley.bentofx.impl.ImplBento;
 
-public abstract class ImplContentBase extends StackPane {
+public abstract class ImplDockSpaceBase extends StackPane {
 	protected final ImplBento bento;
 	protected final BorderPane layout = new BorderPane();
 	protected final Canvas canvas = new Canvas();
 
-	protected ImplContentBase(@Nonnull ImplBento bento) {
+	protected ImplDockSpaceBase(@Nonnull ImplBento bento) {
 		this.bento = bento;
 
 		// Fit the canvas to the container size

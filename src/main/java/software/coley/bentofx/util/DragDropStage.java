@@ -7,7 +7,7 @@ import javafx.stage.WindowEvent;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.header.Header;
-import software.coley.bentofx.layout.RootContentLayout;
+import software.coley.bentofx.layout.RootDockLayout;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -68,12 +68,12 @@ public class DragDropStage extends Stage {
 	 * <b>Context:</b>These stages are created when a user drags a {@link Header} into empty space.
 	 * <p/>
 	 * Most of the time, if a user drags the {@link Header} from this stage into some other place in another stage,
-	 * leaving this stage with nothing in {@link RootContentLayout#getLayout()} it would be ideal to automatically
+	 * leaving this stage with nothing in {@link RootDockLayout#getLayout()} it would be ideal to automatically
 	 * close this window.
 	 * <p/>
 	 * When this is {@code tre} we do just that.
 	 *
-	 * @return {@code true} when this stage should auto-close if its {@link RootContentLayout#getLayout()} is cleared/removed.
+	 * @return {@code true} when this stage should auto-close if its {@link RootDockLayout#getLayout()} is cleared/removed.
 	 */
 	public boolean isAutoCloseWhenEmpty() {
 		return autoCloseWhenEmpty;

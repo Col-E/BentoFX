@@ -1,4 +1,4 @@
-package software.coley.bentofx.content;
+package software.coley.bentofx.space;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -7,9 +7,9 @@ import software.coley.bentofx.Bento;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.RegionBacked;
 import software.coley.bentofx.dockable.Dockable;
-import software.coley.bentofx.layout.ContentLayout;
-import software.coley.bentofx.layout.RootContentLayout;
-import software.coley.bentofx.path.ContentPath;
+import software.coley.bentofx.layout.DockLayout;
+import software.coley.bentofx.layout.RootDockLayout;
+import software.coley.bentofx.path.SpacePath;
 import software.coley.bentofx.path.LayoutPath;
 import software.coley.bentofx.util.BentoUtils;
 
@@ -19,44 +19,44 @@ import java.util.List;
  * Outlines the lowest level of any docking-enabled layout.
  *
  * @author Matt Coley
- * @see Bento#newContentBuilder()
- * @see EmptyContent
- * @see SingleContent
- * @see TabbedContent
+ * @see Bento#newLayoutBuilder()
+ * @see EmptyDockSpace
+ * @see SingleDockSpace
+ * @see TabbedDockSpace
  */
-public sealed interface Content extends RegionBacked, Identifiable permits EmptyContent, SingleContent, TabbedContent {
+public sealed interface DockSpace extends RegionBacked, Identifiable permits EmptyDockSpace, SingleDockSpace, TabbedDockSpace {
 	/**
-	 * Lookup the parent layout of this content.
+	 * Lookup the parent layout of this space.
 	 * <ul>
 	 *     <li>Will be {@code null} if there is no {@link Node#getParent()}.</li>
 	 * </ul>
 	 *
-	 * @return Immediate parent layout containing this content.
+	 * @return Immediate parent layout containing this space.
 	 */
 	@Nullable
-	default ContentLayout getParentLayout() {
-		return BentoUtils.getParent(getBackingRegion(), ContentLayout.class);
+	default DockLayout getParentLayout() {
+		return BentoUtils.getParent(getBackingRegion(), DockLayout.class);
 	}
 
 	/**
-	 * Lookup the root layout of this content.
+	 * Lookup the root layout of this space.
 	 * <ul>
-	 *     <li>Will be {@code null} if there is no chained {@link Node#getParent()} that is a {@link RootContentLayout}.</li>
+	 *     <li>Will be {@code null} if there is no chained {@link Node#getParent()} that is a {@link RootDockLayout}.</li>
 	 * </ul>
 	 *
-	 * @return Root layout containing this content.
+	 * @return Root layout containing this space.
 	 */
 	@Nullable
-	default RootContentLayout getRootLayout() {
-		return BentoUtils.getOrParent(getBackingRegion(), RootContentLayout.class);
+	default RootDockLayout getRootLayout() {
+		return BentoUtils.getOrParent(getBackingRegion(), RootDockLayout.class);
 	}
 
 	/**
-	 * @return Path to this content from the root.
+	 * @return Path to this space from the root.
 	 */
 	@Nullable
-	default ContentPath getPath() {
-		ContentLayout layout = getParentLayout();
+	default SpacePath getPath() {
+		DockLayout layout = getParentLayout();
 		if (layout == null)
 			return null;
 
@@ -64,11 +64,11 @@ public sealed interface Content extends RegionBacked, Identifiable permits Empty
 		if (layoutPath == null)
 			return null;
 
-		return new ContentPath(layoutPath, this);
+		return new SpacePath(layoutPath, this);
 	}
 
 	/**
-	 * @return Unmodifiable list of current dockables in this content.
+	 * @return Unmodifiable list of current dockables in this space.
 	 */
 	@Nonnull
 	List<Dockable> getDockables();
@@ -82,7 +82,7 @@ public sealed interface Content extends RegionBacked, Identifiable permits Empty
 	 * 		Dockable to add.
 	 *
 	 * @return {@code true} when added successfully.
-	 * {@code false} when not added <i>(Due to already being present, or not supported by this content implementation)</i>.
+	 * {@code false} when not added <i>(Due to already being present, or not supported by this space implementation)</i>.
 	 */
 	boolean addDockable(@Nonnull Dockable dockable);
 
@@ -95,7 +95,7 @@ public sealed interface Content extends RegionBacked, Identifiable permits Empty
 	 * 		Dockable to remove.
 	 *
 	 * @return {@code true} when removed successfully.
-	 * {@code false} when not removed <i>(Due to not being present, or not supported by this content implementation)</i>.
+	 * {@code false} when not removed <i>(Due to not being present, or not supported by this space implementation)</i>.
 	 *
 	 * @see #closeDockable(Dockable)
 	 */
@@ -108,14 +108,14 @@ public sealed interface Content extends RegionBacked, Identifiable permits Empty
 	 * 		Dockable to close.
 	 *
 	 * @return {@code true} when closed successfully.
-	 * {@code false} when not closed <i>(Due to not being present or closable, or not supported by this content implementation)</i>.
+	 * {@code false} when not closed <i>(Due to not being present or closable, or not supported by this space implementation)</i>.
 	 *
 	 * @see #removeDockable(Dockable)
 	 */
 	boolean closeDockable(@Nonnull Dockable dockable);
 
 	/**
-	 * @return {@code true} when this content contains zero {@link Dockable} items.
+	 * @return {@code true} when this space contains zero {@link Dockable} items.
 	 */
 	default boolean isEmpty() {
 		return getDockables().isEmpty();

@@ -3,19 +3,19 @@ package software.coley.bentofx.builder;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import javafx.geometry.Side;
-import software.coley.bentofx.content.TabbedContentMenuFactory;
+import software.coley.bentofx.space.TabbedSpaceMenuFactory;
 import software.coley.bentofx.dockable.Dockable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TabbedContentArgs extends AbstractContentArgs<TabbedContentArgs> {
+public class TabbedSpaceArgs extends AbstractArgs<TabbedSpaceArgs> {
 	private final List<Dockable> dockables = new ArrayList<>();
 	private boolean autoPruneWhenEmpty = true;
 	private boolean canSplit = true;
 	private Side side = Side.TOP;
-	private TabbedContentMenuFactory menuFactory;
+	private TabbedSpaceMenuFactory menuFactory;
 
 	@Nonnull
 	public List<Dockable> getDockables() {
@@ -23,12 +23,12 @@ public class TabbedContentArgs extends AbstractContentArgs<TabbedContentArgs> {
 	}
 
 	@Nonnull
-	public TabbedContentArgs addDockables(@Nonnull Dockable... dockables) {
+	public TabbedSpaceArgs addDockables(@Nonnull Dockable... dockables) {
 		return addDockables(Arrays.asList(dockables));
 	}
 
 	@Nonnull
-	public TabbedContentArgs addDockables(@Nonnull DockableBuilder... builders) {
+	public TabbedSpaceArgs addDockables(@Nonnull DockableBuilder... builders) {
 		List<Dockable> dockables = Arrays.stream(builders)
 				.map(DockableBuilder::build)
 				.toList();
@@ -36,7 +36,7 @@ public class TabbedContentArgs extends AbstractContentArgs<TabbedContentArgs> {
 	}
 
 	@Nonnull
-	public TabbedContentArgs addDockables(@Nonnull List<Dockable> dockables) {
+	public TabbedSpaceArgs addDockables(@Nonnull List<Dockable> dockables) {
 		this.dockables.addAll(dockables);
 		return this;
 	}
@@ -46,7 +46,7 @@ public class TabbedContentArgs extends AbstractContentArgs<TabbedContentArgs> {
 	}
 
 	@Nonnull
-	public TabbedContentArgs setAutoPruneWhenEmpty(boolean autoPruneWhenEmpty) {
+	public TabbedSpaceArgs setAutoPruneWhenEmpty(boolean autoPruneWhenEmpty) {
 		this.autoPruneWhenEmpty = autoPruneWhenEmpty;
 		return this;
 	}
@@ -56,7 +56,7 @@ public class TabbedContentArgs extends AbstractContentArgs<TabbedContentArgs> {
 	}
 
 	@Nonnull
-	public TabbedContentArgs setCanSplit(boolean canSplit) {
+	public TabbedSpaceArgs setCanSplit(boolean canSplit) {
 		this.canSplit = canSplit;
 		return this;
 	}
@@ -67,18 +67,18 @@ public class TabbedContentArgs extends AbstractContentArgs<TabbedContentArgs> {
 	}
 
 	@Nonnull
-	public TabbedContentArgs setSide(@Nonnull Side side) {
+	public TabbedSpaceArgs setSide(@Nonnull Side side) {
 		this.side = side;
 		return this;
 	}
 
 	@Nullable
-	public TabbedContentMenuFactory getMenuFactory() {
+	public TabbedSpaceMenuFactory getMenuFactory() {
 		return menuFactory;
 	}
 
 	@Nonnull
-	public TabbedContentArgs setMenuFactory(@Nullable TabbedContentMenuFactory menuFactory) {
+	public TabbedSpaceArgs setMenuFactory(@Nullable TabbedSpaceMenuFactory menuFactory) {
 		this.menuFactory = menuFactory;
 		return this;
 	}

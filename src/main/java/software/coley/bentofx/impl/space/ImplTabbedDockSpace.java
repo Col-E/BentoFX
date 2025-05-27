@@ -1,4 +1,4 @@
-package software.coley.bentofx.impl.content;
+package software.coley.bentofx.impl.space;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -10,29 +10,29 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Side;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.Identifiable;
-import software.coley.bentofx.builder.TabbedContentArgs;
-import software.coley.bentofx.content.TabbedContent;
-import software.coley.bentofx.content.TabbedContentMenuFactory;
+import software.coley.bentofx.builder.TabbedSpaceArgs;
+import software.coley.bentofx.space.TabbedDockSpace;
+import software.coley.bentofx.space.TabbedSpaceMenuFactory;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderView;
 import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.impl.ImplDockable;
-import software.coley.bentofx.path.ContentPath;
+import software.coley.bentofx.path.SpacePath;
 import software.coley.bentofx.path.DockablePath;
 
 import java.util.List;
 
-public class ImplTabbedContent extends ImplContentBase implements TabbedContent {
+public class ImplTabbedDockSpace extends ImplDockSpaceBase implements TabbedDockSpace {
 	private final BooleanProperty autoPruneWhenEmptyProperty;
 	private final BooleanProperty canSplitProperty;
 	private final ObjectProperty<Dockable> selectedProperty;
 	private final ObjectProperty<Side> sideProperty;
-	private final ObjectProperty<TabbedContentMenuFactory> tabbedContentMenuFactoryProperty;
+	private final ObjectProperty<TabbedSpaceMenuFactory> tabbedSpaceMenuFactoryProperty;
 	private final String identifier;
 	private HeaderView view;
 
-	public ImplTabbedContent(@Nonnull ImplBento bento, @Nonnull TabbedContentArgs args) {
+	public ImplTabbedDockSpace(@Nonnull ImplBento bento, @Nonnull TabbedSpaceArgs args) {
 		super(bento);
 
 		Side side = args.getSide();
@@ -42,7 +42,7 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 		this.selectedProperty = new SimpleObjectProperty<>();
 		this.autoPruneWhenEmptyProperty = new SimpleBooleanProperty(args.isAutoPruneWhenEmpty());
 		this.canSplitProperty = new SimpleBooleanProperty(args.isCanSplit());
-		this.tabbedContentMenuFactoryProperty = new SimpleObjectProperty<>(args.getMenuFactory());
+		this.tabbedSpaceMenuFactoryProperty = new SimpleObjectProperty<>(args.getMenuFactory());
 
 		// Setup initial header view
 		setupHeaderView(side, args.getDockables());
@@ -70,7 +70,7 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 
 		// Create a new view for the given side.
 		view = new HeaderView(bento, side);
-		view.menuFactoryProperty().bind(tabbedContentMenuFactoryProperty);
+		view.menuFactoryProperty().bind(tabbedSpaceMenuFactoryProperty);
 		for (Dockable dockable : dockables)
 			view.addDockable(dockable);
 		layout.setCenter(view);
@@ -87,12 +87,12 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 	}
 
 	@Nonnull
-	public TabbedContentArgs toBuilderArgs() {
-		return new TabbedContentArgs()
+	public TabbedSpaceArgs toBuilderArgs() {
+		return new TabbedSpaceArgs()
 				.setAutoPruneWhenEmpty(autoPruneWhenEmptyProperty.get())
 				.setCanSplit(canSplitProperty.get())
 				.setSide(sideProperty.get())
-				.setMenuFactory(tabbedContentMenuFactoryProperty.get())
+				.setMenuFactory(tabbedSpaceMenuFactoryProperty.get())
 				.setIdentifier(identifier);
 	}
 
@@ -140,14 +140,14 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 		if (!dockable.closableProperty().get())
 			return false;
 
-		ContentPath contentPath = getPath();
-		if (contentPath == null)
+		SpacePath spacePath = getPath();
+		if (spacePath == null)
 			return false;
 
 		if (!removeDockable(dockable))
 			return false;
 
-		((ImplDockable) dockable).onClose(new DockablePath(contentPath, dockable));
+		((ImplDockable) dockable).onClose(new DockablePath(spacePath, dockable));
 		return true;
 	}
 
@@ -182,7 +182,7 @@ public class ImplTabbedContent extends ImplContentBase implements TabbedContent 
 
 	@Nonnull
 	@Override
-	public ObjectProperty<TabbedContentMenuFactory> menuFactoryProperty() {
-		return tabbedContentMenuFactoryProperty;
+	public ObjectProperty<TabbedSpaceMenuFactory> menuFactoryProperty() {
+		return tabbedSpaceMenuFactoryProperty;
 	}
 }

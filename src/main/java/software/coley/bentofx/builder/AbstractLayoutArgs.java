@@ -2,7 +2,7 @@ package software.coley.bentofx.builder;
 
 import jakarta.annotation.Nonnull;
 
-public class AbstractContentLayoutArgs<T extends AbstractContentLayoutArgs<T>> extends AbstractContentArgs<T> {
+public class AbstractLayoutArgs<T extends AbstractLayoutArgs<T>> extends AbstractArgs<T> {
 	private boolean resizeWithParent = true;
 
 	public boolean isResizeWithParent() {
