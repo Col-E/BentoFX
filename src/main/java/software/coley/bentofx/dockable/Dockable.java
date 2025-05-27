@@ -9,14 +9,14 @@ import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.Pane;
 import software.coley.bentofx.Identifiable;
-import software.coley.bentofx.space.DockSpace;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderView;
+import software.coley.bentofx.space.DockSpace;
 import software.coley.bentofx.util.ConstantIcon;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Outline of some item to display, generally tied to a {@link Header} inside a {@link HeaderView}.
@@ -43,6 +43,24 @@ public interface Dockable extends Identifiable {
 	 */
 	@Nonnull
 	ObjectProperty<DockSpace> spaceProperty();
+
+	/**
+	 * Runs the given action in the current containing space, if present.
+	 *
+	 * @param action
+	 * 		Action to run on the current containing {@link #spaceProperty() space}.
+	 *
+	 * @return {@code true} when there is a containing space.
+	 * {@code false} when there is no containing space.
+	 */
+	default boolean inSpace(@Nonnull Consumer<DockSpace> action) {
+		DockSpace space = spaceProperty().get();
+		if (space != null) {
+			action.accept(space);
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Drag groups are arbitrary integers. By default, any dockable's group is {@code 0}.
