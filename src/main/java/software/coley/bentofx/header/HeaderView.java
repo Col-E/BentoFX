@@ -365,11 +365,10 @@ public class HeaderView extends StackPane implements DockableDestination {
 			// Always show selected content
 			parentView.headerRegion.selectedProperty().addListener((ob, old, cur) -> {
 				// Always clear binding before handling any kind of update
-				centerProperty().unbind();
 
 				if (cur != null) {
-					// Bind the current selected dockable's content.
-					centerProperty().bind(cur.nodeProperty());
+					// Set the current selected dockable's content.
+					setCenter(cur.nodeProperty().get());
 
 					// If the new content is focusable, focus it.
 					Node center = getCenter();
