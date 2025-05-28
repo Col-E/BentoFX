@@ -338,9 +338,12 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 				setChildSize(childLayout, newSize);
 				setChildResizable(childLayout, false);
 
+				// Mark this child as collapsed. We need to do this before we clear the selection
+				// so that any state change in the child as a result sees "oh we are collapsed now".
+				data.collapsed = true;
+
 				// Deselect any dockable since we are now collapsed
 				tabbedChild.selectDockable(null);
-				data.collapsed = true;
 				return true;
 			} else if (leaf.getSpace() instanceof ImplSingleDockSpace singleChild) {
 				Header childHeader = singleChild.getHeader();

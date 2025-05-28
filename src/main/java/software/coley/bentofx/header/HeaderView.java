@@ -384,7 +384,7 @@ public class HeaderView extends StackPane implements DockableDestination {
 						center.requestFocus();
 				} else {
 					DockLayout parentLayout = getParentLayout();
-					if (parentLayout != null) {
+					if (parentLayout != null && !isCollapsed()) {
 						// Replace the content with the "empty-content" template.
 						DockSpace replacement = parentView.bento.newEmptySpace(parentLayout);
 						setCenter(replacement.getBackingRegion());
