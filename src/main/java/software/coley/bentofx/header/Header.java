@@ -141,7 +141,8 @@ public class Header extends Group {
 				ContextMenu menu = cachedContextMenu;
 				if (menu == null) {
 					DockableMenuFactory factory = dockable.contextMenuFactoryProperty().getValue();
-					menu = factory.build(dockable);
+					if (factory != null)
+						menu = factory.build(dockable);
 
 					// Cache for next time
 					if (dockable.cachedContextMenuProperty().get())
