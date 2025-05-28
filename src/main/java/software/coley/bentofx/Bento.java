@@ -4,16 +4,12 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.stage.Stage;
-import software.coley.bentofx.builder.LayoutBuilder;
 import software.coley.bentofx.builder.DockableBuilder;
-import software.coley.bentofx.space.DockSpace;
-import software.coley.bentofx.space.EmptyDockSpace;
-import software.coley.bentofx.space.EmptyDisplayFactory;
-import software.coley.bentofx.space.SingleDockSpace;
-import software.coley.bentofx.space.TabbedDockSpace;
+import software.coley.bentofx.builder.LayoutBuilder;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableCloseListener;
 import software.coley.bentofx.dockable.DockableDestination;
@@ -26,9 +22,14 @@ import software.coley.bentofx.layout.DockLayout;
 import software.coley.bentofx.layout.LeafDockLayout;
 import software.coley.bentofx.layout.RootDockLayout;
 import software.coley.bentofx.layout.SplitDockLayout;
-import software.coley.bentofx.path.SpacePath;
 import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.path.LayoutPath;
+import software.coley.bentofx.path.SpacePath;
+import software.coley.bentofx.space.DockSpace;
+import software.coley.bentofx.space.EmptyDisplayFactory;
+import software.coley.bentofx.space.EmptyDockSpace;
+import software.coley.bentofx.space.SingleDockSpace;
+import software.coley.bentofx.space.TabbedDockSpace;
 import software.coley.bentofx.util.BentoUtils;
 
 import java.net.URL;
@@ -95,6 +96,21 @@ public interface Bento {
 	Stage newStageForDroppedHeader(@Nonnull DockableDestination source, @Nonnull Header header);
 
 	/**
+	 * @param sourceScene
+	 * 		Optional origin scene to copy stylesheets from.
+	 * @param dockable
+	 * 		Dockable to place in the newly created stage.
+	 * @param width
+	 * 		Initial stage width.
+	 * @param height
+	 * 		Initial stage height.
+	 *
+	 * @return The new stage for the dockable.
+	 */
+	@Nonnull
+	Stage newStageForDockable(@Nullable Scene sourceScene, @Nonnull Dockable dockable, double width, double height);
+
+	/**
 	 * @param identifier
 	 * 		The identifier of some {@link DockLayout} to find and replace.
 	 * @param replacementProvider
@@ -132,9 +148,8 @@ public interface Bento {
 		DockLayout parent = path.layouts().getLast();
 		switch (parent) {
 			case LeafDockLayout leaf -> leaf.setSpace(replacementProvider.get());
-			case SplitDockLayout ignored ->
-					throw new IllegalStateException(SplitDockLayout.class.getSimpleName() +
-							" should never have a direct child " + DockSpace.class.getSimpleName());
+			case SplitDockLayout ignored -> throw new IllegalStateException(SplitDockLayout.class.getSimpleName() +
+					" should never have a direct child " + DockSpace.class.getSimpleName());
 		}
 		return true;
 	}
@@ -307,6 +322,7 @@ public interface Bento {
 	 * 		Dockable to remove.
 	 *
 	 * @return {@code true} if removed. {@code false} if not removed.
+	 *
 	 * @see #closeDockable(Dockable)
 	 */
 	default boolean removeDockable(@Nonnull Dockable dockable) {
@@ -324,6 +340,7 @@ public interface Bento {
 	 * 		Dockable to remove.
 	 *
 	 * @return {@code true} if closed. {@code false} if not closed.
+	 *
 	 * @see #removeDockable(Dockable)
 	 */
 	default boolean closeDockable(@Nonnull Dockable dockable) {

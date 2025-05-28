@@ -11,10 +11,9 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.builder.LayoutBuilder;
 import software.coley.bentofx.builder.DockableBuilder;
-import software.coley.bentofx.space.DockSpace;
-import software.coley.bentofx.space.EmptyDisplayFactory;
+import software.coley.bentofx.builder.LayoutBuilder;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableCloseListener;
 import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.dockable.DockableMoveListener;
@@ -25,6 +24,8 @@ import software.coley.bentofx.impl.space.ImplEmptyDockSpace;
 import software.coley.bentofx.layout.DockLayout;
 import software.coley.bentofx.layout.LeafDockLayout;
 import software.coley.bentofx.layout.RootDockLayout;
+import software.coley.bentofx.space.DockSpace;
+import software.coley.bentofx.space.EmptyDisplayFactory;
 import software.coley.bentofx.util.BentoUtils;
 import software.coley.bentofx.util.DragDropStage;
 
@@ -74,16 +75,25 @@ public class ImplBento implements Bento {
 	@Nonnull
 	@Override
 	public Stage newStageForDroppedHeader(@Nonnull DockableDestination source, @Nonnull Header header) {
+		Scene sourceScene = source.getBackingRegion().getScene();
+		double width = source.getBackingRegion().getWidth();
+		double height = source.getBackingRegion().getHeight();
+		Dockable dockable = header.getDockable();
+		return newStageForDockable(sourceScene, dockable, width, height);
+	}
+
+	@Nonnull
+	@Override
+	public Stage newStageForDockable(@Nullable Scene sourceScene, @Nonnull Dockable dockable, double width, double height) {
 		LayoutBuilder builder = newLayoutBuilder();
-		LeafDockLayout layout = builder.leaf(builder.tabbed(Side.TOP, header.getDockable()));
+		LeafDockLayout layout = builder.leaf(builder.tabbed(Side.TOP, dockable));
 		Region region = builder.root(layout).getBackingRegion();
 
 		// TODO: Need to allow users to control the creation of stages/scenes
 		Stage stage = new DragDropStage(true);
-		Scene scene = new Scene(region, source.getBackingRegion().getWidth(), source.getBackingRegion().getHeight());
+		Scene scene = new Scene(region, width, height);
 		stage.setScene(scene);
 
-		Scene sourceScene = source.getBackingRegion().getScene();
 		if (sourceScene != null) {
 			scene.setUserAgentStylesheet(sourceScene.getUserAgentStylesheet());
 			scene.getStylesheets().addAll(sourceScene.getStylesheets());
