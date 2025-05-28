@@ -11,6 +11,8 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import software.coley.bentofx.Bento;
+import software.coley.bentofx.SceneFactory;
+import software.coley.bentofx.StageFactory;
 import software.coley.bentofx.builder.DockableBuilder;
 import software.coley.bentofx.builder.LayoutBuilder;
 import software.coley.bentofx.dockable.Dockable;
@@ -33,12 +35,16 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ImplBento implements Bento {
+	private static final StageFactory DEFAULT_STAGE_FACTORY = (scene) -> new DragDropStage(true);
+	private static final SceneFactory DEFAULT_SCENE_FACTORY = Scene::new;
 	private final List<DockableOpenListener> openListeners = new CopyOnWriteArrayList<>();
 	private final List<DockableMoveListener> moveListeners = new CopyOnWriteArrayList<>();
 	private final List<DockableCloseListener> closeListeners = new CopyOnWriteArrayList<>();
 	private final List<DockableSelectListener> selectListeners = new CopyOnWriteArrayList<>();
 	private final ObservableList<RootDockLayout> rootLayouts = FXCollections.observableArrayList();
 	private EmptyDisplayFactory emptyDisplayFactory = EmptyDisplayFactory.BLANK;
+	private StageFactory stageFactory = DEFAULT_STAGE_FACTORY;
+	private SceneFactory sceneFactory = DEFAULT_SCENE_FACTORY;
 
 	@Nonnull
 	@Override
@@ -72,6 +78,20 @@ public class ImplBento implements Bento {
 		emptyDisplayFactory = factory;
 	}
 
+	@Override
+	public void setStageFactory(@Nullable StageFactory factory) {
+		if (factory == null)
+			factory = DEFAULT_STAGE_FACTORY;
+		stageFactory = factory;
+	}
+
+	@Override
+	public void setSceneFactory(@Nullable SceneFactory factory) {
+		if (factory == null)
+			factory = DEFAULT_SCENE_FACTORY;
+		sceneFactory = factory;
+	}
+
 	@Nonnull
 	@Override
 	public Stage newStageForDroppedHeader(@Nonnull DockableDestination source, @Nonnull Header header) {
@@ -89,9 +109,8 @@ public class ImplBento implements Bento {
 		LeafDockLayout layout = builder.leaf(builder.tabbed(Side.TOP, dockable));
 		Region region = builder.root(layout).getBackingRegion();
 
-		// TODO: Need to allow users to control the creation of stages/scenes
-		Stage stage = new DragDropStage(true);
-		Scene scene = new Scene(region, width, height);
+		Stage stage = stageFactory.newStage(sourceScene);
+		Scene scene = sceneFactory.newScene(region, width, height);
 		stage.setScene(scene);
 
 		if (sourceScene != null) {

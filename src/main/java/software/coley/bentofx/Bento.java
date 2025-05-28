@@ -85,6 +85,18 @@ public interface Bento {
 	void setEmptyDisplayFactory(@Nullable EmptyDisplayFactory factory);
 
 	/**
+	 * @param factory
+	 * 		Factory to create {@link Stage} instances for new window creation.
+	 */
+	void setStageFactory(@Nullable StageFactory factory);
+
+	/**
+	 * @param factory
+	 * 		Factory to create {@link Scene} instances for new window creation.
+	 */
+	void setSceneFactory(@Nullable SceneFactory factory);
+
+	/**
 	 * @param source
 	 * 		The source where the header is being dragged out of.
 	 * @param header
