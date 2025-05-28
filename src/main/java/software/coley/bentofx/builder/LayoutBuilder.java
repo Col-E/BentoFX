@@ -129,7 +129,7 @@ public class LayoutBuilder {
 
 	@Nonnull
 	public LeafDockLayout leaf(@Nonnull LeafLayoutArgs args) {
-		ImplLeafDockLayout layout = new ImplLeafDockLayout(bento, args.getSpace());
+		ImplLeafDockLayout layout = new ImplLeafDockLayout(bento, args.getSpace(), args.getIdentifier());
 		if (!args.isResizeWithParent())
 			SplitPane.setResizableWithParent(layout.getBackingRegion(), false);
 		return layout;
