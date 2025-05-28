@@ -34,6 +34,7 @@ import software.coley.bentofx.util.LinearItemPane;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class HeaderRegion extends StackPane implements DockableDestination {
 	private final ObjectProperty<Dockable> selectedProperty = new SimpleObjectProperty<>();
@@ -300,9 +301,8 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 				// If the newly created header wraps the current selected tab, mark it as selected.
 				header.setSelected(true);
 
-			// Call open/move listeners
-			DockablePath path = header.getPath();
-			if (path != null) {
+			// Call open/move listeners. If we can't do this right now, schedule it for later when we can construct the path.
+			Consumer<DockablePath> onOpen = path -> {
 				// If the dockable has a "prior" path where it once was it was moved, rather than being freshly opened.
 				DockablePath priorPath = ((ImplDockable) dockable).getPriorPath();
 				if (priorPath != null) {
@@ -312,6 +312,18 @@ public class HeaderRegion extends StackPane implements DockableDestination {
 					for (DockableOpenListener listener : bento.getOpenListeners())
 						listener.onOpen(path, dockable);
 				}
+			};
+			DockablePath path = header.getPath();
+			if (path != null) {
+				onOpen.accept(path);
+			} else if (getScene() == null) {
+				// Reschedule for when we are added to the scene graph.
+				// We should be able to fetch the full dockable path when that happens.
+				BentoUtils.scheduleWhenShown(this, ignored -> {
+					DockablePath currentPath = header.getPath();
+					if (currentPath != null)
+						onOpen.accept(currentPath);
+				});
 			}
 
 			return true;
