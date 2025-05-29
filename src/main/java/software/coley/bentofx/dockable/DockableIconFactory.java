@@ -6,6 +6,7 @@ import javafx.scene.Node;
 
 /**
  * Factory to create a {@link Node} graphic for some given {@link Dockable}.
+ * Implementations should create <b>NEW</b> instances for <b>EACH</b> call.
  *
  * @author Matt Coley
  */

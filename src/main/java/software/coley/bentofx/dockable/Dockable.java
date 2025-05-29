@@ -13,7 +13,6 @@ import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.header.HeaderView;
 import software.coley.bentofx.space.DockSpace;
-import software.coley.bentofx.util.ConstantIcon;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -164,21 +163,6 @@ public interface Dockable extends Identifiable {
 	@Nonnull
 	default Dockable withTooltip(@Nullable Tooltip tooltip) {
 		tooltipProperty().set(tooltip);
-		return this;
-	}
-
-	/**
-	 * @param icon
-	 * 		Icon to set.
-	 *
-	 * @return Self.
-	 */
-	@Nonnull
-	default Dockable withIcon(@Nullable Node icon) {
-		if (icon == null)
-			iconFactoryProperty().set(null);
-		else
-			iconFactoryProperty().set(new ConstantIcon(icon));
 		return this;
 	}
 

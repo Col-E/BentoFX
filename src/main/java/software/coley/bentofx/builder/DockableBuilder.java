@@ -18,7 +18,6 @@ import software.coley.bentofx.dockable.DockableMenuFactory;
 import software.coley.bentofx.impl.ImplBento;
 import software.coley.bentofx.impl.ImplDockable;
 import software.coley.bentofx.util.BentoUtils;
-import software.coley.bentofx.util.ConstantIcon;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,15 +87,6 @@ public class DockableBuilder {
 	@Nonnull
 	public DockableBuilder withTooltip(@Nonnull ObservableValue<Tooltip> tooltip) {
 		tooltipProperty.bind(tooltip);
-		return this;
-	}
-
-	@Nonnull
-	public DockableBuilder withIcon(@Nullable Node icon) {
-		if (icon == null)
-			iconFactoryProperty.set(null);
-		else
-			iconFactoryProperty.set(new ConstantIcon(icon));
 		return this;
 	}
 
