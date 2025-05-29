@@ -82,25 +82,25 @@
     -fx-background-color: -color-border-default, -color-bg-default;
 }
 /* The "v" and "..." buttons in HeaderView */
-.header-view .button {
+.header-view .corner-button {
     -fx-background-insets: 0, 1px;
     -fx-background-radius: 0px;
     -fx-background-color: -color-border-default, -color-bg-overlay;
     -fx-border-width: 0px;
 }
-.header-view .button:hover {
+.header-view .corner-button:hover {
     -fx-background-color: -color-border-default, -color-bg-default;
 }
-.header-view:top .button {
+.header-view:top .corner-button {
     -fx-background-insets: 0, 0 0 1px 1px;
 }
-.header-view:bottom .button {
+.header-view:bottom .corner-button {
     -fx-background-insets: 0, 1px 0 0 1px;
 }
-.header-view:left .button {
+.header-view:left .corner-button {
     -fx-background-insets: 0, 1px 1px 0 0;
 }
-.header-view:right .button {
+.header-view:right .corner-button {
     -fx-background-insets: 0, 1px 0 0 1px;
 }
 .header-view:top .button-bar,

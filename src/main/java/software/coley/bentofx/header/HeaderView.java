@@ -136,6 +136,7 @@ public class HeaderView extends StackPane implements DockableDestination {
 	@Nonnull
 	private Button createDockableListButton() {
 		Button button = new Button("⌄");
+		button.getStyleClass().addAll("corner-button", "list-button");
 		button.setOnMousePressed(e -> {
 			// TODO: A name filter that appears when you begin to type would be nice
 			// TODO: Adding an "x" button to the right of each item to allow closing items would also be nice
@@ -157,6 +158,7 @@ public class HeaderView extends StackPane implements DockableDestination {
 	@Nonnull
 	private Button createSpaceConfigButton() {
 		Button button = new Button("…");
+		button.getStyleClass().addAll("corner-button", "context-button");
 		button.setOnMousePressed(e -> {
 			if (getParentSpace() instanceof TabbedDockSpace tabbed) {
 				button.setContextMenu(menuFactory.get().build(tabbed));
