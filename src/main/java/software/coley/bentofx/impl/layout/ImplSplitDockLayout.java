@@ -85,6 +85,8 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 	@Nullable
 	@Override
 	public LayoutPath findLayout(@Nonnull PathBuilder builder, @Nonnull String id) {
+		if (getIdentifier().equals(id))
+			return builder.buildLayoutPath();
 		for (DockLayout childLayout : getChildLayouts()) {
 			LayoutPath path = childLayout.findLayout(builder.inside(childLayout), id);
 			if (path != null)
