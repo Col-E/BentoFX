@@ -9,22 +9,22 @@ import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.RegionBacked;
-import software.coley.bentofx.space.EmptyDockSpace;
-import software.coley.bentofx.space.SingleDockSpace;
-import software.coley.bentofx.space.TabbedDockSpace;
+import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.header.Header;
 import software.coley.bentofx.impl.space.ImplSingleDockSpace;
 import software.coley.bentofx.impl.space.ImplTabbedDockSpace;
 import software.coley.bentofx.layout.DockLayout;
 import software.coley.bentofx.layout.LeafDockLayout;
 import software.coley.bentofx.layout.SplitDockLayout;
-import software.coley.bentofx.path.SpacePath;
 import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.path.LayoutPath;
 import software.coley.bentofx.path.PathBuilder;
+import software.coley.bentofx.path.SpacePath;
+import software.coley.bentofx.space.EmptyDockSpace;
+import software.coley.bentofx.space.SingleDockSpace;
+import software.coley.bentofx.space.TabbedDockSpace;
 import software.coley.bentofx.util.BentoUtils;
 
 import java.util.ArrayList;
@@ -129,6 +129,14 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 			if (childLayout.closeDockable(dockable))
 				return true;
 		return false;
+	}
+
+	@Override
+	public void addChildLayout(int index, @Nonnull DockLayout childLayout) {
+		if (index >= 0 && index <= children.size()) {
+			children.add(index, new ChildData(childLayout));
+			getItems().add(index, childLayout.getBackingRegion());
+		}
 	}
 
 	@Override

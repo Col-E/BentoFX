@@ -18,6 +18,26 @@ non-sealed public interface SplitDockLayout extends DockLayout {
 	ObjectProperty<Orientation> orientationProperty();
 
 	/**
+	 * Adds a child to the end of the split.
+	 *
+	 * @param childLayout
+	 * 		Child layout to add.
+	 */
+	default void addChildLayout(@Nonnull DockLayout childLayout) {
+		addChildLayout(getChildLayouts().size(), childLayout);
+	}
+
+	/**
+	 * Inserts a child at the given index of the split.
+	 *
+	 * @param index
+	 * 		Index to insert at.
+	 * @param childLayout
+	 * 		Child layout to add.
+	 */
+	void addChildLayout(int index, @Nonnull DockLayout childLayout);
+
+	/**
 	 * Reallocates the size of a given child in the containing {@link SplitPane}.
 	 *
 	 * @param childLayout

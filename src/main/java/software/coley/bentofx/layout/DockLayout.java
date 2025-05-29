@@ -238,6 +238,18 @@ public sealed interface DockLayout extends Identifiable, RegionBacked, BentoBack
 	boolean removeChildLayout(@Nonnull DockLayout child);
 
 	/**
+	 * @param index
+	 * 		Index of child layout to remove.
+	 *
+	 * @return {@code true} when the child was found and removed.
+	 */
+	default boolean removeChildLayout(int index) {
+		List<DockLayout> children = getChildLayouts();
+		return index >= 0 && index < children.size()
+				&& removeChildLayout(children.get(index));
+	}
+
+	/**
 	 * Attempts to remove this layout in the parent <i>(or root)</i> layout.
 	 *
 	 * @return {@code true} when this layout successfully removed itself from its parent.
