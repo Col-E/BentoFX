@@ -286,7 +286,7 @@ public class Header extends Group {
 			// Handle opening in a new window when drag completes without a found target.
 			if (e.getGestureTarget() == null
 					&& headerSource.dockable.canBeDroppedToNewWindow().get()
-					&& sourceParent.removeDockable(headerSource.dockable)) {
+					&& headerSource.removeFromParent(RemovalReason.MOVING)) {
 				Stage stage = bento.newStageForDroppedHeader(sourceParent.getComposedDestinationRoot(), headerSource);
 				stage.show();
 				stage.toFront();
