@@ -326,20 +326,23 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 			// Remove/collapse space if possible.
 			LeafDockLayout leaf = (LeafDockLayout) childLayout;
 			if (leaf.getSpace() instanceof ImplTabbedDockSpace tabbedChild) {
-				Dockable dockable = tabbedChild.selectedDockableProperty().get();
-				if (dockable == null)
+				// We need a dockable in the tabbed child in order to look up the 'Header' component.
+				// That header will be used for size calculations below.
+				if (tabbedChild.getDockables().isEmpty())
 					return false;
+				Dockable dockable = tabbedChild.getDockables().getFirst();
 
-				// Record the existing width/height of the current selected item.
+				// Record the existing width/height of the current space.
 				data.lastWidth = tabbedChild.getWidth();
 				data.lastHeight = tabbedChild.getHeight();
 
-				// Need to look up the header to compute the width or height we need to
+				// Look up the header to compute the width or height we need to collapse into.
+				// We only want to show the header, so we will match the width/height depending on our orientation.
 				Header childHeader = tabbedChild.getHeader(dockable);
 				if (childHeader == null)
 					return false;
 
-				// Update parent split-pane
+				// Update parent split-pane.
 				double newSize = orientation == Orientation.HORIZONTAL ?
 						childHeader.getWidth() :
 						childHeader.getHeight();
@@ -350,7 +353,7 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 				// so that any state change in the child as a result sees "oh we are collapsed now".
 				data.collapsed = true;
 
-				// Deselect any dockable since we are now collapsed
+				// Deselect any dockable since we are now collapsed.
 				tabbedChild.selectDockable(null);
 				return true;
 			} else if (leaf.getSpace() instanceof ImplSingleDockSpace singleChild) {
