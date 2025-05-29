@@ -36,4 +36,9 @@ public class ImplEmptyDockSpace extends BorderPane implements EmptyDockSpace {
 		if (other == null) return false;
 		return identifier.equals(other.getIdentifier());
 	}
+
+	@Override
+	public String toString() {
+		return "Empty: " + getIdentifier();
+	}
 }

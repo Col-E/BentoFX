@@ -66,4 +66,9 @@ public class ImplRootDockLayout extends BorderPane implements RootDockLayout {
 	public void clearLayout() {
 		setLayout(new ImplLeafDockLayout(bento, null));
 	}
+
+	@Override
+	public String toString() {
+		return "Root: " + getIdentifier();
+	}
 }

@@ -190,4 +190,9 @@ public class ImplTabbedDockSpace extends ImplDockSpaceBase implements TabbedDock
 	public ObjectProperty<TabbedSpaceMenuFactory> menuFactoryProperty() {
 		return tabbedSpaceMenuFactoryProperty;
 	}
+
+	@Override
+	public String toString() {
+		return "Tabbed: " + getIdentifier();
+	}
 }

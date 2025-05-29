@@ -110,4 +110,9 @@ public class ImplSingleDockSpace extends ImplDockSpaceBase implements SingleDock
 		if (other == null) return false;
 		return identifier.equals(other.getIdentifier());
 	}
+
+	@Override
+	public String toString() {
+		return "Single: " + getIdentifier();
+	}
 }

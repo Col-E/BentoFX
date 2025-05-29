@@ -170,4 +170,9 @@ public class ImplLeafDockLayout extends BorderPane implements LeafDockLayout {
 	public Bento getBento() {
 		return bento;
 	}
+
+	@Override
+	public String toString() {
+		return "Leaf: " + getIdentifier();
+	}
 }

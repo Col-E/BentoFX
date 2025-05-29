@@ -408,6 +408,11 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 		return null;
 	}
 
+	@Override
+	public String toString() {
+		return "Split: " + getIdentifier();
+	}
+
 	/**
 	 * Mutable data holder for some given {@link DockLayout} child.
 	 */
