@@ -21,7 +21,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.space.TabbedDockSpace;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.header.Header;
@@ -29,6 +28,7 @@ import software.coley.bentofx.header.HeaderView;
 import software.coley.bentofx.impl.space.ImplTabbedDockSpace;
 import software.coley.bentofx.layout.DockLayout;
 import software.coley.bentofx.path.DockablePath;
+import software.coley.bentofx.space.TabbedDockSpace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,54 +84,6 @@ public class BentoUtils {
 		if (path.space() instanceof ImplTabbedDockSpace tabbed)
 			return tabbed.getHeader(path.dockable());
 		return null;
-	}
-
-	/**
-	 * Finds a node's associated {@link Dockable} and selects it within a {@link TabbedDockSpace}.
-	 *
-	 * @param node
-	 * 		Some node that belongs to a {@link Dockable}.
-	 *
-	 * @return {@code true} when selection was completed.
-	 * {@code false} when the node's respective dockable could not be selected.
-	 */
-	public static boolean selectInTabbedParent(@Nullable Node node) {
-		if (node == null)
-			return false;
-
-		TabbedDockSpace space = getParent(node, TabbedDockSpace.class);
-		if (space == null)
-			return false;
-
-		for (Dockable dockable : space.getDockables())
-			if (dockable.nodeProperty().get() instanceof Parent dockableParent && containsChild(dockableParent, node))
-				return space.selectDockable(dockable);
-
-		return false;
-	}
-
-	/**
-	 * Finds a node's associated {@link Dockable} and attempts to close it within a {@link TabbedDockSpace}.
-	 *
-	 * @param node
-	 * 		Some node that belongs to a {@link Dockable}.
-	 *
-	 * @return {@code true} when closure was completed.
-	 * {@code false} when the node's respective dockable could not be closed.
-	 */
-	public static boolean closeInTabbedParent(@Nullable Node node) {
-		if (node == null)
-			return false;
-
-		TabbedDockSpace space = getParent(node, TabbedDockSpace.class);
-		if (space == null)
-			return false;
-
-		for (Dockable dockable : space.getDockables())
-			if (dockable.nodeProperty().get() instanceof Parent dockableParent && containsChild(dockableParent, node))
-				return space.closeDockable(dockable);
-
-		return false;
 	}
 
 	/**
