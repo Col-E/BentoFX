@@ -44,6 +44,8 @@ public class ImplTabbedDockSpace extends ImplDockSpaceBase implements TabbedDock
 		this.canSplitProperty = new SimpleBooleanProperty(args.isCanSplit());
 		this.tabbedSpaceMenuFactoryProperty = new SimpleObjectProperty<>(args.getMenuFactory());
 
+		getStyleClass().addAll("space-tabbed");
+
 		// Setup initial header view
 		setupHeaderView(side, args.getDockables());
 

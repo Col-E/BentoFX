@@ -36,6 +36,13 @@
     -fx-background-color: -color-bg-default;
 }
 
+.bento .layout-leaf {}
+.bento .layout-split {}
+
+.bento .space-empty {}
+.bento .space-single {}
+.bento .space-tabbed {}
+
 .bento .split-pane {
     -fx-background-color: -color-bg-default;
     -fx-background-insets: 0;

@@ -56,6 +56,8 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 
 		BentoUtils.disableWhenNoParent(this);
 
+		getStyleClass().addAll("layout-split");
+
 		orientationProperty().set(orientation);
 
 		List<Region> layoutRegions = childLayouts.stream()
