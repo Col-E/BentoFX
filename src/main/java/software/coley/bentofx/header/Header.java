@@ -15,6 +15,7 @@ import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -57,6 +58,7 @@ public class Header extends Group {
 	private final GridPane grid = new GridPane();
 	private final Text label = new Text();
 	private final Pane graphicWrapper = new Pane();
+	private final Pane closeWrapper = new Pane();
 	private final BorderPane ghostWrapper = new BorderPane();
 	private final Dockable dockable;
 	private ImplBento bento;
@@ -95,6 +97,7 @@ public class Header extends Group {
 		graphicWrapper.getChildren().add(graphicHolder);
 		sideProperty.set(side);
 		sideProperty.addListener((ob, old, cur) -> recomputeLayout(cur));
+		closableProperty.addListener((ob, old, cur) -> recomputeLayout(getSide()));
 		grid.setHgap(6);
 		grid.setVgap(6);
 		grid.setPadding(new Insets(6));
@@ -158,6 +161,10 @@ public class Header extends Group {
 		});
 
 		// Closing support
+		Button closeButton = new Button("✕");
+		closeButton.getStyleClass().add("close-button");
+		closeButton.setOnAction(e -> removeFromParent(RemovalReason.CLOSING));
+		closeWrapper.getChildren().add(closeButton);
 		setOnMouseReleased(e -> {
 			// Middle release --> close dockable
 			if (e.getButton() == MouseButton.MIDDLE && getBoundsInLocal().contains(e.getX(), e.getY()))
@@ -424,17 +431,20 @@ public class Header extends Group {
 			case TOP, BOTTOM -> {
 				grid.add(graphicWrapper, 0, 0);
 				grid.add(label, 1, 0);
+				if (dockable.closableProperty().get()) grid.add(closeWrapper, 2, 0);
 				label.setRotate(0);
 			}
 			case LEFT -> {
 				label.setRotate(-90);
 				grid.add(new Group(label), 0, 0);
 				grid.add(graphicWrapper, 0, 1);
+				if (dockable.closableProperty().get()) 	grid.add(closeWrapper, 0, 2);
 			}
 			case RIGHT -> {
 				label.setRotate(90);
 				grid.add(graphicWrapper, 0, 0);
 				grid.add(new Group(label), 0, 1);
+				if (dockable.closableProperty().get()) 	grid.add(closeWrapper, 0, 2);
 			}
 		}
 		requestLayout();
