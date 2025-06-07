@@ -22,6 +22,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.dockable.Dockable;
@@ -75,6 +76,10 @@ public class HeaderView extends StackPane implements DockableDestination {
 		// Put the headers on the appropriate side, content in the center will be placed later
 		BorderPane layoutWrapper = new BorderPane();
 		BorderPane regionWrapper = new BorderPane(headerRegion);
+		Rectangle clip = new Rectangle(); // Use a clip to prevent headers from rendering beyond expected bounds
+		clip.widthProperty().bind(regionWrapper.widthProperty());
+		clip.heightProperty().bind(regionWrapper.heightProperty());
+		regionWrapper.setClip(clip);
 		regionWrapper.getStyleClass().add("header-region-wrapper");
 		layoutWrapper.setCenter(contentWrapper);
 		switch (side) {
