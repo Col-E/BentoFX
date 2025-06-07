@@ -38,7 +38,7 @@ public class ImplLeafDockLayout extends BorderPane implements LeafDockLayout {
 
 		BentoUtils.disableWhenNoParent(this);
 
-		getStyleClass().addAll("layout-leaf");
+		getStyleClass().addAll("layout", "layout-leaf");
 
 		setSpace(space);
 	}

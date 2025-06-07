@@ -28,7 +28,7 @@ public class ImplSingleDockSpace extends ImplDockSpaceBase implements SingleDock
 		headerSideProperty.addListener((ob, old, cur) -> refreshHeader());
 		layout.centerProperty().bind(dockable.nodeProperty());
 
-		getStyleClass().addAll("space-single");
+		getStyleClass().addAll("space", "space-single");
 
 		refreshHeader();
 	}

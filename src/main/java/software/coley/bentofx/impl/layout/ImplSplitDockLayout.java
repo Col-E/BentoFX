@@ -2,6 +2,7 @@ package software.coley.bentofx.impl.layout;
 
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import javafx.css.PseudoClass;
 import javafx.css.Selector;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("NullableProblems") // Mute the shading of "orientationProperty" not being annotated
 public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
+	public static final PseudoClass PSEUDO_COLLAPSED = PseudoClass.getPseudoClass("collapsed");
 	private static final Selector DIVIDER_SELECTOR = Selector.createSelector(".split-pane-divider");
 	private final Bento bento;
 	private final List<ChildData> children;
@@ -56,7 +58,7 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 
 		BentoUtils.disableWhenNoParent(this);
 
-		getStyleClass().addAll("layout-split");
+		getStyleClass().addAll("layout", "layout-split");
 
 		orientationProperty().set(orientation);
 
@@ -340,7 +342,7 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 					data.lastHeight;
 			setChildSize(childLayout, newSize);
 			setChildResizable(childLayout, true);
-			data.collapsed = false;
+			data.setCollapsed(false);
 		} else if (collapsed) {
 			// Skip if this would steal the divider away from some adjacent collapsed destination space.
 			int i = indexOfChild(childLayout);
@@ -377,7 +379,7 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 
 				// Mark this child as collapsed. We need to do this before we clear the selection
 				// so that any state change in the child as a result sees "oh we are collapsed now".
-				data.collapsed = true;
+				data.setCollapsed(true);
 
 				// Deselect any dockable since we are now collapsed.
 				tabbedChild.selectDockable(null);
@@ -393,7 +395,7 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 						childHeader.getHeight();
 				setChildSize(childLayout, newSize);
 				setChildResizable(childLayout, false);
-				data.collapsed = true;
+				data.setCollapsed(true);
 				return true;
 			}
 		}
@@ -485,6 +487,14 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 				actionQueue.forEach(Runnable::run);
 				actionQueue.clear();
 			}
+		}
+
+		/**
+		 * @param state New collapsed state.
+		 */
+		public void setCollapsed(boolean state) {
+			collapsed = state;
+			layout.getBackingRegion().pseudoClassStateChanged(PSEUDO_COLLAPSED, state);
 		}
 	}
 }

@@ -104,7 +104,7 @@
 .header-view .header .close-button:hover {
     -fx-background-color: -color-bg-default;
 }
-/* The "▼" and "..." buttons in HeaderView */
+/* The "▼" and "≡" buttons in HeaderView */
 .header-view .corner-button {
     -fx-effect: none;
     -fx-background-insets: 0, 1px;
@@ -214,6 +214,14 @@
 .header:selected:right {
     -fx-background-insets: 0, 0 0 0 2px;
 }
+
+/* Collapsed */
+.layout:collapsed .header { -fx-background-color: -color-bg-subtle; }
+.layout:collapsed .header-view { -fx-background-color: -color-bg-subtle; }
+.layout:collapsed .header-region { -fx-background-color: -color-bg-subtle; }
+.layout:collapsed .corner-button { -fx-background-color: -color-bg-subtle; }
+
+/* Misc */
 .dock-ghost-zone {
     -fx-opacity: 0.3;
 }

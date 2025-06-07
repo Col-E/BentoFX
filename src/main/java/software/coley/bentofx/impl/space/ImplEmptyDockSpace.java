@@ -14,7 +14,7 @@ public class ImplEmptyDockSpace extends BorderPane implements EmptyDockSpace {
 	public ImplEmptyDockSpace(@Nonnull String identifier, @Nonnull Node display) {
 		this.identifier = identifier;
 
-		getStyleClass().addAll("space-empty");
+		getStyleClass().addAll("space", "space-empty");
 
 		setCenter(display);
 	}

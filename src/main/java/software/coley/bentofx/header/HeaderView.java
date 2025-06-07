@@ -140,7 +140,6 @@ public class HeaderView extends StackPane implements DockableDestination {
 		button.getStyleClass().addAll("corner-button", "list-button");
 		button.setOnMousePressed(e -> {
 			// TODO: A name filter that appears when you begin to type would be nice
-			// TODO: Adding an "x" button to the right of each item to allow closing items would also be nice
 			ContextMenu menu = new ContextMenu();
 			menu.getItems().addAll(getDockables().stream().map(d -> {
 				MenuItem item = new MenuItem();
