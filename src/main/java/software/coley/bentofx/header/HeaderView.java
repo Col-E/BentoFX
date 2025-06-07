@@ -386,9 +386,9 @@ public class HeaderView extends StackPane implements DockableDestination {
 						otherParent.centerProperty().unbind();
 					centerProperty().bind(dockableNode);
 
-					// If the new content is focusable, focus it.
+					// Focus the new content
 					Node center = getCenter();
-					if (center != null && center.isFocusTraversable())
+					if (center != null)
 						center.requestFocus();
 				} else {
 					DockLayout parentLayout = getParentLayout();
