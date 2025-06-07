@@ -194,35 +194,51 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 
 	@Override
 	public void setChildSize(@Nonnull DockLayout childLayout, double size) {
-		BentoUtils.scheduleWhenShown(this, split -> {
-			int i = indexOfChild(childLayout);
-			double max = orientationProperty().get() == Orientation.HORIZONTAL ? getWidth() : getHeight();
+		ChildData data = getChildData(childLayout);
+		if (data == null)
+			return;
 
-			double ratio = Math.clamp(size / max, 0, 1);
+		// Delay action if the child is not showing.
+		if (!data.showing) {
+			data.addAction(() -> setChildSize(childLayout, size));
+			return;
+		}
 
-			if (i == 0 && children.size() > 1) {
-				// Child is first, move the first divider if one exists
-				setDividerPosition(0, ratio);
-			} else if (i > 0 && i == children.size() - 1) {
-				// Child is last, move the last divider if one exists
-				setDividerPosition(i - 1, 1 - ratio);
-			}
-		});
+		int i = indexOfChild(childLayout);
+		double max = orientationProperty().get() == Orientation.HORIZONTAL ? getWidth() : getHeight();
+
+		double ratio = Math.clamp(size / max, 0, 1);
+
+		if (i == 0 && children.size() > 1) {
+			// Child is first, move the first divider if one exists
+			setDividerPosition(0, ratio);
+		} else if (i > 0 && i == children.size() - 1) {
+			// Child is last, move the last divider if one exists
+			setDividerPosition(i - 1, 1 - ratio);
+		}
 	}
 
 	@Override
 	public void setChildPercent(@Nonnull DockLayout childLayout, double percent) {
-		BentoUtils.scheduleWhenShown(this, split -> {
-			int i = indexOfChild(childLayout);
+		ChildData data = getChildData(childLayout);
+		if (data == null)
+			return;
 
-			if (i == 0 && children.size() > 1) {
-				// Child is first, move the first divider if one exists
-				setDividerPosition(0, percent);
-			} else if (i > 0 && i == children.size() - 1) {
-				// Child is last, move the last divider if one exists
-				setDividerPosition(i - 1, 1 - percent);
-			}
-		});
+		// Delay action if the child is not showing.
+		if (!data.showing) {
+			data.addAction(() -> setChildPercent(childLayout, percent));
+			return;
+		}
+
+		int i = indexOfChild(childLayout);
+
+		if (i == 0 && children.size() > 1) {
+			// Child is first, move the first divider if one exists
+			setDividerPosition(0, percent);
+		} else if (i > 0 && i == children.size() - 1) {
+			// Child is last, move the last divider if one exists
+			setDividerPosition(i - 1, 1 - percent);
+		}
 	}
 
 	@Override
@@ -279,6 +295,12 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 		ChildData data = getChildData(childLayout);
 		if (data == null)
 			return false;
+
+		// Delay action if the child is not showing.
+		if (!data.showing) {
+			data.addAction(() -> setChildCollapsed(childLayout, collapsed));
+			return false;
+		}
 
 		// Only edge children are collapsible.
 		if (children.getFirst() != data && children.getLast() != data)
@@ -393,6 +415,19 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 		return bento;
 	}
 
+	@Override
+	protected void layoutChildren() {
+		super.layoutChildren();
+
+		// Handle queued actions after children get their layouts updated.
+		// This allows things like toggling to work off of items with sizes computed
+		// even when called before the sizes are set by the first layout pass.
+		children.forEach(c -> {
+			c.showing = true;
+			c.runActions();
+		});
+	}
+
 	private int indexOfChild(@Nonnull DockLayout childLayout) {
 		for (int i = 0; i < children.size(); i++)
 			if (children.get(i).layout == childLayout)
@@ -418,12 +453,38 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 	 */
 	private static class ChildData {
 		private final DockLayout layout;
+		private List<Runnable> actionQueue;
 		private double lastWidth;
 		private double lastHeight;
 		private boolean collapsed;
+		private boolean showing;
 
 		private ChildData(@Nonnull DockLayout layout) {
 			this.layout = layout;
+		}
+
+		/**
+		 * @param r
+		 * 		Action to run later.
+		 */
+		private void addAction(@Nonnull Runnable r) {
+			if (actionQueue == null)
+				actionQueue = new ArrayList<>();
+			actionQueue.add(r);
+
+			// Schedule a layout.
+			// Our actions will run after the next layout pass.
+			layout.getBackingRegion().requestLayout();
+		}
+
+		/**
+		 * Run queued actions.
+		 */
+		private void runActions() {
+			if (actionQueue != null) {
+				actionQueue.forEach(Runnable::run);
+				actionQueue.clear();
+			}
 		}
 	}
 }
