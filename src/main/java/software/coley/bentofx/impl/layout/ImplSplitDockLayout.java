@@ -162,7 +162,7 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 			getItems().set(i, replacement.getBackingRegion());
 
 			// Ensure the size of the replacement is set to the size of the prior child.
-			setChildSize(replacement, size);
+			setChildSize0(replacement, false, size);
 			return true;
 		}
 		return false;
@@ -196,21 +196,49 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 
 	@Override
 	public void setChildSize(@Nonnull DockLayout childLayout, double size) {
+		setChildSize0(childLayout, true, size);
+	}
+
+	/**
+	 * Internal implementation of {@link #setChildSize(DockLayout, double)}.
+	 * This version allows skipping updates to {@link ChildData} "last size" caches.
+	 * Generally if an end user is making a size update we want to update the cache.
+	 * But if we're doing something internal with sizes, like collapsing, then we don't want to do that.
+	 *
+	 * @param childLayout
+	 * 		Child layout to change size of.
+	 * @param updateLastSizes
+	 *        {@code true} to update {@link ChildData#lastWidth} and {@link ChildData#lastHeight}
+	 * 		associated with the child layout.
+	 * @param size
+	 * 		New size <i>(In pixels)</i> to grant the given child in the containing {@link SplitPane}.
+	 */
+	private void setChildSize0(@Nonnull DockLayout childLayout, boolean updateLastSizes, double size) {
 		ChildData data = getChildData(childLayout);
 		if (data == null)
 			return;
 
 		// Delay action if the child is not showing.
 		if (!data.showing) {
-			data.addAction(() -> setChildSize(childLayout, size));
+			data.addAction(() -> setChildSize0(childLayout, updateLastSizes, size));
 			return;
 		}
 
-		int i = indexOfChild(childLayout);
-		double max = orientationProperty().get() == Orientation.HORIZONTAL ? getWidth() : getHeight();
+		// If collapsed, update the child's last size.
+		// It will be this new size when it gets uncollapsed.
+		if (updateLastSizes && isChildCollapsed(childLayout)) {
+			Orientation orientation = orientationProperty().get();
+			if (orientation == Orientation.HORIZONTAL)
+				data.lastWidth = size;
+			else
+				data.lastHeight = size;
+			return;
+		}
 
+		double max = orientationProperty().get() == Orientation.HORIZONTAL ? getWidth() : getHeight();
 		double ratio = Math.clamp(size / max, 0, 1);
 
+		int i = indexOfChild(childLayout);
 		if (i == 0 && children.size() > 1) {
 			// Child is first, move the first divider if one exists
 			setDividerPosition(0, ratio);
@@ -232,8 +260,18 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 			return;
 		}
 
-		int i = indexOfChild(childLayout);
+		// If collapsed, update the child's last size.
+		// It will be this new size when it gets uncollapsed.
+		if (isChildCollapsed(childLayout)) {
+			Orientation orientation = orientationProperty().get();
+			if (orientation == Orientation.HORIZONTAL)
+				data.lastWidth = getWidth() * percent;
+			else
+				data.lastHeight = getHeight() * percent;
+			return;
+		}
 
+		int i = indexOfChild(childLayout);
 		if (i == 0 && children.size() > 1) {
 			// Child is first, move the first divider if one exists
 			setDividerPosition(0, percent);
@@ -340,7 +378,7 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 			double newSize = orientation == Orientation.HORIZONTAL ?
 					data.lastWidth :
 					data.lastHeight;
-			setChildSize(childLayout, newSize);
+			setChildSize0(childLayout, false, newSize);
 			setChildResizable(childLayout, true);
 			data.setCollapsed(false);
 		} else if (collapsed) {
@@ -370,11 +408,12 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 				if (childHeader == null)
 					return false;
 
-				// Update parent split-pane.
+				// Update split-pane, make sure not to update the 'child-data' last size cache.
+				// We want that cache to hold the last 'open' size which
 				double newSize = orientation == Orientation.HORIZONTAL ?
 						childHeader.getWidth() :
 						childHeader.getHeight();
-				setChildSize(childLayout, newSize);
+				setChildSize0(childLayout, false, newSize);
 				setChildResizable(childLayout, false);
 
 				// Mark this child as collapsed. We need to do this before we clear the selection
@@ -393,7 +432,7 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 				double newSize = orientation == Orientation.HORIZONTAL ?
 						childHeader.getWidth() :
 						childHeader.getHeight();
-				setChildSize(childLayout, newSize);
+				setChildSize0(childLayout, false, newSize);
 				setChildResizable(childLayout, false);
 				data.setCollapsed(true);
 				return true;
@@ -490,7 +529,8 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 		}
 
 		/**
-		 * @param state New collapsed state.
+		 * @param state
+		 * 		New collapsed state.
 		 */
 		public void setCollapsed(boolean state) {
 			collapsed = state;
