@@ -135,7 +135,8 @@ public class HeaderView extends StackPane implements DockableDestination {
 
 	@Nonnull
 	private Button createDockableListButton() {
-		Button button = new Button("⌄");
+		Button button = new Button("▼");
+		button.setEllipsisString("▼");
 		button.getStyleClass().addAll("corner-button", "list-button");
 		button.setOnMousePressed(e -> {
 			// TODO: A name filter that appears when you begin to type would be nice
@@ -157,7 +158,8 @@ public class HeaderView extends StackPane implements DockableDestination {
 
 	@Nonnull
 	private Button createSpaceConfigButton() {
-		Button button = new Button("…");
+		Button button = new Button("≡");
+		button.setEllipsisString("≡");
 		button.getStyleClass().addAll("corner-button", "context-button");
 		button.setOnMousePressed(e -> {
 			if (getParentSpace() instanceof TabbedDockSpace tabbed) {
