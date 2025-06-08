@@ -30,6 +30,7 @@ import software.coley.bentofx.space.EmptyDisplayFactory;
 import software.coley.bentofx.space.EmptyDockSpace;
 import software.coley.bentofx.space.SingleDockSpace;
 import software.coley.bentofx.space.TabbedDockSpace;
+import software.coley.bentofx.space.TabbedDockSpaceDecorator;
 import software.coley.bentofx.util.BentoUtils;
 
 import java.net.URL;
@@ -95,6 +96,12 @@ public interface Bento {
 	 * 		Factory to create {@link Scene} instances for new window creation.
 	 */
 	void setSceneFactory(@Nullable SceneFactory factory);
+
+	/**
+	 * @param decorator
+	 * 		Decorator responsible for intercepting all created {@link TabbedDockSpace}.
+	 */
+	void setTabbedDockSpaceDecorator(@Nullable TabbedDockSpaceDecorator decorator);
 
 	/**
 	 * @param source

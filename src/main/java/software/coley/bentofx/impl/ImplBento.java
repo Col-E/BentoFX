@@ -28,6 +28,8 @@ import software.coley.bentofx.layout.LeafDockLayout;
 import software.coley.bentofx.layout.RootDockLayout;
 import software.coley.bentofx.space.DockSpace;
 import software.coley.bentofx.space.EmptyDisplayFactory;
+import software.coley.bentofx.space.TabbedDockSpace;
+import software.coley.bentofx.space.TabbedDockSpaceDecorator;
 import software.coley.bentofx.util.BentoUtils;
 import software.coley.bentofx.util.DragDropStage;
 
@@ -43,6 +45,7 @@ public class ImplBento implements Bento {
 	private final List<DockableSelectListener> selectListeners = new CopyOnWriteArrayList<>();
 	private final ObservableList<RootDockLayout> rootLayouts = FXCollections.observableArrayList();
 	private EmptyDisplayFactory emptyDisplayFactory = EmptyDisplayFactory.BLANK;
+	private TabbedDockSpaceDecorator tabbedDockSpaceDecorator;
 	private StageFactory stageFactory = DEFAULT_STAGE_FACTORY;
 	private SceneFactory sceneFactory = DEFAULT_SCENE_FACTORY;
 
@@ -90,6 +93,11 @@ public class ImplBento implements Bento {
 		if (factory == null)
 			factory = DEFAULT_SCENE_FACTORY;
 		sceneFactory = factory;
+	}
+
+	@Override
+	public void setTabbedDockSpaceDecorator(@Nullable TabbedDockSpaceDecorator decorator) {
+		tabbedDockSpaceDecorator = decorator;
 	}
 
 	@Nonnull
@@ -196,5 +204,10 @@ public class ImplBento implements Bento {
 
 	public void unregisterRoot(@Nonnull RootDockLayout layout) {
 		rootLayouts.remove(layout);
+	}
+
+	public void decorate(@Nonnull TabbedDockSpace space) {
+		if (tabbedDockSpaceDecorator != null)
+			tabbedDockSpaceDecorator.decorate(space);
 	}
 }

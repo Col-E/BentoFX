@@ -51,6 +51,9 @@ public class ImplTabbedDockSpace extends ImplDockSpaceBase implements TabbedDock
 
 		// Refresh the header view when the side property updates
 		sideProperty.addListener((ob, old, cur) -> setupHeaderView(cur, view.getDockables()));
+
+		// Pass to decorator
+		bento.decorate(this);
 	}
 
 	private void setupHeaderView(@Nonnull Side side, @Nonnull List<Dockable> dockables) {
