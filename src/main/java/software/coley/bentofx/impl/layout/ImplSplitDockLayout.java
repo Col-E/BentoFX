@@ -153,12 +153,18 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 		if (i >= 0 && i < getItems().size()) {
 			// Record existing child size.
 			Node existing = getItems().get(i);
-			double size = orientationProperty().get() == Orientation.HORIZONTAL ?
-					existing.getLayoutBounds().getWidth() :
-					existing.getLayoutBounds().getHeight();
+			double width = existing.getLayoutBounds().getWidth();
+			double height = existing.getLayoutBounds().getHeight();
+			double size = orientationProperty().get() == Orientation.HORIZONTAL ? width : height;
 
-			// Replace child.
-			children.set(i, new ChildData(replacement));
+			// Create replacement child data model, copying values from the existing display.
+			ChildData newData = new ChildData(replacement);
+			newData.lastWidth = width;
+			newData.lastHeight = height;
+			newData.showing = true;
+			children.set(i, newData);
+
+			// Replace the child in the split-pane.
 			getItems().set(i, replacement.getBackingRegion());
 
 			// Ensure the size of the replacement is set to the size of the prior child.
