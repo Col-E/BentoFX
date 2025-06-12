@@ -152,23 +152,26 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 		int i = indexOfChild(child);
 		if (i >= 0 && i < getItems().size()) {
 			// Record existing child size.
-			Node existing = getItems().get(i);
-			double width = existing.getLayoutBounds().getWidth();
-			double height = existing.getLayoutBounds().getHeight();
-			double size = orientationProperty().get() == Orientation.HORIZONTAL ? width : height;
+			ChildData oldData = children.get(i);
+			double oldWidth = oldData.getIntendedWidth();
+			double oldHeight = oldData.getIntendedHeight();
 
-			// Create replacement child data model, copying values from the existing display.
+			// Create replacement child data model. We'll update the model a little bit further down.
 			ChildData newData = new ChildData(replacement);
-			newData.lastWidth = width;
-			newData.lastHeight = height;
-			newData.showing = true;
 			children.set(i, newData);
 
 			// Replace the child in the split-pane.
 			getItems().set(i, replacement.getBackingRegion());
 
-			// Ensure the size of the replacement is set to the size of the prior child.
-			setChildSize0(replacement, false, size);
+			// Copy the prior child size, if available.
+			if (oldWidth > 1 && oldHeight > 1) {
+				newData.lastWidth = oldWidth;
+				newData.lastHeight = oldHeight;
+
+				// Ensure the size of the replacement is set to the size of the prior child.
+				double size = orientationProperty().get() == Orientation.HORIZONTAL ? oldWidth : oldHeight;
+				setChildSize0(replacement, false, size);
+			}
 			return true;
 		}
 		return false;
@@ -225,7 +228,7 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 			return;
 
 		// Delay action if the child is not showing.
-		if (!data.showing) {
+		if (!data.shown) {
 			data.addAction(() -> setChildSize0(childLayout, updateLastSizes, size));
 			return;
 		}
@@ -261,7 +264,7 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 			return;
 
 		// Delay action if the child is not showing.
-		if (!data.showing) {
+		if (!data.shown) {
 			data.addAction(() -> setChildPercent(childLayout, percent));
 			return;
 		}
@@ -343,7 +346,7 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 			return false;
 
 		// Delay action if the child is not showing.
-		if (!data.showing) {
+		if (!data.shown) {
 			data.addAction(() -> setChildCollapsed(childLayout, collapsed));
 			return false;
 		}
@@ -470,7 +473,7 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 		// This allows things like toggling to work off of items with sizes computed
 		// even when called before the sizes are set by the first layout pass.
 		children.forEach(c -> {
-			c.showing = true;
+			c.shown = true;
 			c.runActions();
 		});
 	}
@@ -504,7 +507,7 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 		private double lastWidth;
 		private double lastHeight;
 		private boolean collapsed;
-		private boolean showing;
+		private boolean shown;
 
 		private ChildData(@Nonnull DockLayout layout) {
 			this.layout = layout;
@@ -541,6 +544,16 @@ public class ImplSplitDockLayout extends SplitPane implements SplitDockLayout {
 		public void setCollapsed(boolean state) {
 			collapsed = state;
 			layout.getBackingRegion().pseudoClassStateChanged(PSEUDO_COLLAPSED, state);
+		}
+
+		public double getIntendedWidth() {
+			if (collapsed || !shown) return lastWidth;
+			return layout.getBackingRegion().getWidth();
+		}
+
+		public double getIntendedHeight() {
+			if (collapsed || !shown) return lastHeight;
+			return layout.getBackingRegion().getHeight();
 		}
 	}
 }
