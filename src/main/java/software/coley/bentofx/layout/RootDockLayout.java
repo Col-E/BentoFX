@@ -46,7 +46,7 @@ public interface RootDockLayout extends Identifiable, RegionBacked {
 	 */
 	@Nullable
 	default LayoutPath findLayout(@Nonnull String identifier) {
-		return getLayout().findLayout(newPathBuilder(), identifier);
+		return getLayout().findLayout(newPathBuilder().inside(getLayout()), identifier);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public interface RootDockLayout extends Identifiable, RegionBacked {
 	 */
 	@Nullable
 	default SpacePath findSpace(@Nonnull String identifier) {
-		return getLayout().findSpace(newPathBuilder(), identifier);
+		return getLayout().findSpace(newPathBuilder().inside(getLayout()), identifier);
 	}
 
 	/**
@@ -104,7 +104,7 @@ public interface RootDockLayout extends Identifiable, RegionBacked {
 	 */
 	@Nullable
 	default DockablePath findDockable(@Nonnull String identifier) {
-		return getLayout().findDockable(newPathBuilder(), identifier);
+		return getLayout().findDockable(newPathBuilder().inside(getLayout()), identifier);
 	}
 
 	/**
