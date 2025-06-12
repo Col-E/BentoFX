@@ -6,6 +6,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Side;
 import software.coley.bentofx.dockable.Dockable;
+import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.header.HeaderRegion;
 import software.coley.bentofx.header.HeaderView;
 import software.coley.bentofx.layout.DockLayout;
@@ -66,4 +67,10 @@ non-sealed public interface TabbedDockSpace extends DockSpace {
 	 */
 	@Nonnull
 	ObjectProperty<TabbedSpaceMenuFactory> menuFactoryProperty();
+
+	/**
+	 * @return Dockable drag/drop destination for this space.
+	 */
+	@Nonnull
+	DockableDestination getDockableDestination();
 }

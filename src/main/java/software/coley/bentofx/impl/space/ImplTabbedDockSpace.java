@@ -11,6 +11,7 @@ import javafx.geometry.Side;
 import javafx.scene.layout.Region;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.builder.TabbedSpaceArgs;
+import software.coley.bentofx.dockable.DockableDestination;
 import software.coley.bentofx.space.TabbedDockSpace;
 import software.coley.bentofx.space.TabbedSpaceMenuFactory;
 import software.coley.bentofx.dockable.Dockable;
@@ -192,6 +193,12 @@ public class ImplTabbedDockSpace extends ImplDockSpaceBase implements TabbedDock
 	@Override
 	public ObjectProperty<TabbedSpaceMenuFactory> menuFactoryProperty() {
 		return tabbedSpaceMenuFactoryProperty;
+	}
+
+	@Nonnull
+	@Override
+	public DockableDestination getDockableDestination() {
+		return view;
 	}
 
 	@Override
