@@ -1,11 +1,11 @@
 package software.coley.bentofx.dockable;
 
 import jakarta.annotation.Nonnull;
-import software.coley.bentofx.space.DockSpace;
+import software.coley.bentofx.layout.DockContainer;
 import software.coley.bentofx.path.DockablePath;
 
 /**
- * Listener that is invoked when a {@link Dockable} is added to a {@link DockSpace}.
+ * Listener that is invoked when a {@link Dockable} is added to a {@link DockContainer}.
  *
  * @author Matt Coley
  */

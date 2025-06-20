@@ -1,13 +1,11 @@
 package software.coley.bentofx.dockable;
 
 import jakarta.annotation.Nonnull;
-import software.coley.bentofx.space.DockSpace;
-import software.coley.bentofx.header.Header;
+import software.coley.bentofx.layout.DockContainer;
 import software.coley.bentofx.path.DockablePath;
 
 /**
- * Listener invoked when a {@link Dockable} is removed from a {@link DockSpace}
- * with the intent to {@link Header.RemovalReason#CLOSING close it}.
+ * Listener invoked when a {@link Dockable} is removed from a {@link DockContainer} with the intent to close it.
  *
  * @author Matt Coley
  */

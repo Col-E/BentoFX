@@ -1,28 +1,32 @@
 package software.coley.bentofx.path;
 
 import jakarta.annotation.Nonnull;
-import software.coley.bentofx.space.DockSpace;
 import software.coley.bentofx.dockable.Dockable;
-import software.coley.bentofx.layout.DockLayout;
-import software.coley.bentofx.layout.RootDockLayout;
+import software.coley.bentofx.layout.DockContainer;
+import software.coley.bentofx.layout.container.DockContainerLeaf;
 
 import java.util.List;
 
 /**
- * @param rootLayout
- * 		Root layout.
- * @param layouts
- * 		Hierarchy of layouts, with the first being the immediate child layout of the root and the last being the holder of the space.
- * @param space
- * 		Space holding the dockable.
+ * Path to a given dockable, starting from the root container <i>(Top {@link DockContainer#getParentContainer()} value)</i>
+ * all the way down to the container that holds the target dockable.
+ *
+ * @param containers
+ * 		Containers up to and including some dockable's parent container.
  * @param dockable
  * 		Target dockable.
  */
-public record DockablePath(@Nonnull RootDockLayout rootLayout,
-                           @Nonnull List<DockLayout> layouts,
-                           @Nonnull DockSpace space,
-                           @Nonnull Dockable dockable) {
-	public DockablePath(@Nonnull SpacePath spacePath, @Nonnull Dockable dockable) {
-		this(spacePath.rootLayout(), spacePath.layouts(), spacePath.space(), dockable);
+public record DockablePath(@Nonnull List<DockContainer> containers, @Nonnull Dockable dockable) implements BentoPath {
+	@Nonnull
+	@Override
+	public DockContainer rootContainer() {
+		// There must always be at least one container in a path since a dockable needs a parent to be placed into.
+		return containers.getFirst();
+	}
+
+	@Nonnull
+	public DockContainerLeaf leafContainer() {
+		// A dockable can only be put in a leaf, so this should be a safe cast.
+		return (DockContainerLeaf) containers.getLast();
 	}
 }

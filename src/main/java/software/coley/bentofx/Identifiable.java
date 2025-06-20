@@ -21,5 +21,5 @@ public interface Identifiable {
 	 *
 	 * @return {@code true} when the other object has the same identifier.
 	 */
-	boolean matchesIdentity(@Nullable Identifiable other);
+	boolean matchesIdentity(@Nonnull Identifiable other);
 }

@@ -1,3 +1,7 @@
+/*
+This serves as an example of how you would create a stylesheet for Bento.
+It outlines all of the classes and pseudo-states used by controls.
+ */
 .root {
     -color-base-9: white;
     -color-base-8: #dddddd;
@@ -20,76 +24,60 @@
     -color-accent-1: #00448a;
     -color-accent-0: #002b57;
     -color-fg-default: black;
-    -color-fg-muted: rgb(50, 50, 50);
-    -color-fg-subtle: rgb(90, 90, 90);
+    -color-fg-muted:  -color-base-1;
+    -color-fg-subtle: -color-base-3;
     -color-bg-default: -color-base-9;
     -color-bg-overlay: -color-base-8;
     -color-bg-subtle: -color-base-6;
     -color-bg-inset: -color-base-4;
-    -color-border-default: -color-base-1;
-    -color-border-muted: -color-base-2;
-    -color-border-subtle: -color-base-3;
-    -color-accent-fg: rgb(110, 180, 255);
-    -color-accent-emphasis: rgb(0, 180, 255);
-    -color-accent-muted: rgba(10, 132, 255, 0.4);
-    -color-accent-subtle: rgba(10, 132, 255, 0.15);
+    -color-border-default: -color-base-3;
+    -color-border-muted: -color-base-4;
+    -color-border-subtle: -color-base-5;
+    -color-accent-fg: -color-accent-8;
+    -color-accent-emphasis: -color-accent-5;
+    -color-accent-muted: -color-accent-2;
+    -color-accent-subtle: -color-accent-0;
     -fx-background-color: -color-bg-default;
 }
 
-.bento .layout-leaf {}
-.bento .layout-split {}
-
-.bento .space-empty {}
-.bento .space-single {}
-.bento .space-tabbed {}
-
-.bento .split-pane {
-    -fx-background-color: -color-bg-default;
+.container-leaf {}
+.container-branch {}
+.container-branch:root {}
+.container-branch {
     -fx-background-insets: 0;
     -fx-padding: 0;
 }
-
-.bento .split-pane > .split-pane-divider {
+.container-branch > .split-pane-divider {
     -fx-background-color: -color-bg-inset !important;
     -fx-padding: 0 2px 0 2px;
 }
-
-.bento .split-pane > .split-pane-divider > .horizontal-grabber {
-    -fx-background-color: -color-base-6;
+.container-branch > .split-pane-divider > .horizontal-grabber {
+    -fx-background-color: -color-bg-subtle;
     -fx-padding: 5px 1px 5px 1px;
 }
-
-.bento .split-pane > .split-pane-divider > .vertical-grabber {
-    -fx-background-color: -color-base-6;
+.container-branch > .split-pane-divider > .vertical-grabber {
+    -fx-background-color: -color-bg-subtle;
     -fx-padding: 1px 5px 1px 5px;
 }
-
-.bento .split-pane > .split-pane-divider:hover {
+.container-branch > .split-pane-divider:hover {}
+.container-branch > .split-pane-divider:pressed {}
+.container-branch > .split-pane-divider:disabled {}
+.container-branch > .split-pane-divider:hover> .horizontal-grabber,
+.container-branch > .split-pane-divider:hover> .vertical-grabber {
+    -fx-background-color: -color-accent-emphasis;
+}
+.container-branch > .split-pane-divider:pressed > .horizontal-grabber,
+.container-branch > .split-pane-divider:pressed > .vertical-grabber {
     -fx-background-color: -color-accent-fg;
 }
-.bento .split-pane > .split-pane-divider:pressed {
-    -fx-background-color: -color-accent-emphasis;
-}
-.bento .split-pane > .split-pane-divider:disabled {
-    -fx-background-color: -color-border-muted;
-}
-.bento .split-pane > .split-pane-divider:hover> .horizontal-grabber,
-.bento .split-pane > .split-pane-divider:hover> .vertical-grabber {
-    -fx-background-color: -color-accent-7;
-}
-.bento .split-pane > .split-pane-divider:pressed > .horizontal-grabber,
-.bento .split-pane > .split-pane-divider:pressed > .vertical-grabber {
-    -fx-background-color: -color-accent-emphasis;
-}
 
-/* HeaderView */
-.header-view {
-    -fx-border-width: 0px;
+/* HeaderPane */
+.header-pane {
     -fx-background-insets: 0, 1px;
     -fx-background-color: -color-border-default, -color-bg-default;
 }
 /* The "x" button on closable headers */
-.header-view .close-button {
+.header-pane .close-button {
     -fx-effect: none;
     -fx-opacity: 0.5;
     -fx-background-insets: 0;
@@ -98,62 +86,53 @@
     -fx-border-width: 0px;
     -fx-padding: 0 2px 0 2px;
 }
-.header-view .header:selected .close-button:hover {
+.header-pane .header:selected .close-button:hover {
     -fx-background-color: -color-bg-subtle;
 }
-.header-view .header .close-button:hover {
+.header-pane .header .close-button:hover {
     -fx-background-color: -color-bg-default;
 }
 /* The "▼" and "≡" buttons in HeaderView */
-.header-view .corner-button {
+.header-pane .corner-button {
     -fx-effect: none;
     -fx-background-insets: 0, 1px;
     -fx-background-radius: 0px;
     -fx-background-color: -color-border-default, -color-bg-overlay;
     -fx-border-width: 0px;
 }
-.header-view .corner-button:hover {
+.header-pane .corner-button:hover {
     -fx-background-color: -color-border-default, -color-bg-default;
 }
-.header-view:top .corner-button {
+.header-pane:top .corner-button {
     -fx-background-insets: 0, 0 0 1px 1px;
 }
-.header-view:bottom .corner-button {
+.header-pane:bottom .corner-button {
     -fx-background-insets: 0, 1px 0 0 1px;
 }
-.header-view:left .corner-button {
+.header-pane:left .corner-button {
     -fx-background-insets: 0, 1px 1px 0 0;
 }
-.header-view:right .corner-button {
+.header-pane:right .corner-button {
     -fx-background-insets: 0, 1px 0 0 1px;
 }
-.header-view:top .button-bar,
-.header-view:bottom .button-bar {
-    -fx-border-width: 0 1px 0 0;
-    -fx-border-color: -color-border-default;
+.button-bar {
+    -fx-spacing: -1;
+    -fx-padding: 0;
+    -fx-background-color: -color-border-default, -color-bg-default;
 }
-.header-view:left .button-bar,
-.header-view:right .button-bar{
-    -fx-border-width: 0 0 1px 0;
-    -fx-border-color: -color-border-default;
+.button-bar:vertical {
+    -fx-fill-height: true;
+}
+.button-bar:horizontal {
+    -fx-fill-width: true;
 }
 
 /* HeaderRegion (Wrapper) */
-.header-region-wrapper {
-    -fx-border-color: -color-border-default;
-}
-.header-view:top .header-region-wrapper {
-    -fx-border-width: 1px 0 0 1px;
-}
-.header-view:bottom .header-region-wrapper {
-    -fx-border-width: 0 0 1px 1px;
-}
-.header-view:left .header-region-wrapper {
-    -fx-border-width: 1px 0 0 1px;
-}
-.header-view:right .header-region-wrapper {
-    -fx-border-width: 1px 1px 0 0;
-}
+.header-region-wrapper {}
+.header-pane:top .header-region-wrapper {}
+.header-pane:bottom .header-region-wrapper {}
+.header-pane:left .header-region-wrapper {}
+.header-pane:right .header-region-wrapper {}
 
 /* HeaderRegion */
 .header-region {
@@ -178,28 +157,24 @@
     -fx-background-color: -color-border-default, -color-bg-overlay;
 }
 .header:top {
-    -fx-padding: 0.3em 0.6em 0.3em 0.6em;
     -fx-background-insets: 0, 0 0 1px 0;
 }
 .header:bottom {
-    -fx-padding: 0.3em 0.6em 0.3em 0.6em;
     -fx-background-insets: 0, 1px 0 0 0;
 }
 .header:left {
-    -fx-padding: 0.3em 0.4em 0.3em 0.4em;
     -fx-background-insets: 0, 0 1px 0 0;
 }
 .header:right {
-    -fx-padding: 0.3em 0.4em 0.3em 0.4em;
     -fx-background-insets: 0, 0 0 0 1px;
 }
 .header:hover {
     -fx-background-color: -color-border-subtle, -color-bg-subtle;
 }
-.header-view .header:selected {
+.header-pane .header:selected {
     -fx-background-color: -color-bg-inset, -color-bg-default;
 }
-.header-view:active .header:selected {
+.header-pane:active .header:selected {
     -fx-background-color: -color-accent-4, -color-bg-default;
 }
 .header:selected:top {
@@ -216,10 +191,10 @@
 }
 
 /* Collapsed */
-.layout:collapsed .header { -fx-background-color: -color-bg-subtle; }
-.layout:collapsed .header-view { -fx-background-color: -color-bg-subtle; }
-.layout:collapsed .header-region { -fx-background-color: -color-bg-subtle; }
-.layout:collapsed .corner-button { -fx-background-color: -color-bg-subtle; }
+.container:collapsed .header { -fx-background-color: -color-bg-subtle; }
+.container:collapsed .header-pane { -fx-background-color: -color-bg-subtle; }
+.container:collapsed .header-region { -fx-background-color: -color-bg-subtle; }
+.container:collapsed .corner-button { -fx-background-color: -color-bg-subtle; }
 
 /* Misc */
 .dock-ghost-zone {
