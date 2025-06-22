@@ -161,32 +161,6 @@ public class Header extends Region {
 			if (!isDisable()) pseudoClassStateChanged(PSEUDO_HOVER, false);
 		});
 
-		// Layout
-		Label graphicHolder = new Label();
-		graphicHolder.graphicProperty().bind(graphicProperty);
-		graphicWrapper.getChildren().add(graphicHolder);
-		sideProperty.addListener((ob, old, cur) -> recomputeLayout(cur));
-		closableProperty.addListener((ob, old, cur) -> recomputeLayout(getSide()));
-		grid.setHgap(6);
-		grid.setVgap(6);
-		grid.setPadding(new Insets(6));
-		grid.setAlignment(Pos.CENTER);
-		BorderPane wrapper = new BorderPane();
-		wrapper.setCenter(grid);
-		wrapper.setLeft(ghostWrapper);
-		getChildren().add(wrapper);
-		recomputeLayout(getSide());
-	}
-
-	/**
-	 * Populate drag-n-drop event handling.
-	 *
-	 * @return This.
-	 */
-	@Nonnull
-	public Header withDragDrop() {
-		Bento bento = dockable.getBento();
-
 		// Focusing a tab (via tab press) should select it.
 		focusedProperty().addListener((ob, old, cur) -> {
 			if (cur) parentPane.getContainer().selectDockable(dockable);
@@ -223,6 +197,32 @@ public class Header extends Region {
 				}
 			}
 		});
+
+		// Layout
+		Label graphicHolder = new Label();
+		graphicHolder.graphicProperty().bind(graphicProperty);
+		graphicWrapper.getChildren().add(graphicHolder);
+		sideProperty.addListener((ob, old, cur) -> recomputeLayout(cur));
+		closableProperty.addListener((ob, old, cur) -> recomputeLayout(getSide()));
+		grid.setHgap(6);
+		grid.setVgap(6);
+		grid.setPadding(new Insets(6));
+		grid.setAlignment(Pos.CENTER);
+		BorderPane wrapper = new BorderPane();
+		wrapper.setCenter(grid);
+		wrapper.setLeft(ghostWrapper);
+		getChildren().add(wrapper);
+		recomputeLayout(getSide());
+	}
+
+	/**
+	 * Populate drag-n-drop event handling.
+	 *
+	 * @return This.
+	 */
+	@Nonnull
+	public Header withDragDrop() {
+		Bento bento = dockable.getBento();
 
 		// Closing support
 		Button closeButton = new Button("✕");
