@@ -3,6 +3,7 @@ package software.coley.bentofx;
 import jakarta.annotation.Nonnull;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import software.coley.bentofx.building.ControlsBuilding;
 import software.coley.bentofx.building.DockBuilding;
 import software.coley.bentofx.building.PlaceholderBuilding;
 import software.coley.bentofx.building.StageBuilding;
@@ -25,6 +26,7 @@ public class Bento {
 	private final EventBus eventBus = newEventBus();
 	private final SearchHandler searchHandler = newSearchHandler();
 	private final StageBuilding stageBuilding = newStageBuilding();
+	private final ControlsBuilding controlsBuilding = newControlsBuilding();
 	private final DockBuilding dockBuilding = newDockBuilding();
 	private final PlaceholderBuilding placeholderBuilding = newPlaceholderBuilding();
 
@@ -41,6 +43,11 @@ public class Bento {
 	@Nonnull
 	protected StageBuilding newStageBuilding() {
 		return new StageBuilding(this);
+	}
+
+	@Nonnull
+	protected ControlsBuilding newControlsBuilding() {
+		return new ControlsBuilding();
 	}
 
 	@Nonnull
@@ -75,6 +82,14 @@ public class Bento {
 	@Nonnull
 	public StageBuilding stageBuilding() {
 		return stageBuilding;
+	}
+
+	/**
+	 * @return Builders for various bento UI controls.
+	 */
+	@Nonnull
+	public ControlsBuilding controlsBuilding() {
+		return controlsBuilding;
 	}
 
 	/**

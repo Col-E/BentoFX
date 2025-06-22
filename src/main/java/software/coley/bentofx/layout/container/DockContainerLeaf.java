@@ -48,7 +48,7 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	private final DoubleProperty uncollapsedHeight = new SimpleDoubleProperty();
 	private BooleanProperty canSplit;
 	private final Canvas canvas = new Canvas();
-	private final HeaderPane headerPane = new HeaderPane(this);
+	private final HeaderPane headerPane;
 	private final Bento bento;
 	private final String identifier;
 	private DockContainerBranch parent;
@@ -63,6 +63,7 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	public DockContainerLeaf(@Nonnull Bento bento, @Nonnull String identifier) {
 		this.bento = bento;
 		this.identifier = identifier;
+		this.headerPane = bento.controlsBuilding().newHeaderPane(this);
 
 		getStyleClass().addAll("bento", "container", "container-leaf");
 

@@ -153,6 +153,14 @@ public class Header extends Region {
 		graphicProperty.bind(dockable.iconFactoryProperty().map(ic -> ic.build(dockable)));
 		label.textProperty().bind(titleProperty);
 
+		// Hover support
+		addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
+			if (!isDisable()) pseudoClassStateChanged(PSEUDO_HOVER, true);
+		});
+		addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
+			if (!isDisable()) pseudoClassStateChanged(PSEUDO_HOVER, false);
+		});
+
 		// Layout
 		Label graphicHolder = new Label();
 		graphicHolder.graphicProperty().bind(graphicProperty);
@@ -176,16 +184,8 @@ public class Header extends Region {
 	 * @return This.
 	 */
 	@Nonnull
-	public Header withEvents() {
+	public Header withDragDrop() {
 		Bento bento = dockable.getBento();
-
-		// Hover support
-		addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
-			if (!isDisable()) pseudoClassStateChanged(PSEUDO_HOVER, true);
-		});
-		addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
-			if (!isDisable()) pseudoClassStateChanged(PSEUDO_HOVER, false);
-		});
 
 		// Focusing a tab (via tab press) should select it.
 		focusedProperty().addListener((ob, old, cur) -> {

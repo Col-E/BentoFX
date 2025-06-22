@@ -14,22 +14,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TabPane;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.dockable.Dockable;
-import software.coley.bentofx.layout.container.DockContainerBranch;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
-import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.util.BentoUtils;
-import software.coley.bentofx.util.DragDropTarget;
-import software.coley.bentofx.util.DragUtils;
-
-import java.util.Objects;
 
 import static software.coley.bentofx.util.BentoStates.*;
 
@@ -40,7 +29,7 @@ import static software.coley.bentofx.util.BentoStates.*;
  */
 public class HeaderPane extends BorderPane {
 	private final DockContainerLeaf container;
-	private final ContentWrapper contentWrapper = new ContentWrapper();
+	private final ContentWrapper contentWrapper;
 	private Headers headers;
 
 	/**
@@ -49,6 +38,7 @@ public class HeaderPane extends BorderPane {
 	 */
 	public HeaderPane(@Nonnull DockContainerLeaf container) {
 		this.container = container;
+		this.contentWrapper = container.getBento().controlsBuilding().newContentWrapper(container);
 
 		getStyleClass().add("header-pane");
 		setAccessibleRole(AccessibleRole.TAB_PANE);
@@ -91,13 +81,13 @@ public class HeaderPane extends BorderPane {
 				if (c.wasPermutated()) {
 					headerList.subList(c.getFrom(), c.getTo()).clear();
 					headerList.addAll(c.getFrom(), c.getList().subList(c.getFrom(), c.getTo()).stream()
-							.map(d -> new Header(d, this).withEvents())
+							.map(this::createHeader)
 							.toList());
 				} else if (c.wasRemoved()) {
 					headerList.subList(c.getFrom(), c.getFrom() + c.getRemovedSize()).clear();
 				} else if (c.wasAdded()) {
 					headerList.addAll(c.getFrom(), c.getAddedSubList().stream()
-							.map(d -> new Header(d, this).withEvents())
+							.map(this::createHeader)
 							.toList());
 				}
 			}
@@ -128,7 +118,7 @@ public class HeaderPane extends BorderPane {
 			return;
 
 		// Update CSS state and edge node to display our headers + controls aligned to the given side.
-		headers = new Headers(BentoUtils.sideToOrientation(side), side);
+		headers = getBento().controlsBuilding().newHeaders(container, BentoUtils.sideToOrientation(side), side);
 		Button dockableListButton = createDockableListButton();
 		Button containerConfigButton = createContainerConfigButton();
 		BorderPane headersWrapper = new BorderPane(headers);
@@ -160,7 +150,7 @@ public class HeaderPane extends BorderPane {
 		// Add all dockables to the headers display
 		container.getDockables().stream()
 				.map(d -> {
-					Header header = new Header(d, this).withEvents();
+					Header header = createHeader(d);
 					if (container.getSelectedDockable() == d)
 						header.setSelected(true);
 					return header;
@@ -201,6 +191,11 @@ public class HeaderPane extends BorderPane {
 		button.visibleProperty().bind(container.menuFactoryProperty().isNotNull());
 		button.managedProperty().bind(button.visibleProperty());
 		return button;
+	}
+
+	@Nonnull
+	private Header createHeader(@Nonnull Dockable dockable) {
+		return getBento().controlsBuilding().newHeader(dockable, this);
 	}
 
 	/**
@@ -249,235 +244,5 @@ public class HeaderPane extends BorderPane {
 	@Nonnull
 	private Bento getBento() {
 		return container.getBento();
-	}
-
-	/**
-	 * Linear item pane to hold {@link Header} displays of {@link DockContainerLeaf#getDockables()}.
-	 */
-	public class Headers extends LinearItemPane {
-		/**
-		 * @param orientation
-		 * 		Which axis to layout children on.
-		 * @param side
-		 * 		Side in the parent container where tabs are displayed.
-		 */
-		private Headers(@Nonnull Orientation orientation, @Nonnull Side side) {
-			super(orientation);
-
-			// Create side-specific header region class.
-			getStyleClass().add("header-region");
-			switch (side) {
-				case TOP -> pseudoClassStateChanged(PSEUDO_SIDE_TOP, true);
-				case BOTTOM -> pseudoClassStateChanged(PSEUDO_SIDE_BOTTOM, true);
-				case LEFT -> pseudoClassStateChanged(PSEUDO_SIDE_LEFT, true);
-				case RIGHT -> pseudoClassStateChanged(PSEUDO_SIDE_RIGHT, true);
-			}
-
-			// Use a clip to prevent headers from rendering beyond expected bounds.
-			// Currently, with the CSS in use this is not needed but in some cases it is.
-			//    Rectangle clip = new Rectangle();
-			//    clip.widthProperty().bind(widthProperty());
-			//    clip.heightProperty().bind(heightProperty());
-			//    setClip(clip);
-
-			// Make this pane fill the full width/height (matching orientation) of the parent container.
-			if (orientation == Orientation.HORIZONTAL) {
-				prefWidthProperty().bind(container.widthProperty());
-			} else {
-				prefHeightProperty().bind(container.heightProperty());
-			}
-
-			// Make children fill the full width/height of this pane on the perpendicular (to orientation) axis.
-			fitChildrenToPerpendicularProperty().set(true);
-
-			// Keep the selected dockable in view.
-			keepInViewProperty().bind(container.selectedDockableProperty().map(container::getHeader));
-
-			// Support drag-drop.
-			setOnDragOver(e -> {
-				Dragboard dragboard = e.getDragboard();
-				String dockableIdentifier = DragUtils.extractIdentifier(dragboard);
-				if (dockableIdentifier != null) {
-					DockablePath dragSourcePath = getBento().search().dockable(dockableIdentifier);
-					if (dragSourcePath != null) {
-						Dockable dragSourceDockable = dragSourcePath.dockable();
-						if (container.canReceiveDockable(dragSourceDockable, null)) {
-							container.drawCanvasHint(this);
-						} else {
-							container.clearCanvas();
-						}
-					}
-
-					// We always need to accept content if there is a dockable identifier.
-					// In the case where it is not actually receivable, we'll handle that in the completion logic.
-					e.acceptTransferModes(TransferMode.MOVE);
-				}
-
-				// Do not propagate upwards.
-				e.consume();
-			});
-			setOnDragDropped(e -> {
-				// Skip if dragboard doesn't contain a dockable identifier.
-				Dragboard dragboard = e.getDragboard();
-				String dockableIdentifier = DragUtils.extractIdentifier(dragboard);
-				if (dockableIdentifier == null)
-					return;
-
-				// Skip if the dockable cannot be found in our bento instance.
-				DockablePath dragSourcePath = getBento().search().dockable(dockableIdentifier);
-				if (dragSourcePath == null)
-					return;
-
-				// If our container can receive the header, move it over.
-				DockContainerLeaf sourceContainer = dragSourcePath.leafContainer();
-				Dockable sourceDockable = dragSourcePath.dockable();
-				if (container.canReceiveDockable(sourceDockable, null)) {
-					sourceContainer.removeDockable(sourceDockable);
-					container.addDockable(sourceDockable);
-					container.selectDockable(sourceDockable);
-					DragUtils.completeDnd(e, sourceDockable, DragDropTarget.REGION);
-				}
-			});
-			setOnDragExited(e -> container.clearCanvas());
-		}
-	}
-
-	/**
-	 * Border pane with handling for drag-drop in the context of this header pane's parent container.
-	 */
-	public class ContentWrapper extends BorderPane {
-		public ContentWrapper() {
-			getStyleClass().add("node-wrapper");
-
-			// Handle drag-drop
-			setOnDragOver(e -> {
-				Dragboard dragboard = e.getDragboard();
-				String dockableIdentifier = DragUtils.extractIdentifier(dragboard);
-				if (dockableIdentifier != null) {
-					DockablePath dragSourcePath = getBento().search().dockable(dockableIdentifier);
-					if (dragSourcePath != null) {
-						Dockable dragSourceDockable = dragSourcePath.dockable();
-						Side side = container.isCanSplit() ? BentoUtils.computeClosestSide(this, e.getX(), e.getY()) : null;
-						if (container.canReceiveDockable(dragSourceDockable, side)) {
-							container.drawCanvasHint(this, side);
-						} else {
-							container.clearCanvas();
-						}
-					}
-
-					// We always need to accept content if there is a dockable identifier.
-					// In the case where it is not actually receivable, we'll handle that in the completion logic.
-					e.acceptTransferModes(TransferMode.MOVE);
-				}
-
-				// Do not propagate upwards.
-				e.consume();
-			});
-			setOnDragExited(e -> container.clearCanvas());
-			setOnDragDropped(e -> {
-				// Skip if dragboard doesn't contain a dockable identifier.
-				Dragboard dragboard = e.getDragboard();
-				String dockableIdentifier = DragUtils.extractIdentifier(dragboard);
-				if (dockableIdentifier == null)
-					return;
-
-				// Skip if the dockable cannot be found in our bento instance.
-				DockablePath dragSourcePath = getBento().search().dockable(dockableIdentifier);
-				if (dragSourcePath == null)
-					return;
-
-				// Skip if this source/target containers are the same, and there is only one dockable.
-				// This means there would be no change after the "move" and thus its wasted effort to do anything.
-				DockContainerLeaf sourceContainer = dragSourcePath.leafContainer();
-				Dockable sourceDockable = dragSourcePath.dockable();
-				if (container == sourceContainer && container.getDockables().size() == 1)
-					return;
-
-				// If our container can receive the header, move it over.
-				Side side = container.isCanSplit() ? BentoUtils.computeClosestSide(this, e.getX(), e.getY()) : null;
-				if (container.canReceiveDockable(sourceDockable, side)) {
-					// Disable empty pruning while we handle splitting.
-					boolean pruneState = sourceContainer.doPruneWhenEmpty();
-					sourceContainer.setPruneWhenEmpty(false);
-
-					// Remove the dockable from its current parent.
-					sourceContainer.removeDockable(sourceDockable);
-
-					// Handle splitting by side if provided.
-					if (side != null) {
-						// Keep track of the current container's parent for later.
-						DockContainerBranch ourParent = Objects.requireNonNull(container.getParentContainer());
-
-						// Create container for dropped header.
-						DockContainerLeaf containerForDropped = getBento().dockBuilding().leaf();
-						containerForDropped.setSide(container.getSide()); // Copy our container's side-ness.
-						containerForDropped.addDockable(sourceDockable);
-
-						// Create container to hold both our own container and the dropped header.
-						// This will combine them in a split view according to the side the user dropped
-						// the incoming dockable on.
-						DockContainerBranch splitContainer = getBento().dockBuilding().branch();
-						if (side == Side.TOP || side == Side.BOTTOM)
-							splitContainer.setOrientation(Orientation.VERTICAL);
-						if (side == Side.TOP || side == Side.LEFT) {
-							// User dropped on top/left, so the dropped item is first in the split.
-							splitContainer.addContainer(containerForDropped);
-							splitContainer.addContainer(container);
-						} else {
-							// User dropped on bottom/right, so the dropped item is last in the split.
-							splitContainer.addContainer(container);
-							splitContainer.addContainer(containerForDropped);
-						}
-
-						// Now we get the parent container (a branch) that holds our container (a leaf) and have it replace
-						// the leaf it currently has (our current container) with the new branch container we just made.
-						ourParent.replaceContainer(container, splitContainer);
-					} else {
-						// Just move the dockable from its prior container to our container.
-						container.addDockable(sourceDockable);
-						container.selectDockable(sourceDockable);
-					}
-
-					// Restore original prune state.
-					sourceContainer.setPruneWhenEmpty(pruneState);
-					if (sourceContainer.doPruneWhenEmpty() && sourceContainer.getDockables().isEmpty())
-						sourceContainer.removeFromParent();
-
-					DragUtils.completeDnd(e, sourceDockable, DragDropTarget.REGION);
-				}
-			});
-		}
-	}
-
-	/**
-	 * {@link HBox} for {@link DockContainerLeaf} level controls.
-	 */
-	private static class ButtonHBar extends HBox {
-		public ButtonHBar(@Nonnull Region parent, Node... children) {
-			getStyleClass().add("button-bar");
-			pseudoClassStateChanged(PSEUDO_ORIENTATION_H, true);
-
-			for (Node child : children) {
-				if (child instanceof Region childRegion)
-					childRegion.prefHeightProperty().bind(parent.heightProperty());
-				getChildren().add(child);
-			}
-		}
-	}
-
-	/**
-	 * {@link VBox} for {@link DockContainerLeaf} level controls.
-	 */
-	private static class ButtonVBar extends VBox {
-		public ButtonVBar(@Nonnull Region parent, Node... children) {
-			getStyleClass().add("button-bar");
-			pseudoClassStateChanged(PSEUDO_ORIENTATION_V, true);
-
-			for (Node child : children) {
-				if (child instanceof Region childRegion)
-					childRegion.prefWidthProperty().bind(parent.widthProperty());
-				getChildren().add(child);
-			}
-		}
 	}
 }
