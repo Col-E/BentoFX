@@ -175,10 +175,12 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 			// Propagate scene graph simplification upwards.
 			//  - Empty branches are pruned.
 			//  - Single child branches are replaced with their child.
-			if (childContainers.isEmpty()) {
-				removeFromParent();
-			} else if (childContainers.size() == 1 && parent instanceof DockContainerBranch parentBranch) {
-				parentBranch.replaceContainer(this, childContainers.getFirst());
+			if (doPruneWhenEmpty()) {
+				if (childContainers.isEmpty()) {
+					removeFromParent();
+				} else if (childContainers.size() == 1 && parent instanceof DockContainerBranch parentBranch) {
+					parentBranch.replaceContainer(this, childContainers.getFirst());
+				}
 			}
 
 			return true;
