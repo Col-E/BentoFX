@@ -224,7 +224,9 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 			// is 4px that implicitly acts as padding to our container that we need to accommodate for.
 			Node divider = getChildren().stream()
 					.filter(DIVIDER_SELECTOR::applies)
-					.findFirst().orElseThrow();
+					.findFirst().orElse(null);
+			if (divider == null)
+				return false;
 			double dividerSize = orientation == Orientation.VERTICAL ?
 					divider.getLayoutBounds().getHeight() :
 					divider.getLayoutBounds().getWidth();
