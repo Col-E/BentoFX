@@ -23,17 +23,18 @@ public class PixelPainterByteBgra implements PixelPainter<ByteBuffer> {
 	protected int imageHeight;
 
 	@Override
-	public void initialize(int width, int height) {
+	public boolean initialize(int width, int height) {
 		if (imageWidth != width || imageHeight != height) {
 			imageWidth = width;
 			imageHeight = height;
 			int drawBufferCapacity = drawBufferCapacity();
 			if (drawBufferCapacity > drawBuffer.limit()) {
 				drawBuffer = ByteBuffer.wrap(new byte[drawBufferCapacity]);
-				return;
+				return true;
 			}
 		}
 		clear();
+		return false;
 	}
 
 	@Override

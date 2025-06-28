@@ -26,8 +26,11 @@ public interface PixelPainter<B extends Buffer> {
 	 * 		Assigned width.
 	 * @param height
 	 * 		Assigned height.
+	 *
+	 * @return {@code true} when the backing buffer was modified as a result of this operation.
+	 * {@code false} when the backing buffer has already been initialized to the given dimensions.
 	 */
-	void initialize(int width, int height);
+	boolean initialize(int width, int height);
 
 	/**
 	 * Releases any resources held by the painter.

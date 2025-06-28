@@ -71,6 +71,8 @@ public class PixelCanvas extends Region {
 
 		view.setFitWidth(width);
 		view.setFitHeight(height);
+
+		reallocate();
 	}
 
 	/**
@@ -91,6 +93,8 @@ public class PixelCanvas extends Region {
 	public void commit() {
 		if (lastDrawHash == currentDrawHash) return;
 		lastDrawHash = currentDrawHash;
+
+		checkDirty();
 
 		pixelPainter.commit(image.getPixelWriter());
 		view.setImage(image);
@@ -350,13 +354,24 @@ public class PixelCanvas extends Region {
 	 * Allocate the image and associated values.
 	 */
 	protected void reallocate() {
-		int imageWidth = (int) Math.max(1, getWidth());
-		int imageHeight = (int) Math.max(1, getHeight());
-		pixelPainter.initialize(imageWidth, imageHeight);
+		int imageWidth = (int) Math.max(1, view.getFitWidth());
+		int imageHeight = (int) Math.max(1, view.getFitHeight());
+		if (pixelPainter.initialize(imageWidth, imageHeight) || image == null)
+			image = newImage(imageWidth, imageHeight);
+	}
 
-		WritableImage image = this.image;
-		if (image == null || imageWidth != image.getWidth() || imageHeight != image.getHeight()) {
-			this.image = new WritableImage(imageWidth, imageHeight);
-		}
+	/**
+	 * Called by {@link #reallocate()} when a new image is necessary.
+	 *
+	 * @param width
+	 * 		Image width.
+	 * @param height
+	 * 		Image height.
+	 *
+	 * @return New writable image of the given dimensions.
+	 */
+	@Nonnull
+	protected WritableImage newImage(int width, int height) {
+		return new WritableImage(width, height);
 	}
 }

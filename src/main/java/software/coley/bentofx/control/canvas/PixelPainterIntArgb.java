@@ -4,7 +4,6 @@ import jakarta.annotation.Nonnull;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 
-import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 
@@ -22,17 +21,18 @@ public class PixelPainterIntArgb implements PixelPainter<IntBuffer> {
 	protected int imageHeight;
 
 	@Override
-	public void initialize(int width, int height) {
+	public boolean initialize(int width, int height) {
 		if (imageWidth != width || imageHeight != height) {
 			imageWidth = width;
 			imageHeight = height;
 			int drawBufferCapacity = drawBufferCapacity();
 			if (drawBufferCapacity > drawBuffer.limit()) {
 				drawBuffer = IntBuffer.wrap(new int[drawBufferCapacity]);
-				return;
+				return true;
 			}
 		}
 		clear();
+		return false;
 	}
 
 	@Override
