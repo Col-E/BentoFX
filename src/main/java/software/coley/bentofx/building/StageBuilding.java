@@ -85,8 +85,6 @@ public class StageBuilding {
 			if (sourceStage != null) {
 				stage.getIcons().addAll(sourceStage.getIcons());
 			}
-		} else {
-			System.err.println("Uh...");
 		}
 
 		return stage;

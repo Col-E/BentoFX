@@ -13,16 +13,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Side;
 import javafx.scene.Parent;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.control.Header;
 import software.coley.bentofx.control.HeaderPane;
+import software.coley.bentofx.control.PixelCanvas;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.event.DockEvent;
 import software.coley.bentofx.layout.DockContainer;
@@ -47,7 +45,7 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	private final DoubleProperty uncollapsedWidth = new SimpleDoubleProperty();
 	private final DoubleProperty uncollapsedHeight = new SimpleDoubleProperty();
 	private BooleanProperty canSplit;
-	private final Canvas canvas = new Canvas();
+	private final PixelCanvas canvas = new PixelCanvas();
 	private final HeaderPane headerPane;
 	private final Bento bento;
 	private final String identifier;
@@ -68,10 +66,9 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 		getStyleClass().addAll("bento", "container", "container-leaf");
 
 		// Fit the canvas to the container size
-		canvas.setManaged(false);
 		canvas.setMouseTransparent(true);
-		canvas.widthProperty().bind(widthProperty());
-		canvas.heightProperty().bind(heightProperty());
+		canvas.prefWidthProperty().bind(widthProperty());
+		canvas.prefHeightProperty().bind(heightProperty());
 
 		uncollapsedWidth.bind(widthProperty());
 		uncollapsedHeight.bind(heightProperty());
@@ -273,47 +270,41 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 		}
 
 		// Clear any old graphics.
-		GraphicsContext g = canvas.getGraphicsContext2D();
-		g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		g.setStroke(Color.RED);
-		g.setFill(Color.rgb(255, 0, 0, 0.25));
+		canvas.clear();
 
 		// Draw a rect around the given target region.
+		final int color = 0x44FF0000;
+		final int borderColor = 0x88FF0000;
+		final int borderWidth = 2;
 		final double x = ox + target.getLayoutX();
 		final double y = oy + target.getLayoutY();
 		final double w = target.getWidth();
 		final double h = target.getHeight();
 		switch (side) {
 			// TODO: For accessibility, draw additional directional indicators
-			case TOP -> {
-				g.fillRect(x, y, w, h / 2);
-				g.strokeRect(x, y, w, h / 2);
-			}
-			case BOTTOM -> {
-				g.fillRect(x, y + h / 2, w, h / 2);
-				g.strokeRect(x, y + h / 2, w, h / 2);
-			}
-			case LEFT -> {
-				g.fillRect(x, y, w / 2, h);
-				g.strokeRect(x, y, w / 2, h);
-			}
-			case RIGHT -> {
-				g.fillRect(x + w / 2, y, w / 2, h);
-				g.strokeRect(x + w / 2, y, w / 2, h);
-			}
-			case null -> {
-				g.fillRect(x, y, w, h);
-				g.strokeRect(x, y, w, h);
-			}
+			case TOP -> canvas.fillBorderedRect(x, y, w, h / 2, borderWidth, color, borderColor);
+			case BOTTOM -> canvas.fillBorderedRect(x, y + h / 2, w, h / 2, borderWidth, color, borderColor);
+			case LEFT -> canvas.fillBorderedRect(x, y, w / 2, h, borderWidth, color, borderColor);
+			case RIGHT -> canvas.fillBorderedRect(x + w / 2, y, w / 2, h, borderWidth, color, borderColor);
+			case null -> canvas.fillBorderedRect(x, y, w, h, borderWidth, color, borderColor);
 		}
+		canvas.commit();
 	}
 
 	/**
 	 * Clear this container's overlay canvas.
 	 */
 	public void clearCanvas() {
-		GraphicsContext g = canvas.getGraphicsContext2D();
-		g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		canvas.clear();
+		canvas.commit();
+	}
+
+	/**
+	 * @return Overlay canvas.
+	 */
+	@Nonnull
+	public PixelCanvas getCanvas() {
+		return canvas;
 	}
 
 	/**
