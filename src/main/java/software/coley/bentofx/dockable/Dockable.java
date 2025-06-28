@@ -19,6 +19,7 @@ import software.coley.bentofx.event.DockEvent;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
 import software.coley.bentofx.path.DockablePath;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -404,6 +405,8 @@ public class Dockable implements BentoBacked, Identifiable {
 	 * 		Listener to add.
 	 */
 	public void addCloseListener(@Nonnull DockableCloseListener listener) {
+		if (closeListeners == null)
+			closeListeners = new ArrayList<>();
 		closeListeners.add(listener);
 	}
 
@@ -414,7 +417,8 @@ public class Dockable implements BentoBacked, Identifiable {
 	 * 		Listener to remove.
 	 */
 	public void removeCloseListener(@Nonnull DockableCloseListener listener) {
-		closeListeners.remove(listener);
+		if (closeListeners != null)
+			closeListeners.remove(listener);
 	}
 
 	@Override
