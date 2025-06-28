@@ -20,7 +20,7 @@ import software.coley.bentofx.Bento;
 import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.control.Header;
 import software.coley.bentofx.control.HeaderPane;
-import software.coley.bentofx.control.PixelCanvas;
+import software.coley.bentofx.control.canvas.PixelCanvas;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.event.DockEvent;
 import software.coley.bentofx.layout.DockContainer;

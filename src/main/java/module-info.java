@@ -9,6 +9,7 @@ module bento.fx {
 	exports software.coley.bentofx;
 	exports software.coley.bentofx.building;
 	exports software.coley.bentofx.control;
+	exports software.coley.bentofx.control.canvas;
 	exports software.coley.bentofx.dockable;
 	exports software.coley.bentofx.event;
 	exports software.coley.bentofx.layout;
@@ -19,6 +20,7 @@ module bento.fx {
 	opens software.coley.bentofx;
 	opens software.coley.bentofx.building;
 	opens software.coley.bentofx.control;
+	opens software.coley.bentofx.control.canvas;
 	opens software.coley.bentofx.dockable;
 	opens software.coley.bentofx.event;
 	opens software.coley.bentofx.layout;

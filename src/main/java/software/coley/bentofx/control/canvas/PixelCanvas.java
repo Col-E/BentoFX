@@ -1,72 +1,99 @@
-package software.coley.bentofx.control;
+package software.coley.bentofx.control.canvas;
 
 import jakarta.annotation.Nonnull;
-import javafx.scene.image.PixelFormat;
-import javafx.scene.image.PixelWriter;
-
-import java.nio.IntBuffer;
-import java.util.Arrays;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Region;
 
 /**
- * Helper class to draw pixels into a temporary buffer.
+ * This is a very simple alternative to {@link Canvas} that <i>does not</i> keep track of draw operations.
+ * In some super niche cases, the default canvas is a memory hog, where this operates on a flat ARGB {@code int[]}.
  *
  * @author Matt Coley
+ * @see PixelPainter
  */
-public final class PixelPainter {
-	/** ARGB pixel buffer to draw with. */
-	private int[] drawBuffer = new int[0];
-	/** Current width of an image. */
-	private int imageWidth;
-	/** Current height of an image. */
-	private int imageHeight;
+public class PixelCanvas extends Region {
+	private static final int OP_RECT_FILL = 100;
+	private static final int OP_PX_SET = 200;
+	/** Pixel painter. */
+	private final PixelPainter<?> pixelPainter;
+	/** Wrapped display. */
+	private final ImageView view = new ImageView();
+	/** The image to display. */
+	private WritableImage image;
+	/** Last committed draw hash. */
+	private int lastDrawHash;
+	/** Current draw hash. */
+	private int currentDrawHash;
 
 	/**
-	 * Initializes the painter.
+	 * New pixel canvas.
+	 *
+	 * @param pixelPainter
+	 * 		Painter to draw pixels.
+	 */
+	public PixelCanvas(@Nonnull PixelPainter<?> pixelPainter) {
+		this.pixelPainter = pixelPainter;
+		getChildren().add(view);
+
+		view.fitWidthProperty().bind(widthProperty());
+		view.fitHeightProperty().bind(heightProperty());
+
+		widthProperty().addListener((ob, old, cur) -> markDirty());
+		heightProperty().addListener((ob, old, cur) -> markDirty());
+	}
+
+	/**
+	 * New pixel canvas.
+	 */
+	public PixelCanvas() {
+		this(new PixelPainterIntArgbPre());
+	}
+
+	/**
+	 * New pixel canvas.
+	 *
+	 * @param pixelPainter
+	 * 		Painter to draw pixels.
+	 * @param width
+	 * 		Assigned width.
+	 * @param height
+	 * 		Assigned height.
+	 */
+	public PixelCanvas(@Nonnull PixelPainter<?> pixelPainter, int width, int height) {
+		this.pixelPainter = pixelPainter;
+		getChildren().add(view);
+
+		setMinSize(width, height);
+		setMaxSize(width, height);
+		setPrefSize(width, height);
+
+		view.setFitWidth(width);
+		view.setFitHeight(height);
+	}
+
+	/**
+	 * New pixel canvas.
 	 *
 	 * @param width
 	 * 		Assigned width.
 	 * @param height
 	 * 		Assigned height.
 	 */
-	public void initialize(int width, int height) {
-		if (imageWidth != width || imageHeight != height) {
-			imageWidth = width;
-			imageHeight = height;
-			int drawBufferCapacity = width * height;
-			if (drawBufferCapacity > drawBuffer.length) {
-				drawBuffer = new int[drawBufferCapacity];
-				return;
-			}
-		}
-		clear();
+	public PixelCanvas(int width, int height) {
+		this(new PixelPainterIntArgb(), width, height);
 	}
 
 	/**
-	 * Releases any resources held by the painter.
-	 * Call {@link #initialize(int, int)} to initialize the painter again.
+	 * Commits any pending state in the canvas buffer to the display.
 	 */
-	public void release() {
-		imageWidth = 0;
-		imageHeight = 0;
-		drawBuffer = new int[0];
-	}
+	public void commit() {
+		if (lastDrawHash == currentDrawHash) return;
+		lastDrawHash = currentDrawHash;
 
-	/**
-	 * Commits any pending state to the display.
-	 *
-	 * @param pixelWriter
-	 * 		Pixel writer.
-	 */
-	public void commit(@Nonnull PixelWriter pixelWriter) {
-		pixelWriter.setPixels(
-				0,
-				0,
-				imageWidth,
-				imageHeight,
-				PixelFormat.getIntArgbInstance(),
-				IntBuffer.wrap(drawBuffer, 0, drawBufferCapacity()),
-				imageWidth
-		);
+		pixelPainter.commit(image.getPixelWriter());
+		view.setImage(image);
 	}
 
 	/**
@@ -125,17 +152,8 @@ public final class PixelPainter {
 	 * 		Color to fill.
 	 */
 	public void fillRect(int x, int y, int width, int height, int color) {
-		int yBound = Math.min(y + height, imageHeight);
-		int xBound = Math.min(x + width, imageWidth);
-		int[] drawBuffer = this.drawBuffer;
-		int capacity = drawBufferCapacity();
-		for (int ly = y; ly < yBound; ly++) {
-			int yOffset = ly * imageWidth;
-			for (int lx = x; lx < xBound; lx++) {
-				int index = yOffset + lx;
-				if (index < capacity) drawBuffer[index] = color;
-			}
-		}
+		updateDrawHash(hash(OP_RECT_FILL, x, y, width, height));
+		pixelPainter.fillRect(x, y, width, height, color);
 	}
 
 	/**
@@ -175,10 +193,8 @@ public final class PixelPainter {
 	 * 		Color to draw.
 	 */
 	public void drawRect(int x, int y, int width, int height, int borderSize, int color) {
-		fillRect(x, y, width, borderSize, color);
-		fillRect(x, y + height - borderSize, width, borderSize, color);
-		fillRect(x, y + borderSize, borderSize, height - borderSize, color);
-		fillRect(x + width - borderSize, y + borderSize, borderSize, height - borderSize, color);
+		updateDrawHash(hash(x, y, width, height, borderSize, color));
+		pixelPainter.drawRect(x, y, width, height, borderSize, color);
 	}
 
 	/**
@@ -214,7 +230,8 @@ public final class PixelPainter {
 	 * 		Color to draw.
 	 */
 	public void drawHorizontalLine(int x, int y, int lineLength, int lineWidth, int color) {
-		fillRect(x, y - Math.max(1, lineWidth / 2), lineLength, lineWidth, color);
+		updateDrawHash(hash(x, y, lineLength, lineWidth, color));
+		pixelPainter.drawHorizontalLine(x, y, lineLength, lineWidth, color);
 	}
 
 	/**
@@ -250,7 +267,8 @@ public final class PixelPainter {
 	 * 		Color to draw.
 	 */
 	public void drawVerticalLine(int x, int y, int lineLength, int lineWidth, int color) {
-		fillRect(x - Math.max(1, lineWidth / 2), y, lineWidth, lineLength, color);
+		updateDrawHash(hash(x, y, lineLength, lineWidth, color));
+		pixelPainter.drawVerticalLine(x, y, lineLength, lineWidth, color);
 	}
 
 	/**
@@ -264,23 +282,81 @@ public final class PixelPainter {
 	 * 		Color to set.
 	 */
 	public void setColor(int x, int y, int color) {
-		int i = adapt(x, y);
-		if (i >= 0 && i < drawBufferCapacity())
-			drawBuffer[i] = color;
+		updateDrawHash(hash(OP_PX_SET, x, y, color));
+		pixelPainter.setColor(x, y, color);
 	}
 
 	/**
-	 * Clears the buffer.
+	 * Clears the canvas buffer. Call {@link #commit()} to update the display.
 	 */
 	public void clear() {
-		Arrays.fill(drawBuffer, 0, drawBufferCapacity(), 0);
+		currentDrawHash = 0;
+		checkDirty();
+		pixelPainter.clear();
 	}
 
-	private int adapt(int x, int y) {
-		return (y * imageWidth) + x;
+	/**
+	 * Update the draw hash.
+	 *
+	 * @param hash
+	 * 		Next operation hash.
+	 */
+	protected void updateDrawHash(int hash) {
+		if (currentDrawHash == 0) currentDrawHash = hash;
+		else currentDrawHash = currentDrawHash * 31 + hash;
+		checkDirty();
 	}
 
-	private int drawBufferCapacity() {
-		return imageWidth * imageHeight;
+	/**
+	 * @param values
+	 * 		Values to hash.
+	 *
+	 * @return Generated hash.
+	 */
+	protected static int hash(int... values) {
+		int hash = values[0];
+		for (int i = 1; i < values.length; i++)
+			hash = 31 * hash + values[i];
+		return hash;
+	}
+
+	/**
+	 * A dirty canvas means the buffer state is outdated and needs to be {@link #reallocate() reallocated}.
+	 * This will be done automatically when calling drawing methods.
+	 *
+	 * @return {@code true} when this canvas is {@code dirty}.
+	 */
+	public boolean isDirty() {
+		return image == null;
+	}
+
+	/**
+	 * Marks the canvas as dirty.
+	 */
+	public void markDirty() {
+		image = null;
+		currentDrawHash = ~lastDrawHash;
+	}
+
+	/**
+	 * Check if {@code dirty} and allocates a new buffer when dirty.
+	 */
+	public void checkDirty() {
+		if (isDirty())
+			reallocate();
+	}
+
+	/**
+	 * Allocate the image and associated values.
+	 */
+	protected void reallocate() {
+		int imageWidth = (int) Math.max(1, getWidth());
+		int imageHeight = (int) Math.max(1, getHeight());
+		pixelPainter.initialize(imageWidth, imageHeight);
+
+		WritableImage image = this.image;
+		if (image == null || imageWidth != image.getWidth() || imageHeight != image.getHeight()) {
+			this.image = new WritableImage(imageWidth, imageHeight);
+		}
 	}
 }
