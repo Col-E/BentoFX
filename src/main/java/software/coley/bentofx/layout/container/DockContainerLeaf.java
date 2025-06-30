@@ -45,7 +45,7 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	private final DoubleProperty uncollapsedWidth = new SimpleDoubleProperty();
 	private final DoubleProperty uncollapsedHeight = new SimpleDoubleProperty();
 	private BooleanProperty canSplit;
-	private final PixelCanvas canvas = new PixelCanvas();
+	private final PixelCanvas canvas;
 	private final HeaderPane headerPane;
 	private final Bento bento;
 	private final String identifier;
@@ -66,6 +66,7 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 		getStyleClass().addAll("bento", "container", "container-leaf");
 
 		// Fit the canvas to the container size
+		canvas = bento.controlsBuilding().newCanvas(this);
 		canvas.setMouseTransparent(true);
 		canvas.prefWidthProperty().bind(widthProperty());
 		canvas.prefHeightProperty().bind(heightProperty());

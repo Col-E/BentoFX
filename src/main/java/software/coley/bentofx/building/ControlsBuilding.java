@@ -8,6 +8,7 @@ import software.coley.bentofx.control.ContentWrapper;
 import software.coley.bentofx.control.Header;
 import software.coley.bentofx.control.HeaderPane;
 import software.coley.bentofx.control.Headers;
+import software.coley.bentofx.control.canvas.PixelCanvas;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
 
@@ -16,15 +17,17 @@ import software.coley.bentofx.layout.container.DockContainerLeaf;
  *
  * @author Matt Coley
  */
-public class ControlsBuilding implements HeaderPaneFactory, HeadersFactory, HeaderFactory, ContentWrapperFactory {
+public class ControlsBuilding implements HeaderPaneFactory, HeadersFactory, HeaderFactory, ContentWrapperFactory, CanvasFactory {
 	private static final HeaderPaneFactory DEFAULT_HEADER_PANE_FACTORY = HeaderPane::new;
 	private static final HeadersFactory DEFAULT_HEADERS_FACTORY = Headers::new;
 	private static final HeaderFactory DEFAULT_HEADER_FACTORY = (dockable, parentPane) -> new Header(dockable, parentPane).withDragDrop();
 	private static final ContentWrapperFactory DEFAULT_CONTENT_WRAPPER_FACTORY = ContentWrapper::new;
+	private static final CanvasFactory DEFAULT_CANVAS_FACTORY = (parentPane) -> new PixelCanvas();
 	private HeaderPaneFactory headerPaneFactory = DEFAULT_HEADER_PANE_FACTORY;
 	private HeadersFactory headersFactory = DEFAULT_HEADERS_FACTORY;
 	private HeaderFactory headerFactory = DEFAULT_HEADER_FACTORY;
 	private ContentWrapperFactory contentWrapperFactory = DEFAULT_CONTENT_WRAPPER_FACTORY;
+	private CanvasFactory canvasFactory = DEFAULT_CANVAS_FACTORY;
 
 	/**
 	 * @return Factory for creating {@link HeaderPane}.
@@ -102,6 +105,25 @@ public class ControlsBuilding implements HeaderPaneFactory, HeadersFactory, Head
 		this.contentWrapperFactory = contentWrapperFactory;
 	}
 
+	/**
+	 * @return Factory for creating {@link PixelCanvas}.
+	 */
+	@Nonnull
+	public CanvasFactory getCanvasFactory() {
+		return canvasFactory;
+	}
+
+	/**
+	 * @param canvasFactory
+	 * 		Factory for creating {@link PixelCanvas}.
+	 *        {@code null} to use the default factory.
+	 */
+	public void setCanvasFactory(@Nullable CanvasFactory canvasFactory) {
+		if (canvasFactory == null)
+			canvasFactory = DEFAULT_CANVAS_FACTORY;
+		this.canvasFactory = canvasFactory;
+	}
+
 	@Nonnull
 	@Override
 	public HeaderPane newHeaderPane(@Nonnull DockContainerLeaf container) {
@@ -124,5 +146,11 @@ public class ControlsBuilding implements HeaderPaneFactory, HeadersFactory, Head
 	@Override
 	public ContentWrapper newContentWrapper(@Nonnull DockContainerLeaf container) {
 		return contentWrapperFactory.newContentWrapper(container);
+	}
+
+	@Nonnull
+	@Override
+	public PixelCanvas newCanvas(@Nonnull DockContainerLeaf container) {
+		return canvasFactory.newCanvas(container);
 	}
 }
