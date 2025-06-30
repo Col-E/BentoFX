@@ -42,7 +42,8 @@ signing:
 deploy:
   maven:
     mavenCentral:
-      lib:
+      sonatype:
+        url: https://central.sonatype.com/api/v1/publisher
         active: RELEASE
         applyMavenCentralRules: true
         stagingRepositories:
