@@ -8,11 +8,11 @@ project:
     - Matt Coley
   license: MIT
   inceptionYear: 2025
-  stereotype: none
-  java:
-    version: 21
-    groupId: software.coley
-    artifactId: bento-fx
+  languages:
+    java:
+      version: 21
+      groupId: software.coley
+      artifactId: bento-fx
 
 release:
   github:
@@ -41,12 +41,9 @@ signing:
 
 deploy:
   maven:
-    nexus2:
-      maven-central:
+    mavenCentral:
+      lib:
         active: RELEASE
-        url: https://s01.oss.sonatype.org/service/local
         applyMavenCentralRules: true
         stagingRepositories:
           - target/staging-deploy
-        closeRepository: true
-        releaseRepository: true
