@@ -72,6 +72,40 @@ public class PixelPainterIntArgb implements PixelPainter<IntBuffer> {
 	}
 
 	@Override
+	public void drawImage(int x, int y, @Nonnull ArgbSource source) {
+		int sourceWidth = source.getWidth();
+		int sourceHeight = source.getHeight();
+		int[] argb = source.getArgb();
+		int yBound = Math.min(y + sourceHeight, imageHeight);
+		int xBound = Math.min(x + sourceWidth, imageWidth);
+		for (int ly = y; ly < yBound; ly++) {
+			int yOffsetSource = (ly - y) * sourceWidth;
+			for (int lx = x; lx < xBound; lx++) {
+				int sourceIndex = yOffsetSource + (lx - x);
+				if (sourceIndex < argb.length)
+					setColor(lx, ly, argb[sourceIndex]);
+			}
+		}
+	}
+
+	@Override
+	public void drawImage(int x, int y, int sx, int sy, int sw, int sh, @Nonnull ArgbSource source) {
+		int[] argb = source.getArgb(sx, sy, sw, sh);
+		if (argb == null)
+			return;
+		int yBound = Math.min(y + sh, imageHeight);
+		int xBound = Math.min(x + sw, imageWidth);
+		for (int ly = y; ly < yBound; ly++) {
+			int yOffsetSource = (ly - y) * sw;
+			for (int lx = x; lx < xBound; lx++) {
+				int sourceIndex = yOffsetSource + (lx - x);
+				if (sourceIndex < argb.length)
+					setColor(lx, ly, argb[sourceIndex]);
+			}
+		}
+	}
+
+	@Override
 	public void setColor(int x, int y, int color) {
 		int i = adapt(x, y);
 		if (i >= 0 && i < drawBufferCapacity())

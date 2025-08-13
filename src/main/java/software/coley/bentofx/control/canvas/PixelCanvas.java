@@ -276,6 +276,42 @@ public class PixelCanvas extends Region {
 	}
 
 	/**
+	 * Draws an image at the given coordinates.
+	 *
+	 * @param x
+	 * 		X coordinate.
+	 * @param y
+	 * 		Y coordinate.
+	 * @param image
+	 * 		Image to draw.
+	 */
+	public void drawImage(int x, int y, @Nonnull ArgbSource image) {
+		pixelPainter.drawImage(x, y, image);
+	}
+
+	/**
+	 * Draws an image at the given coordinates.
+	 *
+	 * @param x
+	 * 		X coordinate to draw image at.
+	 * @param y
+	 * 		Y coordinate to draw image at.
+	 * @param sx
+	 * 		X coordinate offset into the image.
+	 * @param sy
+	 * 		Y coordinate offset into the image.
+	 * @param sw
+	 * 		Width of the image to draw.
+	 * @param sh
+	 * 		Height of the image to draw.
+	 * @param image
+	 * 		Image to draw.
+	 */
+	public void drawImage(int x, int y, int sx, int sy, int sw, int sh, @Nonnull ArgbSource image) {
+		pixelPainter.drawImage(x, y, sx, sy, sw, sh, image);
+	}
+
+	/**
 	 * Set a given pixel to the given color.
 	 *
 	 * @param x

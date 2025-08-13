@@ -4,6 +4,7 @@ module bento.fx {
 	requires javafx.base;
 	requires javafx.graphics;
 	requires javafx.controls;
+	requires java.desktop;
 
 	// Just open/export everything. Do whatever you want.
 	exports software.coley.bentofx;
