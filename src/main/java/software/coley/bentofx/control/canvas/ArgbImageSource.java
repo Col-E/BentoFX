@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 
 import java.nio.IntBuffer;
+import java.util.Arrays;
 
 /**
  * ARGB source wrapping an {@link Image}.
@@ -14,6 +15,7 @@ import java.nio.IntBuffer;
 public class ArgbImageSource implements ArgbSource {
 	private final Image image;
 	private int[] fullArgbCache;
+	private int hash;
 
 	/**
 	 * @param image
@@ -63,5 +65,21 @@ public class ArgbImageSource implements ArgbSource {
 		if (fullArgbCache == null)
 			fullArgbCache = ArgbSource.super.getArgb();
 		return fullArgbCache;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof ArgbImageSource that)) return false;
+
+		if (!image.equals(that.image)) return false;
+		return Arrays.equals(fullArgbCache, that.fullArgbCache);
+	}
+
+	@Override
+	public int hashCode() {
+		if (hash == 0)
+			hash = Arrays.hashCode(getArgb());
+		return hash;
 	}
 }

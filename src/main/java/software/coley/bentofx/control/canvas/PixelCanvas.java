@@ -14,8 +14,12 @@ import javafx.scene.layout.Region;
  * @see PixelPainter
  */
 public class PixelCanvas extends Region {
-	private static final int OP_RECT_FILL = 100;
-	private static final int OP_PX_SET = 200;
+	private static final int OP_FILL_RECT = 100;
+	private static final int OP_FILL_IMG = 101;
+	private static final int OP_DRAW_RECT = 200;
+	private static final int OP_DRAW_LINE_H = 201;
+	private static final int OP_DRAW_LINE_V = 202;
+	private static final int OP_DRAW_PX = 203;
 	/** Pixel painter. */
 	private final PixelPainter<?> pixelPainter;
 	/** Wrapped display. */
@@ -156,7 +160,7 @@ public class PixelCanvas extends Region {
 	 * 		Color to fill.
 	 */
 	public void fillRect(int x, int y, int width, int height, int color) {
-		updateDrawHash(hash(OP_RECT_FILL, x, y, width, height));
+		updateDrawHash(hash(OP_FILL_RECT, x, y, width, height));
 		pixelPainter.fillRect(x, y, width, height, color);
 	}
 
@@ -197,7 +201,7 @@ public class PixelCanvas extends Region {
 	 * 		Color to draw.
 	 */
 	public void drawRect(int x, int y, int width, int height, int borderSize, int color) {
-		updateDrawHash(hash(x, y, width, height, borderSize, color));
+		updateDrawHash(hash(OP_DRAW_RECT, x, y, width, height, borderSize, color));
 		pixelPainter.drawRect(x, y, width, height, borderSize, color);
 	}
 
@@ -234,7 +238,7 @@ public class PixelCanvas extends Region {
 	 * 		Color to draw.
 	 */
 	public void drawHorizontalLine(int x, int y, int lineLength, int lineWidth, int color) {
-		updateDrawHash(hash(x, y, lineLength, lineWidth, color));
+		updateDrawHash(hash(OP_DRAW_LINE_H, x, y, lineLength, lineWidth, color));
 		pixelPainter.drawHorizontalLine(x, y, lineLength, lineWidth, color);
 	}
 
@@ -271,7 +275,7 @@ public class PixelCanvas extends Region {
 	 * 		Color to draw.
 	 */
 	public void drawVerticalLine(int x, int y, int lineLength, int lineWidth, int color) {
-		updateDrawHash(hash(x, y, lineLength, lineWidth, color));
+		updateDrawHash(hash(OP_DRAW_LINE_V, x, y, lineLength, lineWidth, color));
 		pixelPainter.drawVerticalLine(x, y, lineLength, lineWidth, color);
 	}
 
@@ -286,6 +290,7 @@ public class PixelCanvas extends Region {
 	 * 		Image to draw.
 	 */
 	public void drawImage(int x, int y, @Nonnull ArgbSource image) {
+		updateDrawHash(hash(OP_FILL_IMG, x, y, image.hashCode()));
 		pixelPainter.drawImage(x, y, image);
 	}
 
@@ -308,6 +313,7 @@ public class PixelCanvas extends Region {
 	 * 		Image to draw.
 	 */
 	public void drawImage(int x, int y, int sx, int sy, int sw, int sh, @Nonnull ArgbSource image) {
+		updateDrawHash(hash(OP_FILL_IMG, x, y, sx, sy, sw, sh, image.hashCode()));
 		pixelPainter.drawImage(x, y, sx, sy, sw, sh, image);
 	}
 
@@ -322,7 +328,7 @@ public class PixelCanvas extends Region {
 	 * 		Color to set.
 	 */
 	public void setColor(int x, int y, int color) {
-		updateDrawHash(hash(OP_PX_SET, x, y, color));
+		updateDrawHash(hash(OP_DRAW_PX, x, y, color));
 		pixelPainter.setColor(x, y, color);
 	}
 

@@ -3,6 +3,7 @@ package software.coley.bentofx.control.canvas;
 import jakarta.annotation.Nonnull;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 /**
  * ARGB source wrapping a {@link BufferedImage}.
@@ -12,6 +13,7 @@ import java.awt.image.BufferedImage;
 public class ArgbBufferedImageSource implements ArgbSource {
 	private final BufferedImage image;
 	private int[] fullArgbCache;
+	private int hash;
 
 	/**
 	 * @param image
@@ -59,5 +61,12 @@ public class ArgbBufferedImageSource implements ArgbSource {
 		if (fullArgbCache == null)
 			fullArgbCache = ArgbSource.super.getArgb();
 		return fullArgbCache;
+	}
+
+	@Override
+	public int hashCode() {
+		if (hash == 0)
+			hash = Arrays.hashCode(getArgb());
+		return hash;
 	}
 }
