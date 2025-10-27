@@ -183,14 +183,32 @@ public class BentoUtils {
 		// Schedule again when the node is attached to a scene.
 		node.sceneProperty().addListener(new ChangeListener<>() {
 			@Override
-			public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
-				if (newValue != null) {
+			public void changed(ObservableValue<? extends Scene> observable, Scene oldScene, Scene newScene) {
+				if (newScene != null) {
 					node.sceneProperty().removeListener(this);
 
 					// We schedule the action rather than handling things immediately.
 					// The layout pass still needs to run, and if we operated now some properties like dimensions
 					// would not be up-to-date with the expectations of when the target node is "showing".
-					Platform.runLater(() -> action.accept(node));
+					Platform.runLater(() -> {
+						action.accept(node);
+
+						//In the case that these actions were queued immediately after the final layout pass,
+						//requestLayout to execute the queued action so that they aren't
+						//idling until another layout pass occurs.
+						//Another layout pass being the user moving a divider, collapsing a header, etc.
+						if(node instanceof Parent parent){
+							Runnable postListener = new Runnable() {
+								@Override
+								public void run() {
+									newScene.removePostLayoutPulseListener(this);
+									parent.requestLayout();
+								}
+							};
+							newScene.addPostLayoutPulseListener(postListener);
+						}
+
+					});
 				}
 			}
 		});
