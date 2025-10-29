@@ -52,7 +52,7 @@ public class PixelCanvas extends Region {
 	 * New pixel canvas.
 	 */
 	public PixelCanvas() {
-		this(new PixelPainterIntArgbPre());
+		this(new PixelPainterIntArgb());
 	}
 
 	/**
