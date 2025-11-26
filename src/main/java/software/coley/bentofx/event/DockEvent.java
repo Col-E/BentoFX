@@ -68,7 +68,66 @@ public sealed interface DockEvent {
 	 * @param container
 	 * 		Container the dockable belongs to.
 	 */
-	record DockableClosing(@Nonnull Dockable dockable, @Nonnull DockContainerLeaf container) implements DockEvent {}
+	final class DockableClosing implements DockEvent {
+		private final @Nonnull Dockable dockable;
+		private final @Nonnull DockContainerLeaf container;
+
+		private boolean shouldClose = true;
+
+		public DockableClosing(@Nonnull Dockable dockable, @Nonnull DockContainerLeaf container) {
+			this.dockable = dockable;
+			this.container = container;
+		}
+
+		@Nonnull
+		public Dockable dockable() {
+			return dockable;
+		}
+
+		@Nonnull
+		public DockContainerLeaf container() {
+			return container;
+		}
+
+		public void setShouldClose(boolean shouldClose) {
+			this.shouldClose = shouldClose;
+		}
+
+		public boolean shouldClose() {
+			return shouldClose;
+		}
+
+		@Override
+		public boolean equals(final Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
+
+			final DockableClosing that = (DockableClosing) o;
+
+			return dockable.equals(that.dockable)
+					&& container.equals(that.container);
+		}
+
+		@Override
+		public int hashCode() {
+			int result = dockable.hashCode();
+			result = 31 * result + container.hashCode();
+			return result;
+		}
+
+		@Override
+		public String toString() {
+			return "DockableClosing[" +
+				   "dockable=" + dockable +
+				   ", container=" + container +
+				   ", shouldClose=" + shouldClose +
+				   "]";
+		}
+	}
 
 	/**
 	 * @param dockable
