@@ -63,17 +63,20 @@ public sealed interface DockEvent {
 	record DockableAdded(@Nonnull Dockable dockable, @Nonnull DockContainerLeaf container) implements DockEvent {}
 
 	/**
-	 * @param dockable
-	 * 		Dockable being closed.
-	 * @param container
-	 * 		Container the dockable belongs to.
+	 * Event for when a {@link DockContainerLeaf} closes a {@link Dockable} item.
+	 * Can be cancelled to prevent closure.
 	 */
 	final class DockableClosing implements DockEvent {
 		private final @Nonnull Dockable dockable;
 		private final @Nonnull DockContainerLeaf container;
+		private boolean cancelled;
 
-		private boolean shouldClose = true;
-
+		/**
+		 * @param dockable
+		 * 		Dockable being closed.
+		 * @param container
+		 * 		Container the dockable belongs to.
+		 */
 		public DockableClosing(@Nonnull Dockable dockable, @Nonnull DockContainerLeaf container) {
 			this.dockable = dockable;
 			this.container = container;
@@ -89,12 +92,18 @@ public sealed interface DockEvent {
 			return container;
 		}
 
-		public void setShouldClose(boolean shouldClose) {
-			this.shouldClose = shouldClose;
+		/**
+		 * Cancel closing this dockable.
+		 */
+		public void cancel() {
+			cancelled = true;
 		}
 
-		public boolean shouldClose() {
-			return shouldClose;
+		/**
+		 * @return {@code true} when this closure has been cancelled.
+		 */
+		public boolean isCancelled() {
+			return cancelled;
 		}
 
 		@Override
@@ -122,10 +131,10 @@ public sealed interface DockEvent {
 		@Override
 		public String toString() {
 			return "DockableClosing[" +
-				   "dockable=" + dockable +
-				   ", container=" + container +
-				   ", shouldClose=" + shouldClose +
-				   "]";
+					"dockable=" + dockable +
+					", container=" + container +
+					", shouldClose=" + cancelled +
+					"]";
 		}
 	}
 

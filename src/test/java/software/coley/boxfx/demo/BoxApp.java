@@ -158,7 +158,7 @@ public class BoxApp extends Application {
 			// nothing to do - just close
 		} else if (result.equals(ButtonType.CANCEL)) {
 			// prevent closing
-			closingEvent.setShouldClose(false);
+			closingEvent.cancel();
 		}
 	}
 
