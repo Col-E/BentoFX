@@ -65,7 +65,7 @@ public class Headers extends LinearItemPane {
 		setupDragDrop(container);
 	}
 
-	private void setupMinSizeTracking() {
+	protected void setupMinSizeTracking() {
 		getChildren().addListener((ListChangeListener<Node>) c -> {
 			Orientation orientation = getOrientation();
 
