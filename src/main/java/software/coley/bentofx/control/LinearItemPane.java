@@ -12,9 +12,11 @@ import javafx.geometry.Orientation;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 /**
  * A basic pane that lays out children in a single line.
@@ -24,7 +26,7 @@ import javafx.scene.layout.VBox;
  */
 @SuppressWarnings("DuplicatedCode")
 public class LinearItemPane extends Pane {
-	private static final int MIN_PERPENDICULAR = 16;
+	protected static final int MIN_PERPENDICULAR = 16;
 	private final Orientation orientation;
 	private final BooleanProperty overflowing = new SimpleBooleanProperty();
 	private final BooleanProperty fitChildrenToPerpendicular = new SimpleBooleanProperty();
@@ -37,11 +39,21 @@ public class LinearItemPane extends Pane {
 	public LinearItemPane(@Nonnull Orientation orientation) {
 		this.orientation = orientation;
 
+		setEffect(new InnerShadow(10, Color.BLACK));
+
 		// When the child to keep in view changes, update the layout.
 		keepInView.addListener((ob, old, cur) -> requestLayout());
 
 		// Same for perpendicular fitting.
 		fitChildrenToPerpendicular.addListener((ob, old, cur) -> requestLayout());
+	}
+
+	/**
+	 * @return Orientation of this linear pane.
+	 */
+	@Nonnull
+	public Orientation getOrientation() {
+		return orientation;
 	}
 
 	/**

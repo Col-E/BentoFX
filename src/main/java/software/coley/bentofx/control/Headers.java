@@ -1,10 +1,13 @@
 package software.coley.bentofx.control;
 
 import jakarta.annotation.Nonnull;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
@@ -47,6 +50,11 @@ public class Headers extends LinearItemPane {
 			prefHeightProperty().bind(container.heightProperty());
 		}
 
+		// Keep the minimum size with the last added header item.
+		// This will ensure this pane doesn't resize to 0 width/height when the last child is removed,
+		// allowing the user to later drag another header back into this space.
+		setupMinSizeTracking();
+
 		// Make children fill the full width/height of this pane on the perpendicular (to orientation) axis.
 		fitChildrenToPerpendicularProperty().set(true);
 
@@ -55,6 +63,40 @@ public class Headers extends LinearItemPane {
 
 		// Support drag-drop.
 		setupDragDrop(container);
+	}
+
+	private void setupMinSizeTracking() {
+		getChildren().addListener((ListChangeListener<Node>) c -> {
+			Orientation orientation = getOrientation();
+
+			double min = MIN_PERPENDICULAR;
+			while (c.next()) {
+				for (Node child : c.getAddedSubList()) {
+					if (child instanceof Region r) {
+						if (orientation == Orientation.HORIZONTAL) {
+							min = Math.max(min, r.getHeight());
+						} else {
+							min = Math.max(min, r.getWidth());
+						}
+					}
+				}
+				for (Node child : c.getRemoved()) {
+					if (child instanceof Region r) {
+						if (orientation == Orientation.HORIZONTAL) {
+							min = Math.max(min, r.getHeight());
+						} else {
+							min = Math.max(min, r.getWidth());
+						}
+					}
+				}
+			}
+
+			if (orientation == Orientation.HORIZONTAL) {
+				minHeightProperty().setValue(min);
+			} else {
+				minWidthProperty().setValue(min);
+			}
+		});
 	}
 
 	protected void setupClip() {
