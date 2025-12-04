@@ -5,6 +5,8 @@ import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -20,6 +22,7 @@ import javafx.stage.Stage;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.building.DockBuilding;
 import software.coley.bentofx.dockable.Dockable;
+import software.coley.bentofx.event.DockEvent;
 import software.coley.bentofx.layout.container.DockContainerBranch;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
 
@@ -32,7 +35,13 @@ public class BoxApp extends Application {
 		Bento bento = new Bento();
 		bento.placeholderBuilding().setDockablePlaceholderFactory(dockable -> new Label("Empty Dockable"));
 		bento.placeholderBuilding().setContainerPlaceholderFactory(container -> new Label("Empty Container"));
-		bento.events().addEventListener(System.out::println);
+		bento.events().addEventListener((DockEvent event) -> {
+			if (event instanceof DockEvent.DockableClosing closingEvent) {
+				handleDockableClosing(closingEvent);
+			}
+
+			System.out.println(event);
+		});
 
 		DockBuilding builder = bento.dockBuilding();
 		DockContainerBranch branchRoot = builder.root("root");
@@ -119,6 +128,38 @@ public class BoxApp extends Application {
 			dockable.setClosable(false);
 		}
 		return dockable;
+	}
+
+	private void handleDockableClosing(
+			@Nonnull DockEvent.DockableClosing closingEvent
+	) {
+		final Dockable dockable = closingEvent.dockable();
+		if (!dockable.getTitle().startsWith("Class ")) {
+			return;
+		}
+
+		final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+		alert.setTitle("Confirmation");
+		alert.setHeaderText(null);
+		alert.setContentText("Save changes to [" + dockable.getTitle() + "] before closing?");
+		alert.getButtonTypes().setAll(
+				ButtonType.YES,
+				ButtonType.NO,
+				ButtonType.CANCEL
+		);
+
+		final ButtonType result = alert.showAndWait()
+				.orElse(ButtonType.CANCEL);
+
+		if (result.equals(ButtonType.YES)) {
+			// simulate saving
+			System.out.println("Saving " + dockable.getTitle() + "...");
+		} else if (result.equals(ButtonType.NO)) {
+			// nothing to do - just close
+		} else if (result.equals(ButtonType.CANCEL)) {
+			// prevent closing
+			closingEvent.setShouldClose(false);
+		}
 	}
 
 	@Nonnull

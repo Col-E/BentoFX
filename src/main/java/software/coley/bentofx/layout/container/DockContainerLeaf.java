@@ -209,10 +209,16 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 			dockable.fireCloseListeners();
 
 			// Notify event listeners this dockable will close
-			bento.events().fire(new DockEvent.DockableClosing(dockable, this));
+			final DockEvent.DockableClosing event = new DockEvent.DockableClosing(dockable, this);
+			bento.events().fire(event);
+
+			if (!event.shouldClose()) {
+				return false;
+			}
 
 			return removeDockable(dockable);
 		}
+
 		return false;
 	}
 
