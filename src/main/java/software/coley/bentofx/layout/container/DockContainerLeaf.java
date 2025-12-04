@@ -167,7 +167,7 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 		dockable.setContainer(this);
 
 		// Notify event listeners
-		bento.events().fire(new DockEvent.DockableAdded(dockable, this));
+		bento.events().fire(new DockEvent.DockableAdded(this, dockable));
 
 		// If this is the first dockable being added, select it
 		if (dockables.size() == 1) selectDockable(dockable);
