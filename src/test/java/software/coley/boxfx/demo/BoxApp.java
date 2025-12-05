@@ -36,11 +36,8 @@ public class BoxApp extends Application {
 		bento.placeholderBuilding().setDockablePlaceholderFactory(dockable -> new Label("Empty Dockable"));
 		bento.placeholderBuilding().setContainerPlaceholderFactory(container -> new Label("Empty Container"));
 		bento.events().addEventListener((DockEvent event) -> {
-			if (event instanceof DockEvent.DockableClosing closingEvent) {
+			if (event instanceof DockEvent.DockableClosing closingEvent)
 				handleDockableClosing(closingEvent);
-			}
-
-			System.out.println(event);
 		});
 
 		DockBuilding builder = bento.dockBuilding();
@@ -56,9 +53,9 @@ public class BoxApp extends Application {
 		leafTools.setPruneWhenEmpty(false);
 
 		// Add dummy menus to each.
-//		leafTools.setMenuFactory(d -> addSideOptions(new ContextMenu(), leafTools));
-//		leafWorkspaceHeaders.setMenuFactory(d -> addSideOptions(new ContextMenu(), leafWorkspaceHeaders));
-//		leafWorkspaceTools.setMenuFactory(d -> addSideOptions(new ContextMenu(), leafWorkspaceTools));
+		leafTools.setMenuFactory(d -> addSideOptions(new ContextMenu(), leafTools));
+		leafWorkspaceHeaders.setMenuFactory(d -> addSideOptions(new ContextMenu(), leafWorkspaceHeaders));
+		leafWorkspaceTools.setMenuFactory(d -> addSideOptions(new ContextMenu(), leafWorkspaceTools));
 
 		// These leaves shouldn't auto-expand. They are intended to be a set size.
 		DockContainerBranch.setResizableWithParent(leafTools, false);
@@ -135,13 +132,10 @@ public class BoxApp extends Application {
 		return dockable;
 	}
 
-	private void handleDockableClosing(
-			@Nonnull DockEvent.DockableClosing closingEvent
-	) {
+	private void handleDockableClosing(@Nonnull DockEvent.DockableClosing closingEvent) {
 		final Dockable dockable = closingEvent.dockable();
-		if (!dockable.getTitle().startsWith("Class ")) {
+		if (!dockable.getTitle().startsWith("Class "))
 			return;
-		}
 
 		final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 		alert.setTitle("Confirmation");
@@ -188,6 +182,7 @@ public class BoxApp extends Application {
 		return icon;
 	}
 
+	@Nonnull
 	private static ContextMenu addSideOptions(@Nonnull ContextMenu menu, @Nonnull DockContainerLeaf space) {
 		for (Side side : Side.values()) {
 			MenuItem item = new MenuItem(side.name());

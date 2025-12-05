@@ -12,11 +12,9 @@ import javafx.geometry.Orientation;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.effect.InnerShadow;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 
 /**
  * A basic pane that lays out children in a single line.
@@ -38,8 +36,6 @@ public class LinearItemPane extends Pane {
 	 */
 	public LinearItemPane(@Nonnull Orientation orientation) {
 		this.orientation = orientation;
-
-		setEffect(new InnerShadow(10, Color.BLACK));
 
 		// When the child to keep in view changes, update the layout.
 		keepInView.addListener((ob, old, cur) -> requestLayout());
