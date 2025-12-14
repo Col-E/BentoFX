@@ -1,6 +1,7 @@
 package software.coley.bentofx.control;
 
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -8,12 +9,14 @@ import software.coley.bentofx.building.StageBuilding;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.layout.DockContainer;
 import software.coley.bentofx.layout.container.DockContainerBranch;
+import software.coley.bentofx.layout.container.DockContainerLeaf;
+import software.coley.bentofx.layout.container.DockContainerRootBranch;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
- * Stage subtype created by {@link StageBuilding#newStageForDockable(DockContainer, Dockable)}.
+ * Stage subtype created by {@link StageBuilding#newStageForDockable(Scene, DockContainerRootBranch, DockContainerLeaf, Dockable, double, double)}
  *
  * @author Matt Coley
  */
