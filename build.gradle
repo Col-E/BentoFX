@@ -83,6 +83,7 @@ tasks.register('mergeShadedJar', Jar) {
 assemble.dependsOn mergeShadedJar
 
 // Setup publishing to pull from our slightly modified outputs
+def includeTransitives = false
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -120,6 +121,19 @@ publishing {
                     connection = 'scm:git:https://github.com/Col-E/BentoFX.git'
                     developerConnection = 'scm:git:ssh://github.com/Col-E/BentoFX.git'
                     url = 'https://github.com/Col-E/BentoFX'
+                }
+
+                // We aren't using "from components.java" so we need to rebuild the dependencies node ourselves
+                if (includeTransitives) withXml {
+                    def allDeps = project.configurations.compileClasspath.resolvedConfiguration.firstLevelModuleDependencies
+                    def root = asNode()
+                    def depNode = root.appendNode("dependencies")
+                    allDeps.each { d ->
+                        def dn = depNode.appendNode("dependency")
+                        dn.appendNode("groupId", d.moduleGroup)
+                        dn.appendNode("artifactId", d.name)
+                        dn.appendNode("version", d.moduleVersion)
+                    }
                 }
             }
         }
