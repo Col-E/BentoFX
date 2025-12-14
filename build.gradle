@@ -100,7 +100,7 @@ publishing {
             artifact(tasks.named('javadocJar').get())
 
             pom {
-                name = project.group
+                name = project.name
                 description = 'A docking system for JavaFX.'
                 url = 'https://github.com/Col-E/BentoFX'
                 inceptionYear = '2025'
