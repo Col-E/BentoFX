@@ -35,12 +35,12 @@ jobs:
           distribution: temurin
           java-version: 21
           check-latest: true
-      # The project version extract NEEDS to have the maven wrapper already downloaded.
+      # The project version extract NEEDS to have the gradle wrapper already downloaded.
       # So we have a dummy step here just to initialize it.
-      - name: Download Maven wrapper
-        run: ./mvnw --version
+      - name: Download Gradle wrapper
+        run: ./gradlew --version
       - name: Run tests
-        run: ./mvnw test
+        run: ./gradlew test
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -92,15 +92,15 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      # The project version extract NEEDS to have the maven wrapper already downloaded.
+      # The project version extract NEEDS to have the gradle wrapper already downloaded.
       # So we have a dummy step here just to initialize it.
-      - name: Download Maven wrapper
-        run: ./mvnw --version
+      - name: Download Gradle wrapper
+        run: ./gradlew --version
       # Set environment variable for the project version: "var_to_set=$(command_to_run)" >> sink
       #  - For maven:  echo "PROJECT_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
       #  - For gradle: echo "PROJECT_VERSION=$(./gradlew properties | grep -Po '(?<=version: ).*')" >> $GITHUB_ENV
       - name: Extract project version to environment variable
-        run: echo "PROJECT_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+        run: echo "PROJECT_VERSION=$(./gradlew properties | grep -Po '(?<=version\W ).*')" >> $GITHUB_ENV
       # Check if a tag exists that matches the current project version.
       # Write the existence state to the step output 'tagExists'.
       - name: Check the package version has corresponding Git tag
@@ -121,23 +121,17 @@ jobs:
           git tag
           git show-ref --tags --verify -- "refs/tags/${{ env.PROJECT_VERSION }}"
           exit 1
-      # Run build to generate the release artifacts.
-      # Tag does not exist AND trigger was manual. Deploy release artifacts!
-      - name: Build release artifacts
-        run: ./mvnw -Dmaven.test.skip=true deploy -Prelease -DaltDeploymentRepository=local::default::file:./target/staging-deploy
       # Make release with JReleaser, only running when the project version does not exist as a tag on the repository.
       - name: Publish release
-        uses: jreleaser/release-action@v2
-        with:
-          arguments: full-release
+        run: ./gradlew publish jreleaserFullRelease
         env:
           JRELEASER_PROJECT_VERSION: ${{ env.PROJECT_VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
-          JRELEASER_MAVENCENTRAL_TOKEN: ${{ secrets.JRELEASER_MAVENCENTRAL_TOKEN }}
           JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.JRELEASER_MAVENCENTRAL_USERNAME }}
+          JRELEASER_MAVENCENTRAL_TOKEN: ${{ secrets.JRELEASER_MAVENCENTRAL_TOKEN }}
       # Upload JRelease debug log
       - name: JReleaser output
         uses: actions/upload-artifact@v4
