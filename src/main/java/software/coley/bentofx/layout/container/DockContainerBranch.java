@@ -374,6 +374,12 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	 * @return {@code true} when updated.
 	 */
 	public boolean setContainerCollapsed(@Nonnull DockContainerLeaf child, boolean collapse) {
+		// Skip if there is nothing to branch between. If there is only one child collapsing makes no sense
+		// as the same layout space will still be occupied by the leaf, but the leaf display will be hidden.
+		// Collapsing can only occur if there is a splitter between two or more child containers.
+		if (collapse && childContainers.size() <= 1)
+			return false;
+
 		// Skip if we don't have the given child as the first or last entry.
 		int i = childContainers.indexOf(child);
 		if (i < 0 || (i != 0 && i != childContainers.size() - 1))
