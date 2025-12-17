@@ -9,6 +9,7 @@ import software.coley.bentofx.building.PlaceholderBuilding;
 import software.coley.bentofx.building.StageBuilding;
 import software.coley.bentofx.control.DragDropStage;
 import software.coley.bentofx.dockable.Dockable;
+import software.coley.bentofx.dockable.DragDropBehavior;
 import software.coley.bentofx.event.DockEvent;
 import software.coley.bentofx.event.EventBus;
 import software.coley.bentofx.layout.DockContainer;
@@ -29,6 +30,7 @@ public class Bento {
 	private final ControlsBuilding controlsBuilding = newControlsBuilding();
 	private final DockBuilding dockBuilding = newDockBuilding();
 	private final PlaceholderBuilding placeholderBuilding = newPlaceholderBuilding();
+	private final DragDropBehavior dragDropBehavior = newDragDropBehavior();
 
 	@Nonnull
 	protected EventBus newEventBus() {
@@ -58,6 +60,11 @@ public class Bento {
 	@Nonnull
 	protected PlaceholderBuilding newPlaceholderBuilding() {
 		return new PlaceholderBuilding();
+	}
+
+	@Nonnull
+	protected DragDropBehavior newDragDropBehavior() {
+		return null;
 	}
 
 	/**
@@ -106,6 +113,14 @@ public class Bento {
 	@Nonnull
 	public PlaceholderBuilding placeholderBuilding() {
 		return placeholderBuilding;
+	}
+
+	/**
+	 * @return Behavior implementation for drag-drop.
+	 */
+	@Nonnull
+	public DragDropBehavior getDragDropBehavior() {
+		return dragDropBehavior;
 	}
 
 	/**

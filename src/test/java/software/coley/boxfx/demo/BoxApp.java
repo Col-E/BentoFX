@@ -126,7 +126,7 @@ public class BoxApp extends Application {
 			);
 		});
 		if (s > 0) {
-			dockable.setDragGroup(1);
+			dockable.setDragMask(1);
 			dockable.setClosable(false);
 		}
 		return dockable;

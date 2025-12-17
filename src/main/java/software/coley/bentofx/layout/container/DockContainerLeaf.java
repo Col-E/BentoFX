@@ -236,8 +236,8 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 		// If there is a side provided and there are no dockables here, then we can receive the dockable.
 		if (dockables.isEmpty()) return true;
 
-		// If there are existing dockables, the incoming dockable must have a compatible group.
-		return dockables.stream().anyMatch(d -> d.getDragGroup() == dockable.getDragGroup());
+		// If there are existing dockables, check if the DnD behavior allows the dockable to be placed here.
+		return bento.getDragDropBehavior().canReceiveDockable(this, receivedSide, dockable);
 	}
 
 	@Override

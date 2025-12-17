@@ -39,7 +39,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	private ObjectProperty<DockableMenuFactory> contextMenuFactory;
 	private ObjectProperty<Node> node;
 	private ObjectProperty<DockContainerLeaf> container;
-	private IntegerProperty dragGroup;
+	private IntegerProperty dragMask;
 	private BooleanProperty closable;
 	private BooleanProperty canBeDragged;
 	private BooleanProperty canBeDroppedToNewWindow;
@@ -291,30 +291,30 @@ public class Dockable implements BentoBacked, Identifiable {
 	}
 
 	/**
-	 * @return Current drag group.
+	 * @return Current drag group mask.
 	 */
-	public int getDragGroup() {
-		if (dragGroup == null)
+	public int getDragMask() {
+		if (dragMask == null)
 			return 0;
-		return dragGroup.get();
+		return dragMask.get();
 	}
 
 	/**
-	 * @return Drag group property.
+	 * @return Drag group mask property.
 	 */
 	@Nonnull
-	public IntegerProperty dragGroupProperty() {
-		if (dragGroup == null)
-			dragGroup = new SimpleIntegerProperty();
-		return dragGroup;
+	public IntegerProperty dragMaskProperty() {
+		if (dragMask == null)
+			dragMask = new SimpleIntegerProperty();
+		return dragMask;
 	}
 
 	/**
-	 * @param dragGroup
-	 * 		New drag group.
+	 * @param dragMask
+	 * 		New drag group mask.
 	 */
-	public void setDragGroup(int dragGroup) {
-		dragGroupProperty().set(dragGroup);
+	public void setDragMask(int dragMask) {
+		dragMaskProperty().set(dragMask);
 	}
 
 	/**
