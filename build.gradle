@@ -156,9 +156,22 @@ jreleaser {
         checksums = true
         files = false
     }
+    distributions {
+        dist {
+            artifact {
+                path = "build/libs/{{projectName}}-{{projectVersion}}-merged-shaded.jar"
+                transform = "{{projectName}}-{{projectVersion}}.jar"
+            }
+            artifact {
+                path = "build/libs/{{projectName}}-{{projectVersion}}-sources.jar"
+            }
+            artifact {
+                path = "build/libs/{{projectName}}-{{projectVersion}}-javadoc.jar"
+            }
+        }
+    }
     release {
         github {
-            overwrite = true
             tagName = project.version
             changelog {
                 formatted = 'ALWAYS'
