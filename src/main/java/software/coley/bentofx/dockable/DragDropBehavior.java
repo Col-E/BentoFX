@@ -13,7 +13,7 @@ import software.coley.bentofx.layout.container.DockContainerLeaf;
 public class DragDropBehavior {
 	/**
 	 * Determines if a given dockable can be placed into a container.
-	 * Generally this is used to control how the {@link Dockable#getDragMask()} behaves.
+	 * Generally this is used to control how the {@link Dockable#getDragGroupMask()} behaves.
 	 * You can override this method to support alternative grouping models.
 	 * <p/>
 	 * For example, the default implementation is a simple equality check.
@@ -45,6 +45,6 @@ public class DragDropBehavior {
 	                                  @Nonnull Dockable dockable) {
 		// The incoming dockable must have a compatible group.
 		return targetContainer.getDockables().stream()
-				.anyMatch(d -> d.getDragMask() == dockable.getDragMask());
+				.anyMatch(d -> d.getDragGroupMask() == dockable.getDragGroupMask());
 	}
 }

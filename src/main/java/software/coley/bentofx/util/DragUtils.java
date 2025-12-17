@@ -55,7 +55,7 @@ public class DragUtils {
 	@Nonnull
 	public static Map<DataFormat, Object> content(@Nonnull Dockable dockable, @Nullable DragDropTarget target) {
 		ClipboardContent content = new ClipboardContent();
-		String format = PREFIX + dockable.getDragMask() + ";" + dockable.getIdentifier();
+		String format = PREFIX + dockable.getDragGroupMask() + ";" + dockable.getIdentifier();
 		if (target != null)
 			format += ";" + target.name();
 		content.putString(format);
@@ -100,7 +100,7 @@ public class DragUtils {
 	 * @param dragboard
 	 * 		Some dragboard that may contain a dragged {@link Header}.
 	 *
-	 * @return The {@link Dockable#getDragMask()} of the dragged {@link Header}
+	 * @return The {@link Dockable#getDragGroupMask()} of the dragged {@link Header}
 	 * if the board's respective {@link DragEvent} originates from a dragged {@link Header}.
 	 *
 	 * @see #content(Dockable)
