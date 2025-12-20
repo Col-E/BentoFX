@@ -156,15 +156,9 @@ jreleaser {
         checksums = true
         files = false
     }
-    distributions {
-        dist {
-            artifact {
-                path = "build/libs/{{projectName}}-{{projectVersion}}-merged-shaded.jar"
-                transform = "{{projectName}}-{{projectVersion}}.jar"
-            }
-        }
-    }
     release {
+        // TODO: This doesn't auto-publish github releases and the 'distribution' block also isn't a viable alternative
+        //  Need to look into why it doesn't work. Probably related to the project's "alternative" artifact model...
         github {
             tagName = project.version
             changelog {
