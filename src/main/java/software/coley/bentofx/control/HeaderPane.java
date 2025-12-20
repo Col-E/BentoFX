@@ -18,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
+import software.coley.bentofx.layout.container.DockContainerLeafMenuFactory;
 import software.coley.bentofx.util.BentoUtils;
 
 import static software.coley.bentofx.util.BentoStates.*;
@@ -119,14 +120,12 @@ public class HeaderPane extends BorderPane {
 
 		// Update CSS state and edge node to display our headers + controls aligned to the given side.
 		headers = getBento().controlsBuilding().newHeaders(container, BentoUtils.sideToOrientation(side), side);
-		Button dockableListButton = createDockableListButton();
-		Button containerConfigButton = createContainerConfigButton();
 		BorderPane headersWrapper = new BorderPane(headers);
 		headersWrapper.getStyleClass().add("header-region-wrapper");
 		if (BentoUtils.sideToOrientation(side) == Orientation.HORIZONTAL) {
-			headersWrapper.setRight(new ButtonHBar(headers, dockableListButton, containerConfigButton));
+			headersWrapper.setRight(new ButtonHBar(headers, createButtonArray()));
 		} else {
-			headersWrapper.setBottom(new ButtonVBar(headers, dockableListButton, containerConfigButton));
+			headersWrapper.setBottom(new ButtonVBar(headers, createButtonArray()));
 		}
 		switch (side) {
 			case TOP -> {
@@ -158,8 +157,24 @@ public class HeaderPane extends BorderPane {
 				.forEach(headers::add);
 	}
 
+	/**
+	 * @return Array of buttons to show in the corner of the headers region.
+	 *
+	 * @see #createDockableListButton()
+	 * @see #createContainerConfigButton()
+	 */
 	@Nonnull
-	private Button createDockableListButton() {
+	protected Node[] createButtonArray() {
+		Button dockableListButton = createDockableListButton();
+		Button containerConfigButton = createContainerConfigButton();
+		return new Node[]{dockableListButton, containerConfigButton};
+	}
+
+	/**
+	 * @return New button that displays all dockables in this space.
+	 */
+	@Nonnull
+	protected Button createDockableListButton() {
 		Button button = new Button("▼");
 		button.setEllipsisString("▼");
 		button.getStyleClass().addAll("corner-button", "list-button");
@@ -181,8 +196,13 @@ public class HeaderPane extends BorderPane {
 		return button;
 	}
 
+	/**
+	 * @return New button that displays a user-defined menu.
+	 *
+	 * @see DockContainerLeaf#setMenuFactory(DockContainerLeafMenuFactory)
+	 */
 	@Nonnull
-	private Button createContainerConfigButton() {
+	protected Button createContainerConfigButton() {
 		Button button = new Button("≡");
 		button.setEllipsisString("≡");
 		button.getStyleClass().addAll("corner-button", "context-button");
