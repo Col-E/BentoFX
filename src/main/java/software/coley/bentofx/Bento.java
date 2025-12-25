@@ -64,7 +64,7 @@ public class Bento {
 
 	@Nonnull
 	protected DragDropBehavior newDragDropBehavior() {
-		return null;
+		return new DragDropBehavior();
 	}
 
 	/**
