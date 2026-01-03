@@ -9,8 +9,10 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
@@ -40,6 +42,7 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	private final ObservableList<Dockable> dockablesView = FXCollections.unmodifiableObservableList(dockables);
 	private final ObjectProperty<Dockable> selectedDockable = new SimpleObjectProperty<>();
 	private final ObjectProperty<Side> side = new SimpleObjectProperty<>(Side.TOP);
+	private final ObservableValue<Orientation> orientation = side.map(s -> s.isHorizontal() ? Orientation.HORIZONTAL : Orientation.VERTICAL);
 	private final BooleanProperty collapsed = new SimpleBooleanProperty();
 	private final ObjectProperty<DockContainerLeafMenuFactory> menuFactory = new SimpleObjectProperty<>();
 	private final DoubleProperty uncollapsedWidth = new SimpleDoubleProperty();
@@ -439,6 +442,29 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	@Nonnull
 	public ObjectProperty<Side> sideProperty() {
 		return side;
+	}
+
+	/**
+	 * @return Orientation of the {@link #sideProperty() side} of this container.
+	 * {@code null} when the side value is {@code null}.
+	 *
+	 * @see Side#isHorizontal()
+	 * @see Side#isVertical()
+	 */
+	@Nullable
+	public Orientation getOrientation() {
+		return orientation.getValue();
+	}
+
+	/**
+	 * @return Property mapping the {@link #sideProperty() side} of this container to an orientation.
+	 *
+	 * @see Side#isHorizontal()
+	 * @see Side#isVertical()
+	 */
+	@Nonnull
+	public ObservableValue<Orientation> orientationProperty() {
+		return orientation;
 	}
 
 	/**

@@ -166,37 +166,8 @@ public class Header extends Region {
 			if (cur) parentPane.getContainer().selectDockable(dockable);
 		});
 
-		// Support for:
-		//  - Selecting tabs
-		//  - Toggling tab collapsing
-		//  - Showing context menus
-		// Handled on-click because on-mouse-down conflicts with drag initialization.
-		setOnMouseClicked(e -> {
-			// Primary click --> select dockable if not selected, otherwise toggle collapsed state.
-			if (e.getButton() == MouseButton.PRIMARY) {
-				DockContainerLeaf container = parentPane.getContainer();
-
-				if (container.getSelectedDockable() == dockable || container.isCollapsed()) {
-					container.toggleCollapse(dockable);
-				} else if (container.getSelectedDockable() != dockable) {
-					container.selectDockable(dockable);
-					requestFocus();
-				}
-			}
-
-			// Secondary click --> populate context menu
-			if (e.getButton() == MouseButton.SECONDARY) {
-				// Show if a menu was provided
-				DockableMenuFactory factory = dockable.getContextMenuFactory();
-				if (factory != null) {
-					ContextMenu menu = factory.build(dockable);
-					if (menu != null) {
-						menu.setAutoHide(true);
-						menu.show(this, e.getScreenX(), e.getScreenY());
-					}
-				}
-			}
-		});
+		// Delegate click handling to whatever is specified by the bento behavior implementation.
+		setOnMouseClicked(e -> dockable.getBento().getClickBehavior().onMouseClick(parentPane.getContainer(), dockable, this, e));
 
 		// Layout
 		Label graphicHolder = new Label();

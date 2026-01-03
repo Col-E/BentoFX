@@ -9,7 +9,8 @@ import software.coley.bentofx.building.PlaceholderBuilding;
 import software.coley.bentofx.building.StageBuilding;
 import software.coley.bentofx.control.DragDropStage;
 import software.coley.bentofx.dockable.Dockable;
-import software.coley.bentofx.dockable.DragDropBehavior;
+import software.coley.bentofx.dockable.DockableClickBehavior;
+import software.coley.bentofx.dockable.DockableDragDropBehavior;
 import software.coley.bentofx.event.DockEvent;
 import software.coley.bentofx.event.EventBus;
 import software.coley.bentofx.layout.DockContainer;
@@ -30,7 +31,8 @@ public class Bento {
 	private final ControlsBuilding controlsBuilding = newControlsBuilding();
 	private final DockBuilding dockBuilding = newDockBuilding();
 	private final PlaceholderBuilding placeholderBuilding = newPlaceholderBuilding();
-	private final DragDropBehavior dragDropBehavior = newDragDropBehavior();
+	private final DockableDragDropBehavior dragDropBehavior = newDragDropBehavior();
+	private final DockableClickBehavior clickBehavior = newClickBehavior();
 
 	@Nonnull
 	protected EventBus newEventBus() {
@@ -63,8 +65,13 @@ public class Bento {
 	}
 
 	@Nonnull
-	protected DragDropBehavior newDragDropBehavior() {
-		return new DragDropBehavior();
+	protected DockableDragDropBehavior newDragDropBehavior() {
+		return new DockableDragDropBehavior() {};
+	}
+
+	@Nonnull
+	protected DockableClickBehavior newClickBehavior() {
+		return new DockableClickBehavior() {};
 	}
 
 	/**
@@ -116,11 +123,19 @@ public class Bento {
 	}
 
 	/**
-	 * @return Behavior implementation for drag-drop.
+	 * @return Behavior implementation for drag-drop operations.
 	 */
 	@Nonnull
-	public DragDropBehavior getDragDropBehavior() {
+	public DockableDragDropBehavior getDragDropBehavior() {
 		return dragDropBehavior;
+	}
+
+	/**
+	 * @return Behavior implementation for click operations.
+	 */
+	@Nonnull
+	public DockableClickBehavior getClickBehavior() {
+		return clickBehavior;
 	}
 
 	/**
