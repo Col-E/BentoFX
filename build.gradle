@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'org.jreleaser' version '1.18.0'
+    id 'org.jreleaser' version '1.22.0'
     id 'xyz.wagyourtail.jvmdowngrader' version '1.3.4'
 }
 
@@ -148,13 +148,10 @@ publishing {
 
 jreleaser {
     signing {
-        active = 'RELEASE'
-        mode = 'MEMORY'
-        armored = true
-        verify = true
-        artifacts = true
-        checksums = true
-        files = false
+        pgp {
+            active = 'RELEASE'
+            armored = true
+        }
     }
     release {
         // TODO: This doesn't auto-publish github releases and the 'distribution' block also isn't a viable alternative
