@@ -184,15 +184,19 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 
 		// Update dockable model
 		if (i >= 0) {
+			boolean wasSelected = getSelectedDockable() == dockable;
 			dockables.remove(i);
 			dockable.setContainer(null);
 
-			// Select the next available dockable if one is available
-			if (!dockables.isEmpty()) {
-				Dockable nextSourceDockable = dockables.get(Math.min(i, dockables.size() - 1));
-				selectDockable(nextSourceDockable);
-			} else {
-				selectDockable(null);
+			// If the removed dockable was the selected one, then select
+			// the next available dockable if one is available
+			if (wasSelected) {
+				if (!dockables.isEmpty()) {
+					Dockable nextSourceDockable = dockables.get(Math.min(i, dockables.size() - 1));
+					selectDockable(nextSourceDockable);
+				} else {
+					selectDockable(null);
+				}
 			}
 
 			// Notify event listeners
