@@ -1,6 +1,6 @@
 package software.coley.bentofx.control;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -20,7 +20,7 @@ public class ButtonVBar extends VBox {
 	 * @param children
 	 * 		Children to add to this box.
 	 */
-	public ButtonVBar(@Nonnull Region parent, Node... children) {
+	public ButtonVBar(@NonNull Region parent, Node... children) {
 		getStyleClass().add("button-bar");
 		pseudoClassStateChanged(PSEUDO_ORIENTATION_V, true);
 

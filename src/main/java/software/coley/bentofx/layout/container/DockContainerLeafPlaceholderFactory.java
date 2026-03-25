@@ -1,6 +1,6 @@
 package software.coley.bentofx.layout.container;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import javafx.scene.Node;
 
 /**
@@ -16,6 +16,6 @@ public interface DockContainerLeafPlaceholderFactory {
 	 *
 	 * @return Placeholder for the container.
 	 */
-	@Nonnull
-	Node build(@Nonnull DockContainerLeaf container);
+	@NonNull
+	Node build(@NonNull DockContainerLeaf container);
 }

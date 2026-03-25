@@ -1,6 +1,6 @@
 package software.coley.bentofx.dockable;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.layout.DockContainer;
 import software.coley.bentofx.path.DockablePath;
 
@@ -18,5 +18,5 @@ public interface DockableMoveListener {
 	 * @param dockable
 	 * 		Moved dockable.
 	 */
-	void onMove(@Nonnull DockablePath oldPath, @Nonnull DockablePath newPath, @Nonnull Dockable dockable);
+	void onMove(@NonNull DockablePath oldPath, @NonNull DockablePath newPath, @NonNull Dockable dockable);
 }

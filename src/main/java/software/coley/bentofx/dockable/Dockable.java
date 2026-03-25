@@ -1,7 +1,7 @@
 package software.coley.bentofx.dockable;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -51,7 +51,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	 * @param identifier
 	 * 		This dockable's identifier.
 	 */
-	public Dockable(@Nonnull Bento bento, @Nonnull String identifier) {
+	public Dockable(@NonNull Bento bento, @NonNull String identifier) {
 		this.bento = bento;
 		this.identifier = identifier;
 	}
@@ -76,7 +76,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	 * @param consumer
 	 * 		Action to run in the parent container, if one exists.
 	 */
-	public void inContainer(@Nonnull Consumer<DockContainerLeaf> consumer) {
+	public void inContainer(@NonNull Consumer<DockContainerLeaf> consumer) {
 		DockContainerLeaf container = getContainer();
 		if (container != null)
 			consumer.accept(container);
@@ -86,7 +86,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	 * @param consumer
 	 * 		Action to run in the parent container, if one exists.
 	 */
-	public void inContainer(@Nonnull BiConsumer<DockContainerLeaf, Dockable> consumer) {
+	public void inContainer(@NonNull BiConsumer<DockContainerLeaf, Dockable> consumer) {
 		DockContainerLeaf container = getContainer();
 		if (container != null)
 			consumer.accept(container, this);
@@ -104,27 +104,27 @@ public class Dockable implements BentoBacked, Identifiable {
 		return parent.getPath().withChild(this);
 	}
 
-	@Nonnull
+	@NonNull
 	@Override
 	public Bento getBento() {
 		return bento;
 	}
 
-	@Nonnull
+	@NonNull
 	@Override
 	public String getIdentifier() {
 		return identifier;
 	}
 
 	@Override
-	public boolean matchesIdentity(@Nonnull Identifiable other) {
+	public boolean matchesIdentity(@NonNull Identifiable other) {
 		return getIdentifier().equals(other.getIdentifier());
 	}
 
 	/**
 	 * @return Current title.
 	 */
-	@Nonnull
+	@NonNull
 	public String getTitle() {
 		if (title == null)
 			return "";
@@ -134,7 +134,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	/**
 	 * @return Title property.
 	 */
-	@Nonnull
+	@NonNull
 	public StringProperty titleProperty() {
 		if (title == null)
 			title = new SimpleStringProperty("");
@@ -162,7 +162,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	/**
 	 * @return Tooltip property.
 	 */
-	@Nonnull
+	@NonNull
 	public ObjectProperty<Tooltip> tooltipProperty() {
 		if (tooltip == null)
 			tooltip = new SimpleObjectProperty<>();
@@ -190,7 +190,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	/**
 	 * @return Icon factory property.
 	 */
-	@Nonnull
+	@NonNull
 	public ObjectProperty<DockableIconFactory> iconFactoryProperty() {
 		if (iconFactory == null) iconFactory = new SimpleObjectProperty<>();
 		return iconFactory;
@@ -217,7 +217,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	/**
 	 * @return Context menu factory property.
 	 */
-	@Nonnull
+	@NonNull
 	public ObjectProperty<DockableMenuFactory> contextMenuFactoryProperty() {
 		if (contextMenuFactory == null)
 			contextMenuFactory = new SimpleObjectProperty<>();
@@ -245,7 +245,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	/**
 	 * @return Node to display when this dockable is selected.
 	 */
-	@Nonnull
+	@NonNull
 	public ObjectProperty<Node> nodeProperty() {
 		if (node == null)
 			node = new SimpleObjectProperty<>();
@@ -273,7 +273,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	/**
 	 * @return Parent container property.
 	 */
-	@Nonnull
+	@NonNull
 	public ObjectProperty<DockContainerLeaf> containerProperty() {
 		if (container == null)
 			container = new SimpleObjectProperty<>();
@@ -302,7 +302,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	/**
 	 * @return Drag group mask property.
 	 */
-	@Nonnull
+	@NonNull
 	public IntegerProperty dragGroupMaskProperty() {
 		if (dragGroupMask == null)
 			dragGroupMask = new SimpleIntegerProperty();
@@ -329,7 +329,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	/**
 	 * @return Closable property.
 	 */
-	@Nonnull
+	@NonNull
 	public BooleanProperty closableProperty() {
 		if (closable == null)
 			closable = new SimpleBooleanProperty(true);
@@ -356,7 +356,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	/**
 	 * @return Draggable property.
 	 */
-	@Nonnull
+	@NonNull
 	public BooleanProperty canBeDraggedProperty() {
 		if (canBeDragged == null)
 			canBeDragged = new SimpleBooleanProperty();
@@ -383,7 +383,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	/**
 	 * @return Window droppable property.
 	 */
-	@Nonnull
+	@NonNull
 	public BooleanProperty canBeDroppedToNewWindowProperty() {
 		if (canBeDroppedToNewWindow == null)
 			canBeDroppedToNewWindow = new SimpleBooleanProperty();
@@ -404,7 +404,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	 * @param listener
 	 * 		Listener to add.
 	 */
-	public void addCloseListener(@Nonnull DockableCloseListener listener) {
+	public void addCloseListener(@NonNull DockableCloseListener listener) {
 		if (closeListeners == null)
 			closeListeners = new ArrayList<>();
 		closeListeners.add(listener);
@@ -416,7 +416,7 @@ public class Dockable implements BentoBacked, Identifiable {
 	 * @param listener
 	 * 		Listener to remove.
 	 */
-	public void removeCloseListener(@Nonnull DockableCloseListener listener) {
+	public void removeCloseListener(@NonNull DockableCloseListener listener) {
 		if (closeListeners != null)
 			closeListeners.remove(listener);
 	}

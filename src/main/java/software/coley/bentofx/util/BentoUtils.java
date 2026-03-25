@@ -1,7 +1,7 @@
 package software.coley.bentofx.util;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,7 +32,7 @@ public class BentoUtils {
 	 *
 	 * @return Respective orientation if it were to be used for a {@link HeaderPane}.
 	 */
-	@Nonnull
+	@NonNull
 	public static Orientation sideToOrientation(@Nullable Side side) {
 		return switch (side) {
 			case TOP, BOTTOM -> Orientation.HORIZONTAL;
@@ -52,7 +52,7 @@ public class BentoUtils {
 	 * @return The closest side for the given target position in the given region.
 	 */
 	@Nullable
-	public static Side computeClosestSide(@Nonnull Region target, double x, double y) {
+	public static Side computeClosestSide(@NonNull Region target, double x, double y) {
 		double w = target.getWidth();
 		double h = target.getHeight();
 		double mw = w / 2;
@@ -93,7 +93,7 @@ public class BentoUtils {
 	 * @return All matching children of any level with the given type.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> List<T> getCastChildren(@Nonnull Parent parent, @Nonnull Class<T> nodeType) {
+	public static <T> List<T> getCastChildren(@NonNull Parent parent, @NonNull Class<T> nodeType) {
 		return (List<T>) getChildren(parent, nodeType);
 	}
 
@@ -110,8 +110,8 @@ public class BentoUtils {
 	 *
 	 * @return All matching children of any level with the given type.
 	 */
-	@Nonnull
-	public static List<Node> getChildren(@Nonnull Parent parent, @Nonnull Class<?> nodeType) {
+	@NonNull
+	public static List<Node> getChildren(@NonNull Parent parent, @NonNull Class<?> nodeType) {
 		List<Node> list = new ArrayList<>();
 		visitAndMatchChildren(parent, nodeType, list);
 		return list;
@@ -130,17 +130,17 @@ public class BentoUtils {
 	 *
 	 * @return All matching children of any level with the given CSS selector.
 	 */
-	@Nonnull
-	public static List<Node> getChildren(@Nonnull Parent parent, @Nonnull String cssSelector) {
+	@NonNull
+	public static List<Node> getChildren(@NonNull Parent parent, @NonNull String cssSelector) {
 		Selector selector = Selector.createSelector(cssSelector);
 		List<Node> list = new ArrayList<>();
 		visitAndMatchChildren(parent, selector, list);
 		return list;
 	}
 
-	private static void visitAndMatchChildren(@Nonnull Parent parent,
-	                                          @Nonnull Selector selector,
-	                                          @Nonnull List<Node> list) {
+	private static void visitAndMatchChildren(@NonNull Parent parent,
+	                                          @NonNull Selector selector,
+	                                          @NonNull List<Node> list) {
 		for (Node node : parent.getChildrenUnmodifiable()) {
 			if (selector.applies(node)) {
 				list.add(node);
@@ -150,9 +150,9 @@ public class BentoUtils {
 		}
 	}
 
-	private static void visitAndMatchChildren(@Nonnull Parent parent,
-	                                          @Nonnull Class<?> nodeType,
-	                                          @Nonnull List<Node> list) {
+	private static void visitAndMatchChildren(@NonNull Parent parent,
+	                                          @NonNull Class<?> nodeType,
+	                                          @NonNull List<Node> list) {
 		for (Node node : parent.getChildrenUnmodifiable()) {
 			if (nodeType.isAssignableFrom(node.getClass())) {
 				list.add(node);
@@ -172,7 +172,7 @@ public class BentoUtils {
 	 * @param <T>
 	 * 		Node type.
 	 */
-	public static <T extends Node> void scheduleWhenShown(@Nonnull T node, @Nonnull Consumer<T> action) {
+	public static <T extends Node> void scheduleWhenShown(@NonNull T node, @NonNull Consumer<T> action) {
 		// Already showing, do the action immediately.
 		Scene scene = node.getScene();
 		if (scene != null) {

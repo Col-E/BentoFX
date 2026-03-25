@@ -1,6 +1,6 @@
 package software.coley.bentofx.control;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
@@ -31,7 +31,7 @@ public class Headers extends LinearItemPane {
 	 * @param side
 	 * 		Side in the parent container where tabs are displayed.
 	 */
-	public Headers(@Nonnull DockContainerLeaf container, @Nonnull Orientation orientation, @Nonnull Side side) {
+	public Headers(@NonNull DockContainerLeaf container, @NonNull Orientation orientation, @NonNull Side side) {
 		super(orientation);
 
 		// Create side-specific header region class.
@@ -108,7 +108,7 @@ public class Headers extends LinearItemPane {
 		setClip(clip);
 	}
 
-	protected void setupDragDrop(@Nonnull DockContainerLeaf container) {
+	protected void setupDragDrop(@NonNull DockContainerLeaf container) {
 		setOnDragOver(e -> {
 			Dragboard dragboard = e.getDragboard();
 			String dockableIdentifier = DragUtils.extractIdentifier(dragboard);

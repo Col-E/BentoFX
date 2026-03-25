@@ -1,6 +1,6 @@
 package software.coley.bentofx.control;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.input.Dragboard;
@@ -27,14 +27,14 @@ public class ContentWrapper extends BorderPane {
 	 * @param container
 	 * 		Parent container.
 	 */
-	public ContentWrapper(@Nonnull DockContainerLeaf container) {
+	public ContentWrapper(@NonNull DockContainerLeaf container) {
 		getStyleClass().add("node-wrapper");
 
 		// Handle drag-drop
 		setupDragDrop(container);
 	}
 
-	protected void setupDragDrop(@Nonnull DockContainerLeaf container) {
+	protected void setupDragDrop(@NonNull DockContainerLeaf container) {
 		Bento bento = container.getBento();
 		setOnDragOver(e -> {
 			Dragboard dragboard = e.getDragboard();

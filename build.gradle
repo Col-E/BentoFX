@@ -16,8 +16,7 @@ repositories {
 dependencies {
     // Provided dependencies
     compileOnly 'org.openjfx:javafx-controls:19.0.2.1'
-    compileOnly 'jakarta.annotation:jakarta.annotation-api:3.0.0'
-    testCompileOnly 'jakarta.annotation:jakarta.annotation-api:3.0.0'
+    implementation 'org.jspecify:jspecify:1.0.0'
 
     // Test dependencies
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
@@ -43,6 +42,10 @@ java {
 
 tasks.withType(JavaCompile).configureEach {
     options.compilerArgs << '-parameters'
+}
+
+tasks.withType(AbstractTestTask).configureEach {
+    failOnNoDiscoveredTests = false
 }
 
 jvmdg {

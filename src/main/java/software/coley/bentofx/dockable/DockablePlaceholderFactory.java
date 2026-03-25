@@ -1,6 +1,6 @@
 package software.coley.bentofx.dockable;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import javafx.scene.Node;
 
 /**
@@ -16,6 +16,6 @@ public interface DockablePlaceholderFactory {
 	 *
 	 * @return Placeholder for the dockable.
 	 */
-	@Nonnull
-	Node build(@Nonnull Dockable dockable);
+	@NonNull
+	Node build(@NonNull Dockable dockable);
 }

@@ -1,6 +1,6 @@
 package software.coley.bentofx.control;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -34,7 +34,7 @@ public class LinearItemPane extends Pane {
 	 * @param orientation
 	 * 		Which axis to layout children on.
 	 */
-	public LinearItemPane(@Nonnull Orientation orientation) {
+	public LinearItemPane(@NonNull Orientation orientation) {
 		this.orientation = orientation;
 
 		// When the child to keep in view changes, update the layout.
@@ -47,7 +47,7 @@ public class LinearItemPane extends Pane {
 	/**
 	 * @return Orientation of this linear pane.
 	 */
-	@Nonnull
+	@NonNull
 	public Orientation getOrientation() {
 		return orientation;
 	}
@@ -56,7 +56,7 @@ public class LinearItemPane extends Pane {
 	 * @return {@code true} when children overflow beyond the visible bounds of this pane.
 	 * {@code false} when all children are visible in-bounds.
 	 */
-	@Nonnull
+	@NonNull
 	public BooleanProperty overflowingProperty() {
 		return overflowing;
 	}
@@ -64,7 +64,7 @@ public class LinearItemPane extends Pane {
 	/**
 	 * @return A child to keep in view.
 	 */
-	@Nonnull
+	@NonNull
 	public ObjectProperty<Node> keepInViewProperty() {
 		return keepInView;
 	}
@@ -75,7 +75,7 @@ public class LinearItemPane extends Pane {
 	 *
 	 * @return {@code true} to fit child widths/height to the dimensions of this pane on the perpendicular axis.
 	 */
-	@Nonnull
+	@NonNull
 	public BooleanProperty fitChildrenToPerpendicularProperty() {
 		return fitChildrenToPerpendicular;
 	}
@@ -86,7 +86,7 @@ public class LinearItemPane extends Pane {
 	 * @param node
 	 * 		Child to add.
 	 */
-	public void add(@Nonnull Node node) {
+	public void add(@NonNull Node node) {
 		getChildren().add(node);
 	}
 
@@ -205,7 +205,7 @@ public class LinearItemPane extends Pane {
 		overflowing.set(overflow);
 	}
 
-	protected double computeChildPerpendicularSize(@Nonnull Bounds childBounds, @Nonnull Orientation orientation) {
+	protected double computeChildPerpendicularSize(@NonNull Bounds childBounds, @NonNull Orientation orientation) {
 		if (orientation == Orientation.HORIZONTAL) {
 			return Math.max(fitChildrenToPerpendicular.get() ? getHeight() : childBounds.getHeight(), MIN_PERPENDICULAR);
 		} else {

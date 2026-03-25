@@ -1,10 +1,10 @@
 module bento.fx {
-	requires static jakarta.annotation;
 
 	requires javafx.base;
 	requires javafx.graphics;
 	requires javafx.controls;
 	requires java.desktop;
+	requires org.jspecify;
 
 	// Just open/export everything. Do whatever you want.
 	exports software.coley.bentofx;

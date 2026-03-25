@@ -1,6 +1,6 @@
 package software.coley.bentofx.building;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import software.coley.bentofx.control.HeaderPane;
@@ -23,6 +23,6 @@ public interface HeadersFactory {
 	 *
 	 * @return Newly created headers.
 	 */
-	@Nonnull
-	Headers newHeaders(@Nonnull DockContainerLeaf container, @Nonnull Orientation orientation, @Nonnull Side side);
+	@NonNull
+	Headers newHeaders(@NonNull DockContainerLeaf container, @NonNull Orientation orientation, @NonNull Side side);
 }

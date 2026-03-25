@@ -1,6 +1,6 @@
 package software.coley.bentofx.building;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.control.Header;
 import software.coley.bentofx.control.HeaderPane;
 import software.coley.bentofx.dockable.Dockable;
@@ -19,6 +19,6 @@ public interface HeaderFactory {
 	 *
 	 * @return New header.
 	 */
-	@Nonnull
-	Header newHeader(@Nonnull Dockable dockable, @Nonnull HeaderPane parentPane);
+	@NonNull
+	Header newHeader(@NonNull Dockable dockable, @NonNull HeaderPane parentPane);
 }

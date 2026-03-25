@@ -1,6 +1,6 @@
 package software.coley.bentofx.building;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import software.coley.bentofx.dockable.Dockable;
@@ -24,7 +24,7 @@ public class PlaceholderBuilding implements DockablePlaceholderFactory, DockCont
 	/**
 	 * @return Current placeholder factory for dockables with no content to show.
 	 */
-	@Nonnull
+	@NonNull
 	public DockablePlaceholderFactory getDockablePlaceholderFactory() {
 		return dockablePlaceholderFactory;
 	}
@@ -33,14 +33,14 @@ public class PlaceholderBuilding implements DockablePlaceholderFactory, DockCont
 	 * @param dockablePlaceholderFactory
 	 * 		Placeholder factory for dockables with no content to show.
 	 */
-	public void setDockablePlaceholderFactory(@Nonnull DockablePlaceholderFactory dockablePlaceholderFactory) {
+	public void setDockablePlaceholderFactory(@NonNull DockablePlaceholderFactory dockablePlaceholderFactory) {
 		this.dockablePlaceholderFactory = dockablePlaceholderFactory;
 	}
 
 	/**
 	 * @return Current placeholder factory for containers with no content to show.
 	 */
-	@Nonnull
+	@NonNull
 	public DockContainerLeafPlaceholderFactory getContainerPlaceholderFactory() {
 		return containerPlaceholderFactory;
 	}
@@ -49,19 +49,19 @@ public class PlaceholderBuilding implements DockablePlaceholderFactory, DockCont
 	 * @param containerPlaceholderFactory
 	 * 		Placeholder factory for containers with no content to show.
 	 */
-	public void setContainerPlaceholderFactory(@Nonnull DockContainerLeafPlaceholderFactory containerPlaceholderFactory) {
+	public void setContainerPlaceholderFactory(@NonNull DockContainerLeafPlaceholderFactory containerPlaceholderFactory) {
 		this.containerPlaceholderFactory = containerPlaceholderFactory;
 	}
 
-	@Nonnull
+	@NonNull
 	@Override
-	public Node build(@Nonnull Dockable dockable) {
+	public Node build(@NonNull Dockable dockable) {
 		return getDockablePlaceholderFactory().build(dockable);
 	}
 
-	@Nonnull
+	@NonNull
 	@Override
-	public Node build(@Nonnull DockContainerLeaf container) {
+	public Node build(@NonNull DockContainerLeaf container) {
 		return getContainerPlaceholderFactory().build(container);
 	}
 }

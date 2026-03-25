@@ -1,7 +1,7 @@
 package software.coley.bentofx.control.canvas;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -51,7 +51,7 @@ public interface ArgbSource {
 	/**
 	 * @return ARGB {@code int[]} for the full image.
 	 */
-	@Nonnull
+	@NonNull
 	default int[] getArgb() {
 		return Objects.requireNonNull(getArgb(0, 0, getWidth(), getHeight()),
 				"Failed computing ARGB for full image dimensions");

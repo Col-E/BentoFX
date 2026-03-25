@@ -1,6 +1,6 @@
 package software.coley.bentofx.path;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.layout.DockContainer;
 
@@ -14,15 +14,15 @@ import java.util.List;
  * @param containers
  * 		Containers up to and including some target container.
  */
-public record DockContainerPath(@Nonnull List<DockContainer> containers) implements BentoPath {
+public record DockContainerPath(@NonNull List<DockContainer> containers) implements BentoPath {
 	/**
 	 * @param child
 	 * 		Child to append to new path.
 	 *
 	 * @return New path with the given child at the end.
 	 */
-	@Nonnull
-	public DockContainerPath withChild(@Nonnull DockContainer child) {
+	@NonNull
+	public DockContainerPath withChild(@NonNull DockContainer child) {
 		List<DockContainer> containersWithChild = new ArrayList<>(containers.size() + 1);
 		containersWithChild.addAll(containers);
 		containersWithChild.add(child);
@@ -35,12 +35,12 @@ public record DockContainerPath(@Nonnull List<DockContainer> containers) impleme
 	 *
 	 * @return New path with the given child at the end.
 	 */
-	@Nonnull
-	public DockablePath withChild(@Nonnull Dockable child) {
+	@NonNull
+	public DockablePath withChild(@NonNull Dockable child) {
 		return new DockablePath(containers, child);
 	}
 
-	@Nonnull
+	@NonNull
 	@Override
 	public DockContainer rootContainer() {
 		// There must always be at least one container since we must have a result for the path.
@@ -50,7 +50,7 @@ public record DockContainerPath(@Nonnull List<DockContainer> containers) impleme
 	/**
 	 * @return Tail container in the path / intended target of the path.
 	 */
-	@Nonnull
+	@NonNull
 	public DockContainer tailContainer() {
 		// There must always be at least one container since we must have a result for the path.
 		return containers.getLast();

@@ -1,7 +1,7 @@
 package software.coley.bentofx.dockable;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.scene.control.ContextMenu;
 
 /**
@@ -17,5 +17,5 @@ public interface DockableMenuFactory {
 	 * @return Context menu for the dockable.
 	 */
 	@Nullable
-	ContextMenu build(@Nonnull Dockable dockable);
+	ContextMenu build(@NonNull Dockable dockable);
 }

@@ -1,6 +1,6 @@
 package software.coley.bentofx.control.canvas;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 
@@ -44,7 +44,7 @@ public class PixelPainterByteBgra implements PixelPainter<ByteBuffer> {
 	}
 
 	@Override
-	public void commit(@Nonnull PixelWriter pixelWriter) {
+	public void commit(@NonNull PixelWriter pixelWriter) {
 		pixelWriter.setPixels(
 				0,
 				0,
@@ -81,7 +81,7 @@ public class PixelPainterByteBgra implements PixelPainter<ByteBuffer> {
 	}
 
 	@Override
-	public void drawImage(int x, int y, @Nonnull ArgbSource source) {
+	public void drawImage(int x, int y, @NonNull ArgbSource source) {
 		int sourceWidth = source.getWidth();
 		int sourceHeight = source.getHeight();
 		int[] argb = source.getArgb(0, 0, sourceWidth, sourceHeight);
@@ -100,7 +100,7 @@ public class PixelPainterByteBgra implements PixelPainter<ByteBuffer> {
 	}
 
 	@Override
-	public void drawImage(int x, int y, int sx, int sy, int sw, int sh, @Nonnull ArgbSource source) {
+	public void drawImage(int x, int y, int sx, int sy, int sw, int sh, @NonNull ArgbSource source) {
 		int[] argb = source.getArgb(sx, sy, sw, sh);
 		if (argb == null)
 			return;
@@ -136,13 +136,13 @@ public class PixelPainterByteBgra implements PixelPainter<ByteBuffer> {
 		Arrays.fill(drawBuffer.array(), 0, drawBufferCapacity(), (byte) 0);
 	}
 
-	@Nonnull
+	@NonNull
 	@Override
 	public ByteBuffer getBuffer() {
 		return drawBuffer;
 	}
 
-	@Nonnull
+	@NonNull
 	@Override
 	public PixelFormat<ByteBuffer> getPixelFormat() {
 		return PixelFormat.getByteBgraInstance();

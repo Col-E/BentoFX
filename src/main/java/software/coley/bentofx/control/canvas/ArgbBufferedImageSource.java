@@ -1,6 +1,6 @@
 package software.coley.bentofx.control.canvas;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -19,7 +19,7 @@ public class ArgbBufferedImageSource implements ArgbSource {
 	 * @param image
 	 * 		Wrapped image.
 	 */
-	public ArgbBufferedImageSource(@Nonnull BufferedImage image) {
+	public ArgbBufferedImageSource(@NonNull BufferedImage image) {
 		this.image = image;
 	}
 
@@ -54,7 +54,7 @@ public class ArgbBufferedImageSource implements ArgbSource {
 		}
 	}
 
-	@Nonnull
+	@NonNull
 	@Override
 	public int[] getArgb() {
 		// We will likely be using this a bit, so it makes sense to cache the result.

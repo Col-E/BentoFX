@@ -1,7 +1,7 @@
 package software.coley.bentofx.control;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -74,7 +74,7 @@ public class Header extends Region {
 	 * @param parentPane
 	 * 		Parent header pane.
 	 */
-	public Header(@Nonnull Dockable dockable, @Nonnull HeaderPane parentPane) {
+	public Header(@NonNull Dockable dockable, @NonNull HeaderPane parentPane) {
 		this.parentPane = parentPane;
 		this.dockable = dockable;
 
@@ -191,7 +191,7 @@ public class Header extends Region {
 	 *
 	 * @return This.
 	 */
-	@Nonnull
+	@NonNull
 	public Header withDragDrop() {
 		Bento bento = dockable.getBento();
 
@@ -380,7 +380,7 @@ public class Header extends Region {
 	 * @param header
 	 * 		Some other header to draw as a ghost.
 	 */
-	private void enableInsertionGhost(@Nonnull Header header) {
+	private void enableInsertionGhost(@NonNull Header header) {
 		grid.setMouseTransparent(true);
 		grid.setManaged(false);
 		Orientation ourOrientation = BentoUtils.sideToOrientation(getSide());
@@ -421,7 +421,7 @@ public class Header extends Region {
 	/**
 	 * @return Wrapped dockable.
 	 */
-	@Nonnull
+	@NonNull
 	public Dockable getDockable() {
 		return dockable;
 	}

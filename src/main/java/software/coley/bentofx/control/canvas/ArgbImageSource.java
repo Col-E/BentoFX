@@ -1,6 +1,6 @@
 package software.coley.bentofx.control.canvas;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 
@@ -21,7 +21,7 @@ public class ArgbImageSource implements ArgbSource {
 	 * @param image
 	 * 		Wrapped image.
 	 */
-	public ArgbImageSource(@Nonnull Image image) {
+	public ArgbImageSource(@NonNull Image image) {
 		this.image = image;
 	}
 
@@ -58,7 +58,7 @@ public class ArgbImageSource implements ArgbSource {
 		}
 	}
 
-	@Nonnull
+	@NonNull
 	@Override
 	public int[] getArgb() {
 		// We will likely be using this a bit, so it makes sense to cache the result.
