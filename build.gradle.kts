@@ -52,7 +52,6 @@ tasks.withType<Javadoc>().configureEach {
 
 
 
-// Setup publishing to pull from our slightly modified outputs
 publishing {
     repositories {
         mavenLocal()
