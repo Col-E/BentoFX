@@ -5,6 +5,16 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+# Gradle Profiler output
+/gradle-user-home
+profile-out*
+
+# Heap dump files (sometimes generated druing Gradle builds)
+*.hprof
+
+# JVM crash dumps
+hs_err_pid*.log
+
 ### IntelliJ IDEA ###
 .idea/*
 *.iws
@@ -35,3 +45,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+
+# Swap files for various editors
+*~
+*.swp

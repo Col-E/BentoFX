@@ -1,0 +1,58 @@
+################################################################################
+# This is an unpublished work of SAIC.
+# Copyright (c) 2023 SAIC. All Rights Reserved.
+################################################################################
+
+[versions]
+
+# See also '<root>\platform\build.gradle.kts' for additoinal version definitions
+# via BOM dependency declarations and version constraint usages.
+
+#`gradle` is used in the root project's build.gradle.kts.kts
+gradle = "9.4.1"
+jakarta-annotation = "3.0.0"
+#`java-jdk` is used in project-convention.gradle.kts
+java-jdk = "21"
+javafx = "23.0.2"
+javafx-gradlePlugin = "0.1.0"
+jreleaser-gradlePlugin = "1.23.0"
+
+[libraries]
+
+[libraries.jakarta-annotation]
+module = "jakarta.annotation:jakarta.annotation-api"
+version.ref = "jakarta-annotation"
+
+[libraries.javafx-base]
+module = "org.openjfx:javafx-base"
+version.ref = "javafx"
+
+[libraries.javafx-controls]
+module = "org.openjfx:javafx-controls"
+version.ref = "javafx"
+
+[libraries.javafx-graphics]
+module = "org.openjfx:javafx-graphics"
+version.ref = "javafx"
+
+[libraries.jreleaser-gradlePlugin-dependency]
+module = "org.jreleaser:org.jreleaser.gradle.plugin"
+version.ref = "jreleaser-gradlePlugin"
+
+[bundles]
+
+javafx = [
+    "javafx-base",
+    "javafx-controls",
+    "javafx-graphics",
+]
+
+[plugins]
+
+[plugins.javafx-gradlePlugin]
+id = "org.openjfx.javafxplugin"
+version.ref = "javafx-gradlePlugin"
+
+[plugins.jreleaser-gradlePlugin]
+id = "org.jreleaser"
+version.ref = "jreleaser-gradlePlugin"
