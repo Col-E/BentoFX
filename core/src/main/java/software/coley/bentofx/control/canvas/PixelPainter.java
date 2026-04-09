@@ -1,8 +1,8 @@
 package software.coley.bentofx.control.canvas;
 
-import jakarta.annotation.Nonnull;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
+import org.jspecify.annotations.NonNull;
 
 import java.nio.Buffer;
 
@@ -44,7 +44,7 @@ public interface PixelPainter<B extends Buffer> {
 	 * @param pixelWriter
 	 * 		Pixel writer.
 	 */
-	void commit(@Nonnull PixelWriter pixelWriter);
+	void commit(@NonNull PixelWriter pixelWriter);
 
 	/**
 	 * Fills the given rectangle with the given color.
@@ -228,7 +228,7 @@ public interface PixelPainter<B extends Buffer> {
 	 * @param image
 	 * 		Image to draw.
 	 */
-	void drawImage(int x, int y, @Nonnull ArgbSource image);
+	void drawImage(int x, int y, @NonNull ArgbSource image);
 
 	/**
 	 * Draws an image at the given coordinates.
@@ -248,7 +248,7 @@ public interface PixelPainter<B extends Buffer> {
 	 * @param image
 	 * 		Image to draw.
 	 */
-	void drawImage(int x, int y, int sx, int sy, int sw, int sh, @Nonnull ArgbSource image);
+	void drawImage(int x, int y, int sx, int sy, int sw, int sh, @NonNull ArgbSource image);
 
 	/**
 	 * Set a given pixel to the given color.
@@ -270,12 +270,12 @@ public interface PixelPainter<B extends Buffer> {
 	/**
 	 * @return Backing buffer.
 	 */
-	@Nonnull
+	@NonNull
 	B getBuffer();
 
 	/**
 	 * @return Pixel format for contents in this painter's buffer.
 	 */
-	@Nonnull
+	@NonNull
 	PixelFormat<B> getPixelFormat();
 }

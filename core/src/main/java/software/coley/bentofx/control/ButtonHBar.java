@@ -1,9 +1,9 @@
 package software.coley.bentofx.control;
 
-import jakarta.annotation.Nonnull;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
 
 import static software.coley.bentofx.util.BentoStates.PSEUDO_ORIENTATION_H;
@@ -20,7 +20,7 @@ public class ButtonHBar extends HBox {
 	 * @param children
 	 * 		Children to add to this box.
 	 */
-	public ButtonHBar(@Nonnull Region parent, Node... children) {
+	public ButtonHBar(@NonNull Region parent, Node... children) {
 		getStyleClass().add("button-bar");
 		pseudoClassStateChanged(PSEUDO_ORIENTATION_H, true);
 

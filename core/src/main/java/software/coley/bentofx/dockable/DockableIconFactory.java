@@ -1,8 +1,8 @@
 package software.coley.bentofx.dockable;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import javafx.scene.Node;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Factory to create a {@link Node} graphic for some given {@link Dockable}.
@@ -18,5 +18,5 @@ public interface DockableIconFactory {
 	 * @return Graphic for the dockable.
 	 */
 	@Nullable
-	Node build(@Nonnull Dockable dockable);
+	Node build(@NonNull Dockable dockable);
 }

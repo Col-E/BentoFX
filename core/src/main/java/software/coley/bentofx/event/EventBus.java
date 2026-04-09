@@ -1,6 +1,6 @@
 package software.coley.bentofx.event;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.dockable.DockableCloseListener;
 import software.coley.bentofx.dockable.DockableMoveListener;
@@ -30,7 +30,7 @@ public class EventBus {
 	 * @param event
 	 * 		Event to fire.
 	 */
-	public void fire(@Nonnull DockEvent event) {
+	public void fire(@NonNull DockEvent event) {
 		// Fire generic event listeners
 		for (DockEventListener listener : eventListeners)
 			listener.onDockEvent(event);
@@ -82,7 +82,7 @@ public class EventBus {
 	/**
 	 * @return Generic event listeners.
 	 */
-	@Nonnull
+	@NonNull
 	public List<DockEventListener> getEventListeners() {
 		return Collections.unmodifiableList(eventListeners);
 	}
@@ -91,7 +91,7 @@ public class EventBus {
 	 * @param listener
 	 * 		Generic event listener to add.
 	 */
-	public void addEventListener(@Nonnull DockEventListener listener) {
+	public void addEventListener(@NonNull DockEventListener listener) {
 		eventListeners.add(listener);
 	}
 
@@ -99,14 +99,14 @@ public class EventBus {
 	 * @param listener
 	 * 		Generic event listener to remove.
 	 */
-	public boolean removeEventListener(@Nonnull DockEventListener listener) {
+	public boolean removeEventListener(@NonNull DockEventListener listener) {
 		return eventListeners.remove(listener);
 	}
 
 	/**
 	 * @return Dockable opening listeners.
 	 */
-	@Nonnull
+	@NonNull
 	public List<DockableOpenListener> getDockableOpenListener() {
 		return Collections.unmodifiableList(openListeners);
 	}
@@ -115,7 +115,7 @@ public class EventBus {
 	 * @param listener
 	 * 		Dockable opening listener to add.
 	 */
-	public void addDockableOpenListener(@Nonnull DockableOpenListener listener) {
+	public void addDockableOpenListener(@NonNull DockableOpenListener listener) {
 		openListeners.add(listener);
 	}
 
@@ -123,14 +123,14 @@ public class EventBus {
 	 * @param listener
 	 * 		Dockable opening listener to remove.
 	 */
-	public boolean removeDockableOpenListener(@Nonnull DockableOpenListener listener) {
+	public boolean removeDockableOpenListener(@NonNull DockableOpenListener listener) {
 		return openListeners.remove(listener);
 	}
 
 	/**
 	 * @return Dockable moving listeners.
 	 */
-	@Nonnull
+	@NonNull
 	public List<DockableMoveListener> getDockableMoveListener() {
 		return Collections.unmodifiableList(moveListeners);
 	}
@@ -139,7 +139,7 @@ public class EventBus {
 	 * @param listener
 	 * 		Dockable moving listener to add.
 	 */
-	public void addDockableMoveListener(@Nonnull DockableMoveListener listener) {
+	public void addDockableMoveListener(@NonNull DockableMoveListener listener) {
 		moveListeners.add(listener);
 	}
 
@@ -147,14 +147,14 @@ public class EventBus {
 	 * @param listener
 	 * 		Dockable moving listener to remove.
 	 */
-	public boolean removeDockableMoveListener(@Nonnull DockableMoveListener listener) {
+	public boolean removeDockableMoveListener(@NonNull DockableMoveListener listener) {
 		return moveListeners.remove(listener);
 	}
 
 	/**
 	 * @return Dockable closing listeners.
 	 */
-	@Nonnull
+	@NonNull
 	public List<DockableCloseListener> getDockableCloseListener() {
 		return Collections.unmodifiableList(closeListeners);
 	}
@@ -163,7 +163,7 @@ public class EventBus {
 	 * @param listener
 	 * 		Dockable closing listener to add.
 	 */
-	public void addDockableCloseListener(@Nonnull DockableCloseListener listener) {
+	public void addDockableCloseListener(@NonNull DockableCloseListener listener) {
 		closeListeners.add(listener);
 	}
 
@@ -171,14 +171,14 @@ public class EventBus {
 	 * @param listener
 	 * 		Dockable closing listener to remove.
 	 */
-	public boolean removeDockableCloseListener(@Nonnull DockableCloseListener listener) {
+	public boolean removeDockableCloseListener(@NonNull DockableCloseListener listener) {
 		return closeListeners.remove(listener);
 	}
 
 	/**
 	 * @return Dockable selecting listeners.
 	 */
-	@Nonnull
+	@NonNull
 	public List<DockableSelectListener> getDockableSelectListener() {
 		return Collections.unmodifiableList(selectListeners);
 	}
@@ -187,7 +187,7 @@ public class EventBus {
 	 * @param listener
 	 * 		Dockable selecting listener to add.
 	 */
-	public void addDockableSelectListener(@Nonnull DockableSelectListener listener) {
+	public void addDockableSelectListener(@NonNull DockableSelectListener listener) {
 		selectListeners.add(listener);
 	}
 
@@ -195,7 +195,7 @@ public class EventBus {
 	 * @param listener
 	 * 		Dockable selecting listener to remove.
 	 */
-	public boolean removeDockableSelectListener(@Nonnull DockableSelectListener listener) {
+	public boolean removeDockableSelectListener(@NonNull DockableSelectListener listener) {
 		return selectListeners.remove(listener);
 	}
 }

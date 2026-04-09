@@ -1,5 +1,5 @@
 module bento.fx {
-	requires static jakarta.annotation;
+	requires static org.jspecify;
 
 	requires javafx.base;
 	requires javafx.graphics;

@@ -25,9 +25,9 @@ subprojects { sub ->
     }
 
     dependencies {
-        // Shared dependencies for all modules
-        compileOnly 'jakarta.annotation:jakarta.annotation-api:3.0.0'
-        testCompileOnly 'jakarta.annotation:jakarta.annotation-api:3.0.0'
+        // Shared annotations for all modules
+        compileOnly(libs.bundles.annotations)
+        testCompileOnly(libs.bundles.annotations)
 
         // Test dependencies
         testImplementation(libs.bundles.test.libraries)
@@ -35,7 +35,7 @@ subprojects { sub ->
     }
 
     javafx {
-        version = '21'
+        version = '21.0.9'
         modules = ['javafx.controls']
 
         // We don't want to include a specific versio nof JavaFX as a transitive dependency for users of the library

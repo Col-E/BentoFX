@@ -1,8 +1,8 @@
 package software.coley.bentofx;
 
-import jakarta.annotation.Nonnull;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.building.ControlsBuilding;
 import software.coley.bentofx.building.DockBuilding;
 import software.coley.bentofx.building.PlaceholderBuilding;
@@ -34,42 +34,42 @@ public class Bento {
 	private final DockableDragDropBehavior dragDropBehavior = newDragDropBehavior();
 	private final DockableClickBehavior clickBehavior = newClickBehavior();
 
-	@Nonnull
+	@NonNull
 	protected EventBus newEventBus() {
 		return new EventBus();
 	}
 
-	@Nonnull
+	@NonNull
 	protected SearchHandler newSearchHandler() {
 		return new SearchHandler(this);
 	}
 
-	@Nonnull
+	@NonNull
 	protected StageBuilding newStageBuilding() {
 		return new StageBuilding(this);
 	}
 
-	@Nonnull
+	@NonNull
 	protected ControlsBuilding newControlsBuilding() {
 		return new ControlsBuilding();
 	}
 
-	@Nonnull
+	@NonNull
 	protected DockBuilding newDockBuilding() {
 		return new DockBuilding(this);
 	}
 
-	@Nonnull
+	@NonNull
 	protected PlaceholderBuilding newPlaceholderBuilding() {
 		return new PlaceholderBuilding();
 	}
 
-	@Nonnull
+	@NonNull
 	protected DockableDragDropBehavior newDragDropBehavior() {
 		return new DockableDragDropBehavior() {};
 	}
 
-	@Nonnull
+	@NonNull
 	protected DockableClickBehavior newClickBehavior() {
 		return new DockableClickBehavior() {};
 	}
@@ -77,7 +77,7 @@ public class Bento {
 	/**
 	 * @return Bus for handling event firing and event listeners.
 	 */
-	@Nonnull
+	@NonNull
 	public EventBus events() {
 		return eventBus;
 	}
@@ -85,7 +85,7 @@ public class Bento {
 	/**
 	 * @return Search operations.
 	 */
-	@Nonnull
+	@NonNull
 	public SearchHandler search() {
 		return searchHandler;
 	}
@@ -93,7 +93,7 @@ public class Bento {
 	/**
 	 * @return Builders for {@link DragDropStage}.
 	 */
-	@Nonnull
+	@NonNull
 	public StageBuilding stageBuilding() {
 		return stageBuilding;
 	}
@@ -101,7 +101,7 @@ public class Bento {
 	/**
 	 * @return Builders for various bento UI controls.
 	 */
-	@Nonnull
+	@NonNull
 	public ControlsBuilding controlsBuilding() {
 		return controlsBuilding;
 	}
@@ -109,7 +109,7 @@ public class Bento {
 	/**
 	 * @return Builders for {@link DockContainer} and {@link Dockable}.
 	 */
-	@Nonnull
+	@NonNull
 	public DockBuilding dockBuilding() {
 		return dockBuilding;
 	}
@@ -117,7 +117,7 @@ public class Bento {
 	/**
 	 * @return Builders for placeholder content.
 	 */
-	@Nonnull
+	@NonNull
 	public PlaceholderBuilding placeholderBuilding() {
 		return placeholderBuilding;
 	}
@@ -125,7 +125,7 @@ public class Bento {
 	/**
 	 * @return Behavior implementation for drag-drop operations.
 	 */
-	@Nonnull
+	@NonNull
 	public DockableDragDropBehavior getDragDropBehavior() {
 		return dragDropBehavior;
 	}
@@ -133,7 +133,7 @@ public class Bento {
 	/**
 	 * @return Behavior implementation for click operations.
 	 */
-	@Nonnull
+	@NonNull
 	public DockableClickBehavior getClickBehavior() {
 		return clickBehavior;
 	}
@@ -144,7 +144,7 @@ public class Bento {
 	 * @see #registerRoot(DockContainerRootBranch)
 	 * @see #unregisterRoot(DockContainerRootBranch)
 	 */
-	@Nonnull
+	@NonNull
 	public ObservableList<DockContainerRootBranch> getRootContainers() {
 		return rootContainersView;
 	}
@@ -155,7 +155,7 @@ public class Bento {
 	 *
 	 * @return {@code true} when registered.
 	 */
-	public boolean registerRoot(@Nonnull DockContainerRootBranch container) {
+	public boolean registerRoot(@NonNull DockContainerRootBranch container) {
 		if (!rootContainers.contains(container)) {
 			rootContainers.add(container);
 			eventBus.fire(new DockEvent.RootContainerAdded(container));
@@ -170,7 +170,7 @@ public class Bento {
 	 *
 	 * @return {@code true} when unregistered.
 	 */
-	public boolean unregisterRoot(@Nonnull DockContainerRootBranch container) {
+	public boolean unregisterRoot(@NonNull DockContainerRootBranch container) {
 		if (rootContainers.remove(container)) {
 			eventBus.fire(new DockEvent.RootContainerRemoved(container));
 			return true;

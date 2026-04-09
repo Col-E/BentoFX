@@ -1,9 +1,9 @@
 package software.coley.bentofx.layout.container;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.control.DragDropStage;
 import software.coley.bentofx.path.DockContainerPath;
@@ -26,7 +26,7 @@ public class DockContainerRootBranch extends DockContainerBranch {
 	 * @param identifier
 	 * 		This container's identifier.
 	 */
-	public DockContainerRootBranch(@Nonnull Bento bento, @Nonnull String identifier) {
+	public DockContainerRootBranch(@NonNull Bento bento, @NonNull String identifier) {
 		super(bento, identifier);
 
 		pseudoClassStateChanged(PSEUDO_ROOT, true);
@@ -61,12 +61,12 @@ public class DockContainerRootBranch extends DockContainerBranch {
 	}
 
 	@Override
-	public void setParentContainer(@Nonnull DockContainerBranch parent) {
+	public void setParentContainer(@NonNull DockContainerBranch parent) {
 		throw new IllegalStateException("Root should not have a parent container assigned");
 	}
 
 
-	@Nonnull
+	@NonNull
 	@Override
 	public DockContainerPath getPath() {
 		return path;

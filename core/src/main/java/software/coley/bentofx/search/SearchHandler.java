@@ -1,8 +1,8 @@
 package software.coley.bentofx.search;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import javafx.scene.input.DragEvent;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.layout.DockContainer;
@@ -30,7 +30,7 @@ public class SearchHandler {
 	 * @param bento
 	 * 		Parent bento instance.
 	 */
-	public SearchHandler(@Nonnull Bento bento) {
+	public SearchHandler(@NonNull Bento bento) {
 		this.bento = bento;
 	}
 
@@ -42,7 +42,7 @@ public class SearchHandler {
 	 *
 	 * @return {@code true} when replacement was completed.
 	 */
-	public boolean replaceContainer(@Nonnull String identifier, @Nonnull DockContainer replacement) {
+	public boolean replaceContainer(@NonNull String identifier, @NonNull DockContainer replacement) {
 		return replaceContainer(identifier, () -> replacement);
 	}
 
@@ -54,7 +54,7 @@ public class SearchHandler {
 	 *
 	 * @return {@code true} when replacement was completed.
 	 */
-	public boolean replaceContainer(@Nonnull String identifier, @Nonnull Supplier<DockContainer> replacement) {
+	public boolean replaceContainer(@NonNull String identifier, @NonNull Supplier<DockContainer> replacement) {
 		DockContainerPath container = container(identifier);
 		if (container == null)
 			return false;
@@ -74,7 +74,7 @@ public class SearchHandler {
 	 * @return Path to the matched container, if found.
 	 */
 	@Nullable
-	public DockContainerPath container(@Nonnull String identifier) {
+	public DockContainerPath container(@NonNull String identifier) {
 		return container(c -> c.getIdentifier().equals(identifier));
 	}
 
@@ -85,7 +85,7 @@ public class SearchHandler {
 	 * @return Path to the first matched container, if found.
 	 */
 	@Nullable
-	public DockContainerPath container(@Nonnull Predicate<DockContainer> predicate) {
+	public DockContainerPath container(@NonNull Predicate<DockContainer> predicate) {
 		DockContainerVisitor visitor = new DockContainerVisitor(predicate);
 		for (DockContainer container : bento.getRootContainers()) {
 			if (!container.visit(visitor))
@@ -102,7 +102,7 @@ public class SearchHandler {
 	 * @return Path to the associated {@link Dockable} if found.
 	 */
 	@Nullable
-	public DockablePath dockable(@Nonnull DragEvent event) {
+	public DockablePath dockable(@NonNull DragEvent event) {
 		String identifier = DragUtils.extractIdentifier(event.getDragboard());
 		return identifier == null ? null : dockable(identifier);
 	}
@@ -114,7 +114,7 @@ public class SearchHandler {
 	 * @return Path to the matched container, if found.
 	 */
 	@Nullable
-	public DockablePath dockable(@Nonnull String identifier) {
+	public DockablePath dockable(@NonNull String identifier) {
 		return dockable(d -> d.getIdentifier().equals(identifier));
 	}
 
@@ -125,7 +125,7 @@ public class SearchHandler {
 	 * @return Path to the first matched dockable, if found.
 	 */
 	@Nullable
-	public DockablePath dockable(@Nonnull Predicate<Dockable> predicate) {
+	public DockablePath dockable(@NonNull Predicate<Dockable> predicate) {
 		DockableVisitor visitor = new DockableVisitor(predicate);
 		for (DockContainer container : bento.getRootContainers()) {
 			if (!container.visit(visitor))
@@ -138,7 +138,7 @@ public class SearchHandler {
 	/**
 	 * @return All found dockable paths in the current bento instance.
 	 */
-	@Nonnull
+	@NonNull
 	public List<DockablePath> allDockables() {
 		List<DockablePath> paths = new ArrayList<>();
 		for (DockContainerRootBranch root : bento.getRootContainers()) {

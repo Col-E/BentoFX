@@ -1,6 +1,5 @@
 package software.coley.bentofx;
 
-import jakarta.annotation.Nonnull;
 import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
@@ -19,7 +18,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
-import software.coley.bentofx.Bento;
+import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.building.DockBuilding;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.event.DockEvent;
@@ -112,8 +111,8 @@ public class BoxApp extends Application {
 		stage.show();
 	}
 
-	@Nonnull
-	private Dockable buildDockable(@Nonnull DockBuilding builder, int s, int i, @Nonnull String title) {
+	@NonNull
+	private Dockable buildDockable(@NonNull DockBuilding builder, int s, int i, @NonNull String title) {
 		Dockable dockable = builder.dockable();
 		dockable.setTitle(title);
 		dockable.setIconFactory(d -> makeIcon(s, i));
@@ -132,7 +131,7 @@ public class BoxApp extends Application {
 		return dockable;
 	}
 
-	private void handleDockableClosing(@Nonnull DockEvent.DockableClosing closingEvent) {
+	private void handleDockableClosing(DockEvent.@NonNull DockableClosing closingEvent) {
 		final Dockable dockable = closingEvent.dockable();
 		if (!dockable.getTitle().startsWith("Class "))
 			return;
@@ -161,7 +160,7 @@ public class BoxApp extends Application {
 		}
 	}
 
-	@Nonnull
+	@NonNull
 	private static Shape makeIcon(int shapeMode, int i) {
 		final int radius = 6;
 		Shape icon = switch (shapeMode) {
@@ -182,8 +181,8 @@ public class BoxApp extends Application {
 		return icon;
 	}
 
-	@Nonnull
-	private static ContextMenu addSideOptions(@Nonnull ContextMenu menu, @Nonnull DockContainerLeaf space) {
+	@NonNull
+	private static ContextMenu addSideOptions(@NonNull ContextMenu menu, @NonNull DockContainerLeaf space) {
 		for (Side side : Side.values()) {
 			MenuItem item = new MenuItem(side.name());
 			item.setGraphic(new Label(side == space.getSide() ? "✓" : " "));

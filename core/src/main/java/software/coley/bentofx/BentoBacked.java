@@ -1,6 +1,6 @@
 package software.coley.bentofx;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Outline of an object with access to its originating {@link Bento} instance.
@@ -11,6 +11,6 @@ public interface BentoBacked {
 	/**
 	 * @return Bento instance responsible for this object.
 	 */
-	@Nonnull
+	@NonNull
 	Bento getBento();
 }

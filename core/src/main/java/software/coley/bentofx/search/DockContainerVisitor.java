@@ -1,7 +1,7 @@
 package software.coley.bentofx.search;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import software.coley.bentofx.layout.DockContainer;
 import software.coley.bentofx.layout.container.DockContainerBranch;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
@@ -17,21 +17,21 @@ public class DockContainerVisitor implements SearchVisitor {
 	private final Predicate<DockContainer> matcher;
 	private DockContainer result;
 
-	public DockContainerVisitor(@Nonnull Predicate<DockContainer> matcher) {
+	public DockContainerVisitor(@NonNull Predicate<DockContainer> matcher) {
 		this.matcher = matcher;
 	}
 
 	@Override
-	public boolean visitBranch(@Nonnull DockContainerBranch container) {
+	public boolean visitBranch(@NonNull DockContainerBranch container) {
 		return visitContainer(container);
 	}
 
 	@Override
-	public boolean visitLeaf(@Nonnull DockContainerLeaf container) {
+	public boolean visitLeaf(@NonNull DockContainerLeaf container) {
 		return visitContainer(container);
 	}
 
-	private boolean visitContainer(@Nonnull DockContainer container) {
+	private boolean visitContainer(@NonNull DockContainer container) {
 		if (matcher.test(container)) {
 			// Match found, stop visiting.
 			result = container;

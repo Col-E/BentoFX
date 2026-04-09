@@ -1,7 +1,7 @@
 package software.coley.bentofx.event;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.layout.DockContainer;
@@ -21,7 +21,7 @@ public sealed interface DockEvent {
 	 * @param container
 	 * 		Root container added.
 	 */
-	record RootContainerAdded(@Nonnull DockContainer container) implements DockEvent {}
+	record RootContainerAdded(@NonNull DockContainer container) implements DockEvent {}
 
 	/**
 	 * Event for when a {@link DockContainer} is {@link Bento#unregisterRoot(DockContainerRootBranch) uunregistered}.
@@ -29,7 +29,7 @@ public sealed interface DockEvent {
 	 * @param container
 	 * 		Root container removed.
 	 */
-	record RootContainerRemoved(@Nonnull DockContainer container) implements DockEvent {}
+	record RootContainerRemoved(@NonNull DockContainer container) implements DockEvent {}
 
 	/**
 	 * Event for when a {@link DockContainer}'s parent is changed.
@@ -41,7 +41,7 @@ public sealed interface DockEvent {
 	 * @param newParent
 	 * 		The container's new parent.
 	 */
-	record ContainerParentChanged(@Nonnull DockContainer container, @Nullable DockContainerBranch priorParent,
+	record ContainerParentChanged(@NonNull DockContainer container, @Nullable DockContainerBranch priorParent,
 	                              @Nullable DockContainerBranch newParent) implements DockEvent {}
 
 	/**
@@ -52,8 +52,8 @@ public sealed interface DockEvent {
 	 * @param child
 	 * 		Child added to the container.
 	 */
-	record ContainerChildAdded(@Nonnull DockContainerBranch container,
-	                           @Nonnull DockContainer child) implements DockEvent {}
+	record ContainerChildAdded(@NonNull DockContainerBranch container,
+	                           @NonNull DockContainer child) implements DockEvent {}
 
 	/**
 	 * Event for when a {@link DockContainerBranch} removes a child {@link DockContainer}.
@@ -63,8 +63,8 @@ public sealed interface DockEvent {
 	 * @param child
 	 * 		Child removed from the container.
 	 */
-	record ContainerChildRemoved(@Nonnull DockContainerBranch container,
-	                             @Nonnull DockContainer child) implements DockEvent {}
+	record ContainerChildRemoved(@NonNull DockContainerBranch container,
+	                             @NonNull DockContainer child) implements DockEvent {}
 
 	/**
 	 * Event for when a {@link DockContainerLeaf} adds a {@link Dockable} item.
@@ -74,15 +74,15 @@ public sealed interface DockEvent {
 	 * @param dockable
 	 * 		Dockable added.
 	 */
-	record DockableAdded(@Nonnull DockContainerLeaf container, @Nonnull Dockable dockable) implements DockEvent {}
+	record DockableAdded(@NonNull DockContainerLeaf container, @NonNull Dockable dockable) implements DockEvent {}
 
 	/**
 	 * Event for when a {@link DockContainerLeaf} closes a {@link Dockable} item.
 	 * Can be cancelled to prevent closure.
 	 */
 	final class DockableClosing implements DockEvent {
-		private final @Nonnull Dockable dockable;
-		private final @Nonnull DockContainerLeaf container;
+		private final @NonNull Dockable dockable;
+		private final @NonNull DockContainerLeaf container;
 		private boolean cancelled;
 
 		/**
@@ -91,7 +91,7 @@ public sealed interface DockEvent {
 		 * @param container
 		 * 		Container the dockable belongs to.
 		 */
-		public DockableClosing(@Nonnull Dockable dockable, @Nonnull DockContainerLeaf container) {
+		public DockableClosing(@NonNull Dockable dockable, @NonNull DockContainerLeaf container) {
 			this.dockable = dockable;
 			this.container = container;
 		}
@@ -99,7 +99,7 @@ public sealed interface DockEvent {
 		/**
 		 * @return Dockable being closed.
 		 */
-		@Nonnull
+		@NonNull
 		public Dockable dockable() {
 			return dockable;
 		}
@@ -107,7 +107,7 @@ public sealed interface DockEvent {
 		/**
 		 * @return Container the dockable belongs to.
 		 */
-		@Nonnull
+		@NonNull
 		public DockContainerLeaf container() {
 			return container;
 		}
@@ -159,7 +159,7 @@ public sealed interface DockEvent {
 	 * @param container
 	 * 		Container the dockable belonged to.
 	 */
-	record DockableRemoved(@Nonnull Dockable dockable, @Nonnull DockContainerLeaf container) implements DockEvent {}
+	record DockableRemoved(@NonNull Dockable dockable, @NonNull DockContainerLeaf container) implements DockEvent {}
 
 	/**
 	 * Event for when a {@link DockContainerLeaf} updates its selected {@link Dockable} item.
@@ -169,7 +169,7 @@ public sealed interface DockEvent {
 	 * @param container
 	 * 		Container the dockable belongs to.
 	 */
-	record DockableSelected(@Nonnull Dockable dockable, @Nonnull DockContainerLeaf container) implements DockEvent {}
+	record DockableSelected(@NonNull Dockable dockable, @NonNull DockContainerLeaf container) implements DockEvent {}
 
 	/**
 	 * Event for when a {@link Dockable}'s parent is changed.
@@ -181,6 +181,6 @@ public sealed interface DockEvent {
 	 * @param newParent
 	 * 		Dockable's new parent.
 	 */
-	record DockableParentChanged(@Nonnull Dockable dockable, @Nullable DockContainerLeaf priorParent,
+	record DockableParentChanged(@NonNull Dockable dockable, @Nullable DockContainerLeaf priorParent,
 	                             @Nullable DockContainerLeaf newParent) implements DockEvent {}
 }

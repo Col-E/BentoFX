@@ -1,6 +1,6 @@
 package software.coley.bentofx.building;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.control.ContentWrapper;
 import software.coley.bentofx.control.HeaderPane;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
@@ -17,6 +17,6 @@ public interface ContentWrapperFactory {
 	 *
 	 * @return Newly created content wrapper.
 	 */
-	@Nonnull
-	ContentWrapper newContentWrapper(@Nonnull DockContainerLeaf container);
+	@NonNull
+	ContentWrapper newContentWrapper(@NonNull DockContainerLeaf container);
 }

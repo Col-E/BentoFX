@@ -1,6 +1,6 @@
 package software.coley.bentofx.path;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.layout.DockContainer;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
@@ -16,15 +16,15 @@ import java.util.List;
  * @param dockable
  * 		Target dockable.
  */
-public record DockablePath(@Nonnull List<DockContainer> containers, @Nonnull Dockable dockable) implements BentoPath {
-	@Nonnull
+public record DockablePath(@NonNull List<DockContainer> containers, @NonNull Dockable dockable) implements BentoPath {
+	@NonNull
 	@Override
 	public DockContainer rootContainer() {
 		// There must always be at least one container in a path since a dockable needs a parent to be placed into.
 		return containers.getFirst();
 	}
 
-	@Nonnull
+	@NonNull
 	public DockContainerLeaf leafContainer() {
 		// A dockable can only be put in a leaf, so this should be a safe cast.
 		return (DockContainerLeaf) containers.getLast();

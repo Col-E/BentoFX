@@ -1,6 +1,6 @@
 package software.coley.bentofx.building;
 
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.layout.DockContainer;
@@ -23,14 +23,14 @@ public class DockBuilding {
 	 * @param bento
 	 * 		Parent bento instance.
 	 */
-	public DockBuilding(@Nonnull Bento bento) {
+	public DockBuilding(@NonNull Bento bento) {
 		this.bento = bento;
 	}
 
 	/**
 	 * @return New dockable.
 	 */
-	@Nonnull
+	@NonNull
 	public Dockable dockable() {
 		return dockable(uid("dockable"));
 	}
@@ -41,8 +41,8 @@ public class DockBuilding {
 	 *
 	 * @return New dockable.
 	 */
-	@Nonnull
-	public Dockable dockable(@Nonnull String identifier) {
+	@NonNull
+	public Dockable dockable(@NonNull String identifier) {
 		return new Dockable(bento, identifier);
 	}
 
@@ -52,7 +52,7 @@ public class DockBuilding {
 	 * @see Bento#registerRoot(DockContainerRootBranch)
 	 * @see Bento#unregisterRoot(DockContainerRootBranch)
 	 */
-	@Nonnull
+	@NonNull
 	public DockContainerRootBranch root() {
 		return root(uid("croot"));
 	}
@@ -67,15 +67,15 @@ public class DockBuilding {
 	 * @see Bento#registerRoot(DockContainerRootBranch)
 	 * @see Bento#unregisterRoot(DockContainerRootBranch)
 	 */
-	@Nonnull
-	public DockContainerRootBranch root(@Nonnull String identifier) {
+	@NonNull
+	public DockContainerRootBranch root(@NonNull String identifier) {
 		return new DockContainerRootBranch(bento, identifier);
 	}
 
 	/**
 	 * @return New branch container.
 	 */
-	@Nonnull
+	@NonNull
 	public DockContainerBranch branch() {
 		return branch(uid("cbranch"));
 	}
@@ -86,15 +86,15 @@ public class DockBuilding {
 	 *
 	 * @return New branch container.
 	 */
-	@Nonnull
-	public DockContainerBranch branch(@Nonnull String identifier) {
+	@NonNull
+	public DockContainerBranch branch(@NonNull String identifier) {
 		return new DockContainerBranch(bento, identifier);
 	}
 
 	/**
 	 * @return New leaf container.
 	 */
-	@Nonnull
+	@NonNull
 	public DockContainerLeaf leaf() {
 		return leaf(uid("cleaf"));
 	}
@@ -105,13 +105,13 @@ public class DockBuilding {
 	 *
 	 * @return New branch container.
 	 */
-	@Nonnull
-	public DockContainerLeaf leaf(@Nonnull String identifier) {
+	@NonNull
+	public DockContainerLeaf leaf(@NonNull String identifier) {
 		return new DockContainerLeaf(bento, identifier);
 	}
 
-	@Nonnull
-	private static String uid(@Nonnull String prefix) {
+	@NonNull
+	private static String uid(@NonNull String prefix) {
 		StringBuilder suffix = new StringBuilder(8);
 		for (int i = 0; i < 8; i++)
 			suffix.append((char) RANDOM.nextInt('A', 'Z'));
