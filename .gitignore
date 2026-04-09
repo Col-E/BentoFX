@@ -20,6 +20,7 @@ hs_err_pid*.log
 *.iws
 *.iml
 *.ipr
+*.run.xml
 
 ### Eclipse ###
 .apt_generated
