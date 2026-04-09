@@ -219,4 +219,8 @@ For a more real-world example you can check out [Recaf](https://github.com/Col-E
 ![containers](assets/example-recaf.png)
 
 ## Demo Application
-The [demo](./demo) module contains an example application that demonstrates using the [core](./core) framework to create a layout structure that loosely models how an IDE is laid out. For details, refer to `BoxApp.getDefaultLayout()`.
+The [basic-demo](./demos/basic-demo) module contains an example application that demonstrates using the [core](./core) framework to create a layout structure that loosely models how an IDE is laid out.  
+
+To run the basic demo, use `./gradlew :demos:basic-demo:run`
+
+For details, refer to `BoxApp.getDefaultLayout()`.
