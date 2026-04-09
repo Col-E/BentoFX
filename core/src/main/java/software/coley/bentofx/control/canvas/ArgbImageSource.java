@@ -58,9 +58,8 @@ public class ArgbImageSource implements ArgbSource {
 		}
 	}
 
-	@NonNull
 	@Override
-	public int[] getArgb() {
+	public int @NonNull [] getArgb() {
 		// We will likely be using this a bit, so it makes sense to cache the result.
 		if (fullArgbCache == null)
 			fullArgbCache = ArgbSource.super.getArgb();

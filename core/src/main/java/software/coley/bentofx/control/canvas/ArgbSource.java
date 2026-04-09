@@ -45,14 +45,12 @@ public interface ArgbSource {
 	 * @return ARGB {@code int[]} at coordinates for the given width/height.
 	 * {@code null} when coordinates are out of the image bounds.
 	 */
-	@Nullable
-	int[] getArgb(int x, int y, int width, int height);
+	int @Nullable [] getArgb(int x, int y, int width, int height);
 
 	/**
 	 * @return ARGB {@code int[]} for the full image.
 	 */
-	@NonNull
-	default int[] getArgb() {
+	default int @NonNull [] getArgb() {
 		return Objects.requireNonNull(getArgb(0, 0, getWidth(), getHeight()),
 				"Failed computing ARGB for full image dimensions");
 	}
