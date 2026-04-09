@@ -1,8 +1,3 @@
-/*******************************************************************************
-This is an unpublished work of SAIC.
-Copyright (c) 2019 SAIC. All Rights Reserved.
- ******************************************************************************/
-
 plugins {
     id("java-platform")
 }
@@ -21,6 +16,12 @@ dependencies {
      * will cause third-party dependencies declared in the BOM to be overridden
      * by those platform declarations.
      */
+
+    api(platform(libs.junit.bom)) {
+        version {
+            strictly(libs.versions.junit.get())
+        }
+    }
 
     constraints {
 

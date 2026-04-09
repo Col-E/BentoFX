@@ -16,6 +16,7 @@ java-jdk = "21"
 javafx = "23.0.2"
 javafx-gradlePlugin = "0.1.0"
 jreleaser-gradlePlugin = "1.23.0"
+junit = "6.0.3"
 
 [libraries]
 
@@ -38,6 +39,13 @@ version.ref = "javafx"
 [libraries.jreleaser-gradlePlugin-dependency]
 module = "org.jreleaser:org.jreleaser.gradle.plugin"
 version.ref = "jreleaser-gradlePlugin"
+
+[libraries.junit-bom]
+module = "org.junit:junit-bom"
+version.ref = "junit"
+
+[libraries.junit-jupiter-api]
+module = "org.junit.jupiter:junit-jupiter-api"
 
 [bundles]
 
