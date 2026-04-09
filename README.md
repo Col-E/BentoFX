@@ -12,15 +12,15 @@ Requirements:
 Gradle syntax:
 
 ```groovy
-implementation "software.coley:bento-fx:${version}"
+implementation "software.coley.bento-fx:core:${version}"
 ```
 
 Maven syntax:
 
 ```xml
 <dependency>
-    <groupId>software.coley</groupId>
-    <artifactId>bento-fx</artifactId>
+    <groupId>software.coley.bento-fx</groupId>
+    <artifactId>core</artifactId>
     <version>${version}</version>
 </dependency>
 ```
