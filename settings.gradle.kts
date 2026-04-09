@@ -19,6 +19,8 @@ plugins {
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositories {
+        // Search ~/.m2
+        mavenLocal()
         mavenCentral()
     }
 }
