@@ -1,4 +1,4 @@
-package software.coley.boxfx.demo;
+package software.coley.bentofx;
 
 public class Runner {
 	public static void main(String[] args) {

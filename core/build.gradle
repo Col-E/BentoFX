@@ -1,0 +1,46 @@
+import java.nio.file.Files
+
+plugins {
+    alias(libs.plugins.peterabeles.gversion)
+}
+
+gversion {
+    srcDir       = "src/generated/java/"
+    classPackage = "software.coley.bentofx"
+    className    = "BentoVersion"
+}
+
+sourceSets {
+    // Need to add the generated class to the source set
+    main {
+        java {
+            srcDirs += 'src/generated/java'
+        }
+    }
+}
+
+clean {
+    // Delete the generated gversion class when cleaning
+    delete 'src/generated'
+}
+
+// Force generation of gversion data class when the version information is not up-to-date
+tasks.register('conditionalBuildConfigUpdate') {
+    if (!isBuildConfigUpToDate()) {
+        finalizedBy createVersionFile
+    }
+}
+
+project.compileJava.dependsOn('conditionalBuildConfigUpdate')
+
+private boolean isBuildConfigUpToDate() {
+    File buildConfigPath = project.file(gversion.srcDir +
+            gversion.classPackage.replace('.', '/') + '/' +
+            gversion.className + ".java")
+    if (buildConfigPath.exists()) {
+        String text = Files.readString(buildConfigPath.toPath())
+        if (text.contains('VERSION = "' + project.version + '"'))
+            return true
+    }
+    return false
+}

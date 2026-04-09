@@ -1,4 +1,4 @@
-package software.coley.boxfx.demo;
+package software.coley.bentofx;
 
 import jakarta.annotation.Nonnull;
 import javafx.application.Application;

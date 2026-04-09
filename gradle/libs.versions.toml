@@ -1,0 +1,29 @@
+[versions]
+# Libraries
+assertj = "3.27.3"
+junit = "5.13.4"
+junit-launch = "1.13.4"
+testfx = "4.0.18"
+# Plugins
+benmanes-versions = "0.52.0"
+javafx-plugin = "0.1.0"
+jreleaser = "1.22.0"
+peterabeles-gversion = "1.10.3"
+
+[libraries]
+assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
+junit-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-launch" }
+testfx = { module = "org.testfx:testfx-junit5", version.ref = "testfx" }
+
+[bundles]
+test-libraries = ["assertj", "junit-api",  "junit-params", "testfx"]
+test-runtime = ["junit-engine", "junit-launcher"]
+
+[plugins]
+benmanes-versions = { id = "com.github.ben-manes.versions", version.ref = "benmanes-versions" }
+javafx = { id = "org.openjfx.javafxplugin", version.ref = "javafx-plugin" }
+jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }
+peterabeles-gversion = { id = "com.peterabeles.gversion", version.ref = "peterabeles-gversion" }
