@@ -38,7 +38,7 @@ subprojects { sub ->
         version = '21.0.9'
         modules = ['javafx.controls']
 
-        // We don't want to include a specific versio nof JavaFX as a transitive dependency for users of the library
+        // We don't want to include a specific version of JavaFX as a transitive dependency for users of the library
         configurations = ['compileOnly', 'testImplementation']
     }
 
@@ -53,6 +53,14 @@ subprojects { sub ->
 
     tasks.withType(JavaCompile).configureEach {
         options.compilerArgs << '-parameters'
+    }
+
+    tasks.named('jar') {
+        from(rootProject.layout.projectDirectory) {
+            include 'LICENSE'
+            into 'META-INF'
+            rename { 'LICENSE.txt' }
+        }
     }
 
     javadoc {
