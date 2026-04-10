@@ -1,4 +1,4 @@
-package software.coley.bentofx;
+package demo;
 
 import javafx.application.Application;
 import javafx.geometry.Orientation;
@@ -19,6 +19,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NonNull;
+import software.coley.bentofx.Bento;
 import software.coley.bentofx.building.DockBuilding;
 import software.coley.bentofx.dockable.Dockable;
 import software.coley.bentofx.event.DockEvent;

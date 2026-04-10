@@ -1,4 +1,4 @@
-package software.coley.bentofx;
+package demo;
 
 public class Runner {
 	public static void main(String[] args) {

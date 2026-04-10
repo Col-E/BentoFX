@@ -1,5 +1,15 @@
-dependencies {
-    implementation project(':core')
+subprojects {
+    apply plugin: 'application'
+
+    // Override top-level 'compileOnly', 'testImplementation' configurations
+    // to facilitate running via :run task
+    javafx {
+        configurations = [ 'implementation' ]
+    }
+
+    dependencies {
+        implementation project(':core')
+    }
 }
 
 // Don't publish the demos, they are just for testing and examples. They aren't meant to be consumed as a library.

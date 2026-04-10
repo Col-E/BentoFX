@@ -2,3 +2,4 @@ rootProject.name = 'bento-fx'
 
 include 'core'
 include 'demos'
+include 'demos:basic'
