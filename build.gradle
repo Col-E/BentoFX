@@ -72,7 +72,7 @@ subprojects { sub ->
     test {
         useJUnitPlatform()
 
-        // TODO: Remove after implementing tests (Gradle 9+ requires at least one test to be present)
+        // Not all subprojects have tests, so don't fail the build if no tests are found.
         failOnNoDiscoveredTests = false
     }
 
@@ -113,7 +113,8 @@ subprojects { sub ->
         repositories {
             mavenLocal()
             maven {
-                url = layout.projectDirectory.dir("../build/staging-deploy")
+                // All modules will publish to the same staging directory.
+                url = rootProject.layout.projectDirectory.dir("build/staging-deploy")
             }
         }
     }
