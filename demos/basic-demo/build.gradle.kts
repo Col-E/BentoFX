@@ -1,8 +1,3 @@
-/*******************************************************************************
-This is an unpublished work of SAIC.
-Copyright (c) 2025 SAIC. All Rights Reserved.
- ******************************************************************************/
-
 plugins {
 
     id("bento.project.project-convention")

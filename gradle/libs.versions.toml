@@ -1,8 +1,3 @@
-################################################################################
-# This is an unpublished work of SAIC.
-# Copyright (c) 2023 SAIC. All Rights Reserved.
-################################################################################
-
 [versions]
 
 # See also '<root>\platform\build.gradle.kts' for additoinal version definitions

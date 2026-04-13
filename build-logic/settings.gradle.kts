@@ -1,8 +1,3 @@
-/*******************************************************************************
-This is an unpublished work of SAIC.
-Copyright (c) 2019 SAIC. All Rights Reserved.
- ******************************************************************************/
-
 pluginManagement {
     repositories {
         gradlePluginPortal()

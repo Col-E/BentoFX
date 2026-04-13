@@ -1,8 +1,3 @@
-/*******************************************************************************
-This is an unpublished work of SAIC.
-Copyright (c) 2026 SAIC. All Rights Reserved.
- ******************************************************************************/
-
 import org.gradle.api.tasks.wrapper.Wrapper.DistributionType.ALL
 import org.jreleaser.gradle.plugin.tasks.*
 
