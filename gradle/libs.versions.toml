@@ -6,10 +6,10 @@ junit-launch = "1.13.4"
 testfx = "4.0.18"
 # Plugins
 benmanes-versions = "0.52.0"
+buildconfig = "6.0.9"
 javafx-plugin = "0.1.0"
 jreleaser = "1.22.0"
 jspecify = "1.0.0"
-peterabeles-gversion = "1.10.3"
 
 [libraries]
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
@@ -27,6 +27,6 @@ test-runtime = ["junit-engine", "junit-launcher"]
 
 [plugins]
 benmanes-versions = { id = "com.github.ben-manes.versions", version.ref = "benmanes-versions" }
+buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
 javafx = { id = "org.openjfx.javafxplugin", version.ref = "javafx-plugin" }
 jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }
-peterabeles-gversion = { id = "com.peterabeles.gversion", version.ref = "peterabeles-gversion" }

@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.javafx) apply false
     alias(libs.plugins.jreleaser)
     alias(libs.plugins.benmanes.versions) apply false
-    alias(libs.plugins.peterabeles.gversion) apply false
+    alias(libs.plugins.buildconfig) apply false
 }
 
 ext.pluginId = { provider -> provider.get().pluginId }
