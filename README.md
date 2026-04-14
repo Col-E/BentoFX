@@ -12,15 +12,15 @@ Requirements:
 Gradle syntax:
 
 ```groovy
-implementation "software.coley:bento-fx:${version}"
+implementation "software.coley.bento-fx:core:${version}"
 ```
 
 Maven syntax:
 
 ```xml
 <dependency>
-    <groupId>software.coley</groupId>
-    <artifactId>bento-fx</artifactId>
+    <groupId>software.coley.bento-fx</groupId>
+    <artifactId>core</artifactId>
     <version>${version}</version>
 </dependency>
 ```
@@ -59,7 +59,7 @@ Bento comes with a few custom controls that you will want to create a custom sty
 look and feel of your application.
 
 An example reference sheet _(which is included in the dependency)_ can be found
-in [`bento.css`](src/main/resources/bento.css).
+in [`bento.css`](demos/basic/src/main/resources/bento.css).
 
 | Control                     | Description                                                                                                                                       |
 |-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|

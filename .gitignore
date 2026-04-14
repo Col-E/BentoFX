@@ -7,6 +7,7 @@ build/
 
 ### IntelliJ IDEA ###
 .idea/*
+.run/*
 *.iws
 *.iml
 *.ipr
@@ -35,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Generated Content ###
+**/generated/**

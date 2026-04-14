@@ -1,147 +1,121 @@
 plugins {
     id 'java'
-    id 'maven-publish'
-    id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'org.jreleaser' version '1.22.0'
-    id 'xyz.wagyourtail.jvmdowngrader' version '1.3.4'
+    alias(libs.plugins.javafx) apply false
+    alias(libs.plugins.jreleaser)
+    alias(libs.plugins.benmanes.versions) apply false
+    alias(libs.plugins.buildconfig) apply false
 }
 
-group = 'software.coley'
-version = '0.15.1'
+ext.pluginId = { provider -> provider.get().pluginId }
 
-repositories {
-    mavenCentral()
+allprojects {
+    group = 'software.coley.bento-fx'
+    version = '0.16.0'
 }
 
-dependencies {
-    // Provided dependencies
-    compileOnly 'org.openjfx:javafx-controls:19.0.2.1'
-    compileOnly 'jakarta.annotation:jakarta.annotation-api:3.0.0'
-    testCompileOnly 'jakarta.annotation:jakarta.annotation-api:3.0.0'
+subprojects { sub ->
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: pluginId(libs.plugins.javafx)
+    apply plugin: pluginId(libs.plugins.benmanes.versions)
 
-    // Test dependencies
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.2'
-    testRuntimeOnly 'org.junit.platform:junit-platform-surefire-provider:1.3.2'
-    testImplementation 'org.testfx:testfx-junit5:4.0.18'
-}
-
-javafx {
-    version = '19'
-    modules = ['javafx.controls']
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+    repositories {
+        mavenLocal()
+        mavenCentral()
     }
 
-    withJavadocJar()
-    withSourcesJar()
-}
+    dependencies {
+        // Shared annotations for all modules
+        compileOnly(libs.bundles.annotations)
+        testCompileOnly(libs.bundles.annotations)
 
-tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs << '-parameters'
-}
-
-jvmdg {
-    downgradeTo = JavaVersion.VERSION_17
-}
-
-javadoc {
-    options {
-        addStringOption('Xdoclint:none', '-quiet')
+        // Test dependencies
+        testImplementation(libs.bundles.test.libraries)
+        testRuntimeOnly(libs.bundles.test.runtime)
     }
-}
 
-// There is currently a bug with the shading portion of 'jvmdowngrader' which
-// prevents the 'module-info' class from being copied into the final output.
-// These two tasks will generate a modified shaded output jar that includes it.
-tasks.register('copyModuleInfo', Copy) {
-    // Ensure the downgrader tasks all run
-    dependsOn(tasks.named("shadeDowngradedApi"))
+    javafx {
+        version = '21.0.9'
+        modules = ['javafx.controls']
 
-    // Copy the downgraded module-info into a temporary location
-    from(zipTree(tasks.named("downgradeJar").get().outputs.files.singleFile)) {
-        include('module-info.class')
+        // We don't want to include a specific version of JavaFX as a transitive dependency for users of the library
+        configurations = ['compileOnly', 'testImplementation']
     }
-    into(project.layout.buildDirectory.dir('module-info-temp'))
-}
-tasks.register('mergeShadedJar', Jar) {
-    // Run the copy task defined above
-    dependsOn(tasks.named('copyModuleInfo'))
 
-    archiveClassifier.set('merged-shaded')
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
 
-    // Merge the shaded output and our module-info class we put in the temp dir
-    from(zipTree(tasks.named("shadeDowngradedApi").get().outputs.files.singleFile))
-    from(project.layout.buildDirectory.dir('module-info-temp'))
-}
+        withJavadocJar()
+        withSourcesJar()
+    }
 
-// Ensure builds emit the corrected shaded jar
-assemble.dependsOn mergeShadedJar
+    tasks.withType(JavaCompile).configureEach {
+        options.compilerArgs << '-parameters'
+    }
 
-// Setup publishing to pull from our slightly modified outputs
-def includeTransitives = false
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId = project.group
-            artifactId = project.name
-            version = project.version
+    tasks.named('jar') {
+        from(rootProject.layout.projectDirectory) {
+            include 'LICENSE'
+            into 'META-INF'
+            rename { 'LICENSE.txt' }
+        }
+    }
 
-            // Include our corrected shaded/downgraded jar
-            artifact(tasks.named('mergeShadedJar').get().outputs.files.singleFile) {
-                builtBy tasks.named('mergeShadedJar')
-            }
+    javadoc {
+        options {
+            addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
 
-            // Include sources + javadoc jars
-            artifact(tasks.named('sourcesJar').get())
-            artifact(tasks.named('javadocJar').get())
+    test {
+        useJUnitPlatform()
 
-            pom {
-                name = project.name
-                description = 'A docking system for JavaFX.'
-                url = 'https://github.com/Col-E/BentoFX'
-                inceptionYear = '2025'
-                licenses {
-                    license {
-                        name = 'MIT'
-                        url = 'https://spdx.org/licenses/MIT.html'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'Col-E'
-                        name = 'Matt Coley'
-                    }
-                }
-                scm {
-                    connection = 'scm:git:https://github.com/Col-E/BentoFX.git'
-                    developerConnection = 'scm:git:ssh://github.com/Col-E/BentoFX.git'
+        // Not all subprojects have tests, so don't fail the build if no tests are found.
+        failOnNoDiscoveredTests = false
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                groupId = sub.group
+                artifactId = sub.name
+                version = sub.version
+
+                from sub.components.java
+
+                pom {
+                    name = sub.name
+                    description = 'A docking system for JavaFX.'
                     url = 'https://github.com/Col-E/BentoFX'
-                }
-
-                // We aren't using "from components.java" so we need to rebuild the dependencies node ourselves
-                if (includeTransitives) withXml {
-                    def allDeps = project.configurations.compileClasspath.resolvedConfiguration.firstLevelModuleDependencies
-                    def root = asNode()
-                    def depNode = root.appendNode("dependencies")
-                    allDeps.each { d ->
-                        def dn = depNode.appendNode("dependency")
-                        dn.appendNode("groupId", d.moduleGroup)
-                        dn.appendNode("artifactId", d.name)
-                        dn.appendNode("version", d.moduleVersion)
+                    inceptionYear = '2025'
+                    licenses {
+                        license {
+                            name = 'MIT'
+                            url = 'https://spdx.org/licenses/MIT.html'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'Col-E'
+                            name = 'Matt Coley'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:https://github.com/Col-E/BentoFX.git'
+                        developerConnection = 'scm:git:ssh://github.com/Col-E/BentoFX.git'
+                        url = 'https://github.com/Col-E/BentoFX'
                     }
                 }
             }
         }
-    }
-    repositories {
-        mavenLocal()
-        maven {
-            url = layout.buildDirectory.dir('staging-deploy')
+        repositories {
+            mavenLocal()
+            maven {
+                // All modules will publish to the same staging directory.
+                url = rootProject.layout.projectDirectory.dir("build/staging-deploy")
+            }
         }
     }
 }

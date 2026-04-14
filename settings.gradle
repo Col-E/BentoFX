@@ -1,2 +1,8 @@
 rootProject.name = 'bento-fx'
 
+enableFeaturePreview('STABLE_CONFIGURATION_CACHE')
+enableFeaturePreview('TYPESAFE_PROJECT_ACCESSORS')
+
+include 'core'
+include 'demos'
+include 'demos:basic'

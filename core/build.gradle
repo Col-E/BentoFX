@@ -1,0 +1,11 @@
+plugins {
+    alias(libs.plugins.buildconfig)
+}
+
+buildConfig {
+    useJavaOutput()
+    className("BentoVersion")
+    packageName("software.coley.bentofx")
+    buildConfigField(String, "VERSION", provider { "${project.version}" })
+    buildConfigField(String, "BUILD_DATE", provider { "${new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")}" })
+}
