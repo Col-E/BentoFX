@@ -1,9 +1,7 @@
 package software.coley.bentofx.building;
 
-import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
-import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
@@ -91,42 +89,6 @@ public class StageBuilding {
 	                                         DockContainerLeaf leaf,
 	                                         Dockable dockable,
 	                                         double width, double height) {
-		return newStageForDockable(sourceScene, root, leaf, dockable, width, height, false, true);
-	}
-
-	/**
-	 * Create a new stage for the given dockable.,
-	 *
-	 * @param sourceScene
-	 * 		Original scene to copy state from.
-	 * @param root
-	 * 		Newly created root branch to place into the resulting stage.
-	 * @param leaf
-	 * 		Newly created leaf container to place the dockable into.
-	 * @param dockable
-	 * 		Dockable to place into the newly created stage.
-	 * @param width
-	 * 		Preferred stage width.
-	 * @param height
-	 * 		Preferred stage height.
-	 * @param sourceIsOwner
-	 *        {@code true} to invoke {@link Stage#initOwner(Window)}, where the
-	 * 		owner is the source stage.
-	 * @param applyMousePosition
-	 *        {@code true} to set the stage's X and Y positions to the position of
-	 * 		the mouse when the new stage is created.
-	 *
-	 * @return Newly created stage.
-	 */
-	public DragDropStage newStageForDockable(@Nullable Scene sourceScene,
-	                                         DockContainerRootBranch root,
-	                                         DockContainerLeaf leaf,
-	                                         Dockable dockable,
-	                                         double width,
-	                                         double height,
-	                                         boolean sourceIsOwner,
-	                                         boolean applyMousePosition
-	) {
 		// Sanity check, leaf shouldn't have an existing parent.
 		if (leaf.getParentContainer() != root && leaf.getParentContainer() != null)
 			leaf.removeFromParent();
@@ -144,14 +106,7 @@ public class StageBuilding {
 
 		// Copy properties from the source scene/stage.
 		if (sourceScene != null)
-			initializeFromSource(sourceScene, scene, sourceStage, stage, sourceIsOwner);
-
-		if (applyMousePosition) {
-			final Robot robot = new Robot();
-			final Point2D mousePosition = robot.getMousePosition();
-			stage.setX(mousePosition.getX());
-			stage.setY(mousePosition.getY());
-		}
+			initializeFromSource(sourceScene, scene, sourceStage, stage, true);
 
 		return stage;
 	}
