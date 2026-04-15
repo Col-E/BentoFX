@@ -1,3 +1,6 @@
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 module bento.fx {
 	requires static org.jspecify;
 

@@ -1,6 +1,5 @@
 package software.coley.bentofx.path;
 
-import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.layout.DockContainer;
 
 /**
@@ -12,6 +11,5 @@ public sealed interface BentoPath permits DockContainerPath, DockablePath {
 	/**
 	 * @return Root container of the path.
 	 */
-	@NonNull
 	DockContainer rootContainer();
 }

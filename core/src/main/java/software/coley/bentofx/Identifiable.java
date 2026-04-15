@@ -1,7 +1,5 @@
 package software.coley.bentofx;
 
-import org.jspecify.annotations.NonNull;
-
 /**
  * Outline of an <i>(ideally uniquely)</i> identifiable object.
  *
@@ -11,7 +9,6 @@ public interface Identifiable {
 	/**
 	 * @return This objects identifier.
 	 */
-	@NonNull
 	String getIdentifier();
 
 	/**
@@ -20,5 +17,5 @@ public interface Identifiable {
 	 *
 	 * @return {@code true} when the other object has the same identifier.
 	 */
-	boolean matchesIdentity(@NonNull Identifiable other);
+	boolean matchesIdentity(Identifiable other);
 }

@@ -18,7 +18,6 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
-import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.building.DockBuilding;
 import software.coley.bentofx.dockable.Dockable;
@@ -112,8 +111,7 @@ public class BoxApp extends Application {
 		stage.show();
 	}
 
-	@NonNull
-	private Dockable buildDockable(@NonNull DockBuilding builder, int s, int i, @NonNull String title) {
+	private Dockable buildDockable(DockBuilding builder, int s, int i, String title) {
 		Dockable dockable = builder.dockable();
 		dockable.setTitle(title);
 		dockable.setIconFactory(d -> makeIcon(s, i));
@@ -132,7 +130,7 @@ public class BoxApp extends Application {
 		return dockable;
 	}
 
-	private void handleDockableClosing(DockEvent.@NonNull DockableClosing closingEvent) {
+	private void handleDockableClosing(DockEvent.DockableClosing closingEvent) {
 		final Dockable dockable = closingEvent.dockable();
 		if (!dockable.getTitle().startsWith("Class "))
 			return;
@@ -161,7 +159,6 @@ public class BoxApp extends Application {
 		}
 	}
 
-	@NonNull
 	private static Shape makeIcon(int shapeMode, int i) {
 		final int radius = 6;
 		Shape icon = switch (shapeMode) {
@@ -182,8 +179,7 @@ public class BoxApp extends Application {
 		return icon;
 	}
 
-	@NonNull
-	private static ContextMenu addSideOptions(@NonNull ContextMenu menu, @NonNull DockContainerLeaf space) {
+	private static ContextMenu addSideOptions(ContextMenu menu, DockContainerLeaf space) {
 		for (Side side : Side.values()) {
 			MenuItem item = new MenuItem(side.name());
 			item.setGraphic(new Label(side == space.getSide() ? "✓" : " "));

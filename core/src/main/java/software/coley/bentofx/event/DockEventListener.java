@@ -1,7 +1,5 @@
 package software.coley.bentofx.event;
 
-import org.jspecify.annotations.NonNull;
-
 /**
  * Listener invoked by the firing of any {@link DockEvent}.
  *
@@ -12,5 +10,5 @@ public interface DockEventListener {
 	 * @param event
 	 * 		Event fired.
 	 */
-	void onDockEvent(@NonNull DockEvent event);
+	void onDockEvent(DockEvent event);
 }

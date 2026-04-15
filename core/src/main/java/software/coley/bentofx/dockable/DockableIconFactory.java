@@ -1,7 +1,6 @@
 package software.coley.bentofx.dockable;
 
 import javafx.scene.Node;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -18,5 +17,5 @@ public interface DockableIconFactory {
 	 * @return Graphic for the dockable.
 	 */
 	@Nullable
-	Node build(@NonNull Dockable dockable);
+	Node build(Dockable dockable);
 }

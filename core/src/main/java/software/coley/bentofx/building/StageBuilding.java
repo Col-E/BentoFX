@@ -6,7 +6,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.control.DragDropStage;
@@ -25,7 +24,7 @@ public class StageBuilding {
 	private StageFactory stageFactory = DEFAULT_STAGE_FACTORY;
 	private SceneFactory sceneFactory = DEFAULT_SCENE_FACTORY;
 
-	public StageBuilding(@NonNull Bento bento) {
+	public StageBuilding(Bento bento) {
 		this.bento = bento;
 	}
 
@@ -41,8 +40,7 @@ public class StageBuilding {
 	 *
 	 * @return Newly created stage.
 	 */
-	@NonNull
-	public DragDropStage newStageForDockable(@NonNull Scene sourceScene, @NonNull DockContainer source, @NonNull Dockable dockable) {
+	public DragDropStage newStageForDockable(Scene sourceScene, DockContainer source, Dockable dockable) {
 		Region sourceRegion = source.asRegion();
 		double width = sourceRegion.getWidth();
 		double height = sourceRegion.getHeight();
@@ -63,8 +61,7 @@ public class StageBuilding {
 	 *
 	 * @return Newly created stage.
 	 */
-	@NonNull
-	public DragDropStage newStageForDockable(@Nullable Scene sourceScene, @NonNull Dockable dockable, double width, double height) {
+	public DragDropStage newStageForDockable(@Nullable Scene sourceScene, Dockable dockable, double width, double height) {
 		DockBuilding builder = bento.dockBuilding();
 		DockContainerRootBranch root = builder.root();
 		DockContainerLeaf leaf = builder.leaf();
@@ -89,11 +86,10 @@ public class StageBuilding {
 	 *
 	 * @return Newly created stage.
 	 */
-	@NonNull
 	public DragDropStage newStageForDockable(@Nullable Scene sourceScene,
-	                                         @NonNull DockContainerRootBranch root,
-	                                         @NonNull DockContainerLeaf leaf,
-	                                         @NonNull Dockable dockable,
+	                                         DockContainerRootBranch root,
+	                                         DockContainerLeaf leaf,
+	                                         Dockable dockable,
 	                                         double width, double height) {
 		return newStageForDockable(sourceScene, root, leaf, dockable, width, height, false, true);
 	}
@@ -123,9 +119,9 @@ public class StageBuilding {
 	 * @return Newly created stage.
 	 */
 	public DragDropStage newStageForDockable(@Nullable Scene sourceScene,
-	                                         @NonNull DockContainerRootBranch root,
-	                                         @NonNull DockContainerLeaf leaf,
-	                                         @NonNull Dockable dockable,
+	                                         DockContainerRootBranch root,
+	                                         DockContainerLeaf leaf,
+	                                         Dockable dockable,
 	                                         double width,
 	                                         double height,
 	                                         boolean sourceIsOwner,
@@ -175,10 +171,10 @@ public class StageBuilding {
 	 * @param sourceIsOwner
 	 *        {@code true} to invoke {@link Stage#initOwner(Window)}, where the owner is the source stage.
 	 */
-	protected void initializeFromSource(@NonNull Scene sourceScene,
-	                                    @NonNull Scene newScene,
+	protected void initializeFromSource(Scene sourceScene,
+	                                    Scene newScene,
 	                                    @Nullable Stage sourceStage,
-	                                    @NonNull DragDropStage newStage,
+	                                    DragDropStage newStage,
 	                                    boolean sourceIsOwner) {
 		// Copy stylesheets.
 		newScene.setUserAgentStylesheet(sourceScene.getUserAgentStylesheet());

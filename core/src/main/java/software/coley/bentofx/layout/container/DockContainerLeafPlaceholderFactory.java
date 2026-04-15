@@ -1,7 +1,6 @@
 package software.coley.bentofx.layout.container;
 
 import javafx.scene.Node;
-import org.jspecify.annotations.NonNull;
 
 /**
  * Factory to create a {@link Node} placeholder display for some given {@link DockContainerLeaf}.
@@ -16,6 +15,5 @@ public interface DockContainerLeafPlaceholderFactory {
 	 *
 	 * @return Placeholder for the container.
 	 */
-	@NonNull
-	Node build(@NonNull DockContainerLeaf container);
+	Node build(DockContainerLeaf container);
 }

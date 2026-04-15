@@ -1,6 +1,5 @@
 package software.coley.bentofx.dockable;
 
-import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.layout.DockContainer;
 import software.coley.bentofx.path.DockablePath;
 
@@ -16,5 +15,5 @@ public interface DockableCloseListener {
 	 * @param dockable
 	 * 		Closed dockable.
 	 */
-	void onClose(@NonNull DockablePath path, @NonNull Dockable dockable);
+	void onClose(DockablePath path, Dockable dockable);
 }

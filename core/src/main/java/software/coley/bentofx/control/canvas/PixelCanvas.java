@@ -4,7 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Region;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is a very simple alternative to {@link Canvas} that <i>does not</i> keep track of draw operations.
@@ -25,7 +25,7 @@ public class PixelCanvas extends Region {
 	/** Wrapped display. */
 	private final ImageView view = new ImageView();
 	/** The image to display. */
-	private WritableImage image;
+	private @Nullable WritableImage image;
 	/** Last committed draw hash. */
 	private int lastDrawHash;
 	/** Current draw hash. */
@@ -37,7 +37,7 @@ public class PixelCanvas extends Region {
 	 * @param pixelPainter
 	 * 		Painter to draw pixels.
 	 */
-	public PixelCanvas(@NonNull PixelPainter<?> pixelPainter) {
+	public PixelCanvas(PixelPainter<?> pixelPainter) {
 		this.pixelPainter = pixelPainter;
 		getChildren().add(view);
 
@@ -65,7 +65,7 @@ public class PixelCanvas extends Region {
 	 * @param height
 	 * 		Assigned height.
 	 */
-	public PixelCanvas(@NonNull PixelPainter<?> pixelPainter, int width, int height) {
+	public PixelCanvas(PixelPainter<?> pixelPainter, int width, int height) {
 		this.pixelPainter = pixelPainter;
 		getChildren().add(view);
 
@@ -289,7 +289,7 @@ public class PixelCanvas extends Region {
 	 * @param image
 	 * 		Image to draw.
 	 */
-	public void drawImage(int x, int y, @NonNull ArgbSource image) {
+	public void drawImage(int x, int y, ArgbSource image) {
 		updateDrawHash(hash(OP_FILL_IMG, x, y, image.hashCode()));
 		pixelPainter.drawImage(x, y, image);
 	}
@@ -312,7 +312,7 @@ public class PixelCanvas extends Region {
 	 * @param image
 	 * 		Image to draw.
 	 */
-	public void drawImage(int x, int y, int sx, int sy, int sw, int sh, @NonNull ArgbSource image) {
+	public void drawImage(int x, int y, int sx, int sy, int sw, int sh, ArgbSource image) {
 		updateDrawHash(hash(OP_FILL_IMG, x, y, sx, sy, sw, sh, image.hashCode()));
 		pixelPainter.drawImage(x, y, sx, sy, sw, sh, image);
 	}
@@ -412,7 +412,6 @@ public class PixelCanvas extends Region {
 	 *
 	 * @return New writable image of the given dimensions.
 	 */
-	@NonNull
 	protected WritableImage newImage(int width, int height) {
 		return new WritableImage(width, height);
 	}

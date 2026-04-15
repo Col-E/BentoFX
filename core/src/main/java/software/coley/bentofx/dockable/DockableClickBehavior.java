@@ -25,10 +25,10 @@ public interface DockableClickBehavior {
 	 * @param e
 	 * 		The click event.
 	 */
-	default void onMouseClick(@NonNull DockContainerLeaf container,
-	                          @NonNull Dockable dockable,
-	                          @NonNull Header header,
-	                          @NonNull MouseEvent e) {
+	default void onMouseClick(DockContainerLeaf container,
+	                          Dockable dockable,
+	                          Header header,
+	                          MouseEvent e) {
 		// Primary click --> select dockable if not selected, otherwise toggle collapsed state.
 		if (e.getButton() == MouseButton.PRIMARY) {
 			if (container.getSelectedDockable() == dockable || container.isCollapsed()) {
