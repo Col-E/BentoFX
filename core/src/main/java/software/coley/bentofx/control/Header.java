@@ -55,7 +55,7 @@ public class Header extends Region {
 	private final StringProperty titleProperty = new SimpleStringProperty();
 	private final ObjectProperty<Node> graphicProperty = new SimpleObjectProperty<>();
 	private final BooleanProperty closableProperty = new SimpleBooleanProperty();
-	private final ObjectProperty<Side> sideProperty = new SimpleObjectProperty<>();
+	private final ObjectProperty<@Nullable Side> sideProperty = new SimpleObjectProperty<>();
 	private final ObjectProperty<Tooltip> tooltipProperty = new SimpleObjectProperty<>();
 	private final GridPane grid = new GridPane();
 	private final Text label = new Text();
@@ -424,7 +424,7 @@ public class Header extends Region {
 	/**
 	 * @return Side of the {@link #parentPane} at the time of construction.
 	 */
-	private Side getSide() {
+	private @Nullable Side getSide() {
 		return sideProperty.get();
 	}
 
