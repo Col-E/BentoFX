@@ -24,6 +24,8 @@ public class StageBuilding {
 	private final Bento bento;
 	private StageFactory stageFactory = DEFAULT_STAGE_FACTORY;
 	private SceneFactory sceneFactory = DEFAULT_SCENE_FACTORY;
+	private boolean applyMousePosition = false;
+	private boolean sourceIsOwner = true;
 
 	public StageBuilding(@NonNull Bento bento) {
 		this.bento = bento;
@@ -95,42 +97,6 @@ public class StageBuilding {
 	                                         @NonNull DockContainerLeaf leaf,
 	                                         @NonNull Dockable dockable,
 	                                         double width, double height) {
-		return newStageForDockable(sourceScene, root, leaf, dockable, width, height, false, true);
-	}
-
-	/**
-	 * Create a new stage for the given dockable.,
-	 *
-	 * @param sourceScene
-	 * 		Original scene to copy state from.
-	 * @param root
-	 * 		Newly created root branch to place into the resulting stage.
-	 * @param leaf
-	 * 		Newly created leaf container to place the dockable into.
-	 * @param dockable
-	 * 		Dockable to place into the newly created stage.
-	 * @param width
-	 * 		Preferred stage width.
-	 * @param height
-	 * 		Preferred stage height.
-	 * @param sourceIsOwner
-	 *        {@code true} to invoke {@link Stage#initOwner(Window)}, where the
-	 * 		owner is the source stage.
-	 * @param applyMousePosition
-	 *        {@code true} to set the stage's X and Y positions to the position of
-	 * 		the mouse when the new stage is created.
-	 *
-	 * @return Newly created stage.
-	 */
-	public DragDropStage newStageForDockable(@Nullable Scene sourceScene,
-	                                         @NonNull DockContainerRootBranch root,
-	                                         @NonNull DockContainerLeaf leaf,
-	                                         @NonNull Dockable dockable,
-	                                         double width,
-	                                         double height,
-	                                         boolean sourceIsOwner,
-	                                         boolean applyMousePosition
-	) {
 		// Sanity check, leaf shouldn't have an existing parent.
 		if (leaf.getParentContainer() != root && leaf.getParentContainer() != null)
 			leaf.removeFromParent();
@@ -216,5 +182,13 @@ public class StageBuilding {
 		if (factory == null)
 			factory = DEFAULT_SCENE_FACTORY;
 		sceneFactory = factory;
+	}
+
+	public void setSourceIsOwner(boolean sourceIsOwner) {
+		this.sourceIsOwner = sourceIsOwner;
+	}
+
+	public void setApplyMousePosition(boolean applyMousePosition) {
+		this.applyMousePosition = applyMousePosition;
 	}
 }
