@@ -1,10 +1,14 @@
 package software.coley.bentofx.building;
 
+import javafx.collections.ObservableList;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.scene.robot.Robot;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
@@ -24,7 +28,7 @@ public class StageBuilding {
 	private final Bento bento;
 	private StageFactory stageFactory = DEFAULT_STAGE_FACTORY;
 	private SceneFactory sceneFactory = DEFAULT_SCENE_FACTORY;
-	private boolean applyMousePosition = true;
+	private boolean applyMousePosition = false;
 	private boolean applySourceAsOwner = true;
 
 	public StageBuilding(Bento bento) {
@@ -131,8 +135,23 @@ public class StageBuilding {
 		if (applyMousePosition) {
 			final Robot robot = new Robot();
 			final Point2D mousePosition = robot.getMousePosition();
-			stage.setX(mousePosition.getX());
-			stage.setY(mousePosition.getY());
+
+			// Clamp the position to the screen bounds.
+			// We don't want a new stage that spawns on the bottom or right edge of the screen to be inaccessible.
+			double x = mousePosition.getX();
+			double y = mousePosition.getY();
+			ObservableList<Screen> screens = Screen.getScreensForRectangle(x, y, x + 1, y + 1);
+			if (!screens.isEmpty()) {
+				final Bounds dockableContainerBounds = leaf.getBoundsInLocal();
+				final Rectangle2D screenBounds = screens.getFirst().getVisualBounds();
+				final double maxX = screenBounds.getMaxX() - dockableContainerBounds.getWidth();
+				final double maxY = screenBounds.getMaxY() - dockableContainerBounds.getHeight();
+				x = Math.min(x, maxX);
+				y = Math.min(y, maxY);
+			}
+
+			stage.setX(x);
+			stage.setY(y);
 		}
 
 		return stage;
