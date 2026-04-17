@@ -1,7 +1,6 @@
 package software.coley.bentofx.layout.container;
 
 import javafx.scene.control.ContextMenu;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -17,5 +16,5 @@ public interface DockContainerLeafMenuFactory {
 	 * @return Context menu for the container.
 	 */
 	@Nullable
-	ContextMenu build(@NonNull DockContainerLeaf container);
+	ContextMenu build(DockContainerLeaf container);
 }

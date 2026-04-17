@@ -1,6 +1,6 @@
 package software.coley.bentofx.control.canvas;
 
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -12,14 +12,14 @@ import java.util.Arrays;
  */
 public class ArgbBufferedImageSource implements ArgbSource {
 	private final BufferedImage image;
-	private int[] fullArgbCache;
+	private int @Nullable[] fullArgbCache;
 	private int hash;
 
 	/**
 	 * @param image
 	 * 		Wrapped image.
 	 */
-	public ArgbBufferedImageSource(@NonNull BufferedImage image) {
+	public ArgbBufferedImageSource(BufferedImage image) {
 		this.image = image;
 	}
 
@@ -45,7 +45,7 @@ public class ArgbBufferedImageSource implements ArgbSource {
 	}
 
 	@Override
-	public int[] getArgb(int x, int y, int width, int height) {
+	public int @Nullable [] getArgb(int x, int y, int width, int height) {
 		try {
 			return image.getRGB(x, y, width, height, null, 0, width);
 		} catch (Throwable t) {
@@ -55,10 +55,9 @@ public class ArgbBufferedImageSource implements ArgbSource {
 	}
 
 	@Override
-	public int @NonNull [] getArgb() {
+	public int[] getArgb() {
 		// We will likely be using this a bit, so it makes sense to cache the result.
-		if (fullArgbCache == null)
-			fullArgbCache = ArgbSource.super.getArgb();
+		fullArgbCache = ArgbSource.super.getArgb();
 		return fullArgbCache;
 	}
 

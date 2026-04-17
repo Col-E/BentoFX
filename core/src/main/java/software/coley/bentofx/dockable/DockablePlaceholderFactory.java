@@ -1,7 +1,6 @@
 package software.coley.bentofx.dockable;
 
 import javafx.scene.Node;
-import org.jspecify.annotations.NonNull;
 
 /**
  * Factory to create a {@link Node} placeholder display for some given {@link Dockable}.
@@ -16,6 +15,5 @@ public interface DockablePlaceholderFactory {
 	 *
 	 * @return Placeholder for the dockable.
 	 */
-	@NonNull
-	Node build(@NonNull Dockable dockable);
+	Node build(Dockable dockable);
 }

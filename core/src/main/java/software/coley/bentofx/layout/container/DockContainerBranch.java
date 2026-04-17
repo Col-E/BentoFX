@@ -7,7 +7,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.Identifiable;
@@ -31,8 +30,8 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	private final ObservableList<DockContainer> childContainersView = FXCollections.unmodifiableObservableList(childContainers);
 	private final Bento bento;
 	private final String identifier;
-	private List<Runnable> queue;
-	private DockContainerBranch parent;
+	private @Nullable List<Runnable> queue;
+	private @Nullable DockContainerBranch parent;
 	private boolean pruneWhenEmpty = true;
 
 	/**
@@ -41,14 +40,13 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	 * @param identifier
 	 * 		This container's identifier.
 	 */
-	public DockContainerBranch(@NonNull Bento bento, @NonNull String identifier) {
+	public DockContainerBranch(Bento bento, String identifier) {
 		this.bento = bento;
 		this.identifier = identifier;
 
 		getStyleClass().addAll("bento", "container", "container-branch");
 	}
 
-	@NonNull
 	@Override
 	public Bento getBento() {
 		return bento;
@@ -61,14 +59,14 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	}
 
 	@Override
-	public void setParentContainer(@NonNull DockContainerBranch parent) {
+	public void setParentContainer(DockContainerBranch parent) {
 		DockContainerBranch priorParent = this.parent;
 		this.parent = parent;
 		bento.events().fire(new DockEvent.ContainerParentChanged(this, priorParent, parent));
 	}
 
 	@Override
-	public void removeAsParentContainer(@NonNull DockContainerBranch parent) {
+	public void removeAsParentContainer(DockContainerBranch parent) {
 		if (this.parent == parent) {
 			DockContainerBranch priorParent = this.parent;
 			this.parent = null;
@@ -77,7 +75,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	}
 
 	@Override
-	public boolean visit(@NonNull SearchVisitor visitor) {
+	public boolean visit(SearchVisitor visitor) {
 		if (visitor.visitBranch(this))
 			for (DockContainer container : childContainers)
 				if (!container.visit(visitor))
@@ -91,7 +89,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	 *
 	 * @return {@code true} if one or more of the containers were added.
 	 */
-	public boolean addContainers(@NonNull DockContainer... containers) {
+	public boolean addContainers(DockContainer... containers) {
 		boolean changed = false;
 		for (DockContainer container : containers)
 			changed |= addContainer(container);
@@ -104,7 +102,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	 *
 	 * @return {@code true} when added.
 	 */
-	public boolean addContainer(@NonNull DockContainer container) {
+	public boolean addContainer(DockContainer container) {
 		return addContainer(childContainers.size(), container);
 	}
 
@@ -116,7 +114,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	 *
 	 * @return {@code true} when added.
 	 */
-	public boolean addContainer(int index, @NonNull DockContainer container) {
+	public boolean addContainer(int index, DockContainer container) {
 		if (index < 0 || index > childContainers.size())
 			return false;
 
@@ -140,7 +138,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	 *
 	 * @return {@code true} when replaced.
 	 */
-	public boolean replaceContainer(@NonNull DockContainer child, @NonNull DockContainer replacement) {
+	public boolean replaceContainer(DockContainer child, DockContainer replacement) {
 		if (childContainers.contains(child)) {
 			child.removeAsParentContainer(this);
 
@@ -165,7 +163,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	 *
 	 * @return {@code true} when removed.
 	 */
-	public boolean removeContainer(@NonNull DockContainer child) {
+	public boolean removeContainer(DockContainer child) {
 		if (childContainers.remove(child)) {
 			getItems().remove(child.asRegion());
 			child.removeAsParentContainer(this);
@@ -196,11 +194,11 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	 *
 	 * @return {@code true} when updated.
 	 */
-	public boolean setContainerSizePx(@NonNull DockContainer child, double size) {
+	public boolean setContainerSizePx(DockContainer child, double size) {
 		return setContainerSizePx0(child, size, true);
 	}
 
-	private boolean setContainerSizePx0(@NonNull DockContainer child, double size, boolean updateSize) {
+	private boolean setContainerSizePx0(DockContainer child, double size, boolean updateSize) {
 		// We rely on knowing the current layout sizes for this implementation, so we need to delegate
 		// any requests to this method to later when the layout for this container and all children
 		// has been computed.
@@ -261,7 +259,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	 *
 	 * @return {@code true} when updated.
 	 */
-	public boolean setContainerSizePercent(@NonNull DockContainer child, double percent) {
+	public boolean setContainerSizePercent(DockContainer child, double percent) {
 		// TODO: This does not need to be queued in the same way the SizePx does however...
 		//  - when the child is collapsed we need to determine how to persist the percent
 		//    so that when it uncollapses the percentage is correct.
@@ -290,7 +288,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	 *
 	 * @return {@code true} if the child is resizable.
 	 */
-	public boolean isContainerResizable(@NonNull DockContainer child) {
+	public boolean isContainerResizable(DockContainer child) {
 		// Get our direct children that are dividers.
 		List<Node> dividers = getChildren().stream().filter(DIVIDER_SELECTOR::applies).toList();
 		if (dividers.isEmpty())
@@ -322,7 +320,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	 *
 	 * @return {@code true} when updated.
 	 */
-	public boolean setContainerResizable(@NonNull DockContainer child, boolean resizable) {
+	public boolean setContainerResizable(DockContainer child, boolean resizable) {
 		// We rely on the split-pane skin having laid out the divders for this implementation, so we need to delegate
 		// any requests to this method to later when the layout for this container and all children
 		// has been computed.
@@ -361,7 +359,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	 *
 	 * @return {@code true} if the child is collapsed.
 	 */
-	public boolean isContainerCollapsed(@NonNull DockContainer child) {
+	public boolean isContainerCollapsed(DockContainer child) {
 		return child instanceof DockContainerLeaf leaf && leaf.isCollapsed();
 	}
 
@@ -373,7 +371,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	 *
 	 * @return {@code true} when updated.
 	 */
-	public boolean setContainerCollapsed(@NonNull DockContainerLeaf child, boolean collapse) {
+	public boolean setContainerCollapsed(DockContainerLeaf child, boolean collapse) {
 		// Skip if there is nothing to branch between. If there is only one child collapsing makes no sense
 		// as the same layout space will still be occupied by the leaf, but the leaf display will be hidden.
 		// Collapsing can only occur if there is a splitter between two or more child containers.
@@ -425,12 +423,10 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	/**
 	 * @return Unmodifiable list of containers within this container.
 	 */
-	@NonNull
 	public ObservableList<DockContainer> getChildContainers() {
 		return childContainersView;
 	}
 
-	@NonNull
 	@Override
 	public List<Dockable> getDockables() {
 		return childContainers.stream()
@@ -439,7 +435,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	}
 
 	@Override
-	public boolean addDockable(@NonNull Dockable dockable) {
+	public boolean addDockable(Dockable dockable) {
 		for (DockContainer container : childContainers)
 			if (container.addDockable(dockable))
 				return true;
@@ -447,7 +443,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	}
 
 	@Override
-	public boolean addDockable(int index, @NonNull Dockable dockable) {
+	public boolean addDockable(int index, Dockable dockable) {
 		// Calling the indexed add on the branch container is probably a bad idea.
 		for (DockContainer container : childContainers)
 			if (container.addDockable(index, dockable))
@@ -456,7 +452,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	}
 
 	@Override
-	public boolean removeDockable(@NonNull Dockable dockable) {
+	public boolean removeDockable(Dockable dockable) {
 		DockContainer updatedContainer = null;
 		for (DockContainer container : childContainers)
 			if (container.removeDockable(dockable)) {
@@ -474,7 +470,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 	}
 
 	@Override
-	public boolean closeDockable(@NonNull Dockable dockable) {
+	public boolean closeDockable(Dockable dockable) {
 		DockContainer updatedContainer = null;
 		for (DockContainer container : childContainers)
 			if (container.closeDockable(dockable)) {
@@ -501,14 +497,13 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 		this.pruneWhenEmpty = pruneWhenEmpty;
 	}
 
-	@NonNull
 	@Override
 	public String getIdentifier() {
 		return identifier;
 	}
 
 	@Override
-	public boolean matchesIdentity(@NonNull Identifiable other) {
+	public boolean matchesIdentity(Identifiable other) {
 		return identifier.equals(other.getIdentifier());
 	}
 
@@ -522,7 +517,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 		}
 	}
 
-	private void addQueue(@NonNull Runnable action) {
+	private void addQueue(Runnable action) {
 		// Gee, two layers of indirection?
 		// Yes. I know this is stupid, but it delays registering the actions to a point
 		// later where the reliance on the current layout is actually correct and not
