@@ -1,7 +1,6 @@
 package software.coley.bentofx.layout;
 
 import javafx.scene.layout.Region;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import software.coley.bentofx.BentoBacked;
 import software.coley.bentofx.Identifiable;
@@ -25,7 +24,6 @@ public sealed interface DockContainer extends BentoBacked, Identifiable permits 
 	/**
 	 * @return Path to this container from the root container that holds this container.
 	 */
-	@NonNull
 	default DockContainerPath getPath() {
 		DockContainer parent = getParentContainer();
 		if (parent != null)
@@ -46,7 +44,7 @@ public sealed interface DockContainer extends BentoBacked, Identifiable permits 
 	 * @param container
 	 * 		Container to assign as this container's parent.
 	 */
-	void setParentContainer(@NonNull DockContainerBranch container);
+	void setParentContainer(DockContainerBranch container);
 
 	/**
 	 * Remove the given container as this container's parent.
@@ -55,7 +53,7 @@ public sealed interface DockContainer extends BentoBacked, Identifiable permits 
 	 * @param parent
 	 * 		Container to remove as this container's parent.
 	 */
-	void removeAsParentContainer(@NonNull DockContainerBranch parent);
+	void removeAsParentContainer(DockContainerBranch parent);
 
 	/**
 	 * @param visitor
@@ -63,12 +61,11 @@ public sealed interface DockContainer extends BentoBacked, Identifiable permits 
 	 *
 	 * @return {@code true} when the visit shall continue.
 	 */
-	boolean visit(@NonNull SearchVisitor visitor);
+	boolean visit(SearchVisitor visitor);
 
 	/**
 	 * @return Unmodifiable list of dockables within this container.
 	 */
-	@NonNull
 	List<Dockable> getDockables();
 
 	/**
@@ -77,7 +74,7 @@ public sealed interface DockContainer extends BentoBacked, Identifiable permits 
 	 *
 	 * @return {@code true} if one or more of the dockables were added.
 	 */
-	default boolean addDockables(@NonNull Dockable... dockables) {
+	default boolean addDockables(Dockable... dockables) {
 		boolean changed = false;
 		for (Dockable dockable : dockables)
 			changed |= addDockable(dockable);
@@ -90,7 +87,7 @@ public sealed interface DockContainer extends BentoBacked, Identifiable permits 
 	 *
 	 * @return {@code true} when added.
 	 */
-	boolean addDockable(@NonNull Dockable dockable);
+	boolean addDockable(Dockable dockable);
 
 	/**
 	 * @param dockable
@@ -100,7 +97,7 @@ public sealed interface DockContainer extends BentoBacked, Identifiable permits 
 	 *
 	 * @return {@code true} when added.
 	 */
-	boolean addDockable(int index, @NonNull Dockable dockable);
+	boolean addDockable(int index, Dockable dockable);
 
 	/**
 	 * @param dockable
@@ -108,7 +105,7 @@ public sealed interface DockContainer extends BentoBacked, Identifiable permits 
 	 *
 	 * @return {@code true} when removed.
 	 */
-	boolean removeDockable(@NonNull Dockable dockable);
+	boolean removeDockable(Dockable dockable);
 
 	/**
 	 * @param dockable
@@ -116,7 +113,7 @@ public sealed interface DockContainer extends BentoBacked, Identifiable permits 
 	 *
 	 * @return {@code true} when removed.
 	 */
-	boolean closeDockable(@NonNull Dockable dockable);
+	boolean closeDockable(Dockable dockable);
 
 	/**
 	 * Remove this container within the {@link #getParentContainer() parent container}.
@@ -144,7 +141,6 @@ public sealed interface DockContainer extends BentoBacked, Identifiable permits 
 	/**
 	 * @return Self, cast to region.
 	 */
-	@NonNull
 	default Region asRegion() {
 		return (Region) this;
 	}

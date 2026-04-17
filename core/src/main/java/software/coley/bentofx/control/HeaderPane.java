@@ -13,7 +13,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.dockable.Dockable;
@@ -31,13 +30,13 @@ import static software.coley.bentofx.util.BentoStates.*;
 public class HeaderPane extends BorderPane {
 	private final DockContainerLeaf container;
 	private final ContentWrapper contentWrapper;
-	private Headers headers;
+	private @Nullable Headers headers;
 
 	/**
 	 * @param container
 	 * 		Parent container.
 	 */
-	public HeaderPane(@NonNull DockContainerLeaf container) {
+	public HeaderPane(DockContainerLeaf container) {
 		this.container = container;
 		this.contentWrapper = container.getBento().controlsBuilding().newContentWrapper(container);
 
@@ -163,7 +162,6 @@ public class HeaderPane extends BorderPane {
 	 * @see #createDockableListButton()
 	 * @see #createContainerConfigButton()
 	 */
-	@NonNull
 	protected Node[] createButtonArray() {
 		Button dockableListButton = createDockableListButton();
 		Button containerConfigButton = createContainerConfigButton();
@@ -173,7 +171,6 @@ public class HeaderPane extends BorderPane {
 	/**
 	 * @return New button that displays all dockables in this space.
 	 */
-	@NonNull
 	protected Button createDockableListButton() {
 		Button button = new Button("▼");
 		button.setEllipsisString("▼");
@@ -201,7 +198,6 @@ public class HeaderPane extends BorderPane {
 	 *
 	 * @see DockContainerLeaf#setMenuFactory(DockContainerLeafMenuFactory)
 	 */
-	@NonNull
 	protected Button createContainerConfigButton() {
 		Button button = new Button("≡");
 		button.setEllipsisString("≡");
@@ -213,8 +209,7 @@ public class HeaderPane extends BorderPane {
 		return button;
 	}
 
-	@NonNull
-	private Header createHeader(@NonNull Dockable dockable) {
+	private Header createHeader(Dockable dockable) {
 		return getBento().controlsBuilding().newHeader(dockable, this);
 	}
 
@@ -237,7 +232,6 @@ public class HeaderPane extends BorderPane {
 	/**
 	 * @return Parent container.
 	 */
-	@NonNull
 	public DockContainerLeaf getContainer() {
 		return container;
 	}
@@ -245,7 +239,6 @@ public class HeaderPane extends BorderPane {
 	/**
 	 * @return The border-pane that holds the currently selected {@link Dockable#getNode()}.
 	 */
-	@NonNull
 	public ContentWrapper getContentWrapper() {
 		return contentWrapper;
 	}
@@ -261,7 +254,6 @@ public class HeaderPane extends BorderPane {
 	/**
 	 * @return Convenience call.
 	 */
-	@NonNull
 	private Bento getBento() {
 		return container.getBento();
 	}

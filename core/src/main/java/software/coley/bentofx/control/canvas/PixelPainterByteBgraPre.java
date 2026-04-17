@@ -1,7 +1,6 @@
 package software.coley.bentofx.control.canvas;
 
 import javafx.scene.image.PixelFormat;
-import org.jspecify.annotations.NonNull;
 
 import java.nio.ByteBuffer;
 
@@ -70,7 +69,6 @@ public class PixelPainterByteBgraPre extends PixelPainterByteBgra {
 		}
 	}
 
-	@NonNull
 	@Override
 	public PixelFormat<ByteBuffer> getPixelFormat() {
 		return PixelFormat.getByteBgraPreInstance();

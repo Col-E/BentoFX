@@ -3,7 +3,6 @@ package software.coley.bentofx.control;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
 
 import static software.coley.bentofx.util.BentoStates.PSEUDO_ORIENTATION_V;
@@ -20,7 +19,7 @@ public class ButtonVBar extends VBox {
 	 * @param children
 	 * 		Children to add to this box.
 	 */
-	public ButtonVBar(@NonNull Region parent, Node... children) {
+	public ButtonVBar(Region parent, Node... children) {
 		getStyleClass().add("button-bar");
 		pseudoClassStateChanged(PSEUDO_ORIENTATION_V, true);
 

@@ -1,6 +1,5 @@
 package software.coley.bentofx.building;
 
-import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.control.HeaderPane;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
 
@@ -16,6 +15,5 @@ public interface HeaderPaneFactory {
 	 *
 	 * @return New header pane.
 	 */
-	@NonNull
-	HeaderPane newHeaderPane(@NonNull DockContainerLeaf container);
+	HeaderPane newHeaderPane(DockContainerLeaf container);
 }
