@@ -1,8 +1,10 @@
 package software.coley.bentofx.building;
 
+import javafx.geometry.Point2D;
 import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
+import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
@@ -22,8 +24,8 @@ public class StageBuilding {
 	private final Bento bento;
 	private StageFactory stageFactory = DEFAULT_STAGE_FACTORY;
 	private SceneFactory sceneFactory = DEFAULT_SCENE_FACTORY;
-	private boolean applyMousePosition = false;
-	private boolean sourceIsOwner = true;
+	private boolean applyMousePosition = true;
+	private boolean applySourceAsOwner = true;
 
 	public StageBuilding(Bento bento) {
 		this.bento = bento;
@@ -123,7 +125,15 @@ public class StageBuilding {
 
 		// Copy properties from the source scene/stage.
 		if (sourceScene != null)
-			initializeFromSource(sourceScene, scene, sourceStage, stage, true);
+			initializeFromSource(sourceScene, scene, sourceStage, stage, applySourceAsOwner);
+
+		// Position the stage at the mouse position, if enabled.
+		if (applyMousePosition) {
+			final Robot robot = new Robot();
+			final Point2D mousePosition = robot.getMousePosition();
+			stage.setX(mousePosition.getX());
+			stage.setY(mousePosition.getY());
+		}
 
 		return stage;
 	}
@@ -186,10 +196,23 @@ public class StageBuilding {
 		sceneFactory = factory;
 	}
 
-	public void setSourceIsOwner(boolean sourceIsOwner) {
-		this.sourceIsOwner = sourceIsOwner;
+	/**
+	 * @param applySourceAsOwner
+	 *        {@code true} to make newly created stages have their owner set to the source stage the dockable is being dragged out of.
+	 *        {@code false} to not set an owner, allowing the new stage to be handled independently of the source stage.
+	 *
+	 * @see Stage#initOwner(Window)
+	 */
+	public void setApplySourceAsOwner(boolean applySourceAsOwner) {
+		this.applySourceAsOwner = applySourceAsOwner;
 	}
 
+	/**
+	 *
+	 * @param applyMousePosition
+	 *        {@code true} to position newly created stages at the current mouse position.
+	 *        {@code false} to not apply any special positioning, allowing the stage to be positioned automatically <i>(Generally centered)</i>.
+	 */
 	public void setApplyMousePosition(boolean applyMousePosition) {
 		this.applyMousePosition = applyMousePosition;
 	}
