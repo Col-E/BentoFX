@@ -10,7 +10,6 @@ import org.jspecify.annotations.Nullable;
 import software.coley.bentofx.Bento;
 import software.coley.bentofx.control.DragDropStage;
 import software.coley.bentofx.dockable.Dockable;
-import software.coley.bentofx.layout.DockContainer;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
 import software.coley.bentofx.layout.container.DockContainerLeafMenuFactory;
 import software.coley.bentofx.layout.container.DockContainerRootBranch;
@@ -30,7 +29,7 @@ public class StageBuilding {
 	}
 
 	/**
-	 * Create a new stage for the given dockable.,
+	 * Create a new stage for the given dockable.
 	 *
 	 * @param sourceScene
 	 * 		Original scene to copy state from.
@@ -42,43 +41,17 @@ public class StageBuilding {
 	 * @return Newly created stage.
 	 */
 	@NonNull
-	public DragDropStage newStageForDockable(@NonNull Scene sourceScene, @NonNull DockContainer source, @NonNull Dockable dockable) {
+	public DragDropStage newStageForDockable(@NonNull Scene sourceScene, @NonNull DockContainerLeaf source, @NonNull Dockable dockable) {
 		Region sourceRegion = source.asRegion();
 		double width = sourceRegion.getWidth();
 		double height = sourceRegion.getHeight();
-		if (source instanceof final DockContainerLeaf leaf) {
-			final DockContainerLeafMenuFactory leafMenuFactory = leaf.getMenuFactory();
-			final Side side = leaf.getSide();
-			return newStageForDockable(sourceScene, dockable, width, height, leafMenuFactory, side);
-		} else {
-			return newStageForDockable(sourceScene, dockable, width, height);
-		}
+		final DockContainerLeafMenuFactory leafMenuFactory = source.getMenuFactory();
+		final Side side = source.getSide();
+		return newStageForDockable(sourceScene, dockable, width, height, leafMenuFactory, side);
 	}
 
 	/**
-	 * Create a new stage for the given dockable.,
-	 *
-	 * @param sourceScene
-	 * 		Original scene to copy state from.
-	 * @param dockable
-	 * 		Dockable to place into the newly created stage.
-	 * @param width
-	 * 		Preferred stage width.
-	 * @param height
-	 * 		Preferred stage height.
-	 *
-	 * @return Newly created stage.
-	 */
-	@NonNull
-	public DragDropStage newStageForDockable(@Nullable Scene sourceScene, @NonNull Dockable dockable, double width, double height) {
-		DockBuilding builder = bento.dockBuilding();
-		DockContainerRootBranch root = builder.root();
-		DockContainerLeaf leaf = builder.leaf();
-		return newStageForDockable(sourceScene, root, leaf, dockable, width, height);
-	}
-
-	/**
-	 * Create a new stage for the given dockable.,
+	 * Create a new stage for the given dockable.
 	 *
 	 * @param sourceScene
 	 * 		Original scene to copy state from.
@@ -124,7 +97,7 @@ public class StageBuilding {
 	}
 
 	/**
-	 * Create a new stage for the given dockable.,
+	 * Create a new stage for the given dockable.
 	 *
 	 * @param sourceScene
 	 * 		Original scene to copy state from.
