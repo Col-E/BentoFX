@@ -12,7 +12,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import software.coley.bentofx.control.HeaderPane;
 
@@ -32,7 +31,6 @@ public class BentoUtils {
 	 *
 	 * @return Respective orientation if it were to be used for a {@link HeaderPane}.
 	 */
-	@NonNull
 	public static Orientation sideToOrientation(@Nullable Side side) {
 		return switch (side) {
 			case TOP, BOTTOM -> Orientation.HORIZONTAL;
@@ -52,7 +50,7 @@ public class BentoUtils {
 	 * @return The closest side for the given target position in the given region.
 	 */
 	@Nullable
-	public static Side computeClosestSide(@NonNull Region target, double x, double y) {
+	public static Side computeClosestSide(Region target, double x, double y) {
 		double w = target.getWidth();
 		double h = target.getHeight();
 		double mw = w / 2;
@@ -64,7 +62,7 @@ public class BentoUtils {
 		Point2D right = new Point2D(w, mh);
 		Point2D center = new Point2D(mw, mh);
 		Point2D[] candidates = new Point2D[]{center, top, bottom, left, right};
-		Side[] sides = new Side[]{null, Side.TOP, Side.BOTTOM, Side.LEFT, Side.RIGHT};
+		final @Nullable Side[] sides = new @Nullable Side[]{null, Side.TOP, Side.BOTTOM, Side.LEFT, Side.RIGHT};
 		int closest = 0;
 		double closestDistance = Double.MAX_VALUE;
 		for (int i = 0; i < candidates.length; i++) {
@@ -93,7 +91,7 @@ public class BentoUtils {
 	 * @return All matching children of any level with the given type.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> List<T> getCastChildren(@NonNull Parent parent, @NonNull Class<T> nodeType) {
+	public static <T> List<T> getCastChildren(Parent parent, Class<T> nodeType) {
 		return (List<T>) getChildren(parent, nodeType);
 	}
 
@@ -110,8 +108,7 @@ public class BentoUtils {
 	 *
 	 * @return All matching children of any level with the given type.
 	 */
-	@NonNull
-	public static List<Node> getChildren(@NonNull Parent parent, @NonNull Class<?> nodeType) {
+	public static List<Node> getChildren(Parent parent, Class<?> nodeType) {
 		List<Node> list = new ArrayList<>();
 		visitAndMatchChildren(parent, nodeType, list);
 		return list;
@@ -130,17 +127,16 @@ public class BentoUtils {
 	 *
 	 * @return All matching children of any level with the given CSS selector.
 	 */
-	@NonNull
-	public static List<Node> getChildren(@NonNull Parent parent, @NonNull String cssSelector) {
+	public static List<Node> getChildren(Parent parent, String cssSelector) {
 		Selector selector = Selector.createSelector(cssSelector);
 		List<Node> list = new ArrayList<>();
 		visitAndMatchChildren(parent, selector, list);
 		return list;
 	}
 
-	private static void visitAndMatchChildren(@NonNull Parent parent,
-	                                          @NonNull Selector selector,
-	                                          @NonNull List<Node> list) {
+	private static void visitAndMatchChildren(Parent parent,
+	                                          Selector selector,
+	                                          List<Node> list) {
 		for (Node node : parent.getChildrenUnmodifiable()) {
 			if (selector.applies(node)) {
 				list.add(node);
@@ -150,9 +146,9 @@ public class BentoUtils {
 		}
 	}
 
-	private static void visitAndMatchChildren(@NonNull Parent parent,
-	                                          @NonNull Class<?> nodeType,
-	                                          @NonNull List<Node> list) {
+	private static void visitAndMatchChildren(Parent parent,
+	                                          Class<?> nodeType,
+	                                          List<Node> list) {
 		for (Node node : parent.getChildrenUnmodifiable()) {
 			if (nodeType.isAssignableFrom(node.getClass())) {
 				list.add(node);
@@ -172,7 +168,7 @@ public class BentoUtils {
 	 * @param <T>
 	 * 		Node type.
 	 */
-	public static <T extends Node> void scheduleWhenShown(@NonNull T node, @NonNull Consumer<T> action) {
+	public static <T extends Node> void scheduleWhenShown(T node, Consumer<T> action) {
 		// Already showing, do the action immediately.
 		Scene scene = node.getScene();
 		if (scene != null) {
@@ -183,7 +179,7 @@ public class BentoUtils {
 		// Schedule again when the node is attached to a scene.
 		node.sceneProperty().addListener(new ChangeListener<>() {
 			@Override
-			public void changed(ObservableValue<? extends Scene> observable, Scene oldScene, Scene newScene) {
+			public void changed(ObservableValue<? extends Scene> observable, Scene oldScene, @Nullable Scene newScene) {
 				if (newScene != null) {
 					node.sceneProperty().removeListener(this);
 

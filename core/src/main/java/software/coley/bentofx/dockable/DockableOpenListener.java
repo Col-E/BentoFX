@@ -1,6 +1,5 @@
 package software.coley.bentofx.dockable;
 
-import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.layout.DockContainer;
 import software.coley.bentofx.path.DockablePath;
 
@@ -16,5 +15,5 @@ public interface DockableOpenListener {
 	 * @param dockable
 	 * 		Closed dockable.
 	 */
-	void onOpen(@NonNull DockablePath path, @NonNull Dockable dockable);
+	void onOpen(DockablePath path, Dockable dockable);
 }

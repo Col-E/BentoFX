@@ -2,7 +2,7 @@ package software.coley.bentofx.control.canvas;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.IntBuffer;
 import java.util.Arrays;
@@ -14,14 +14,14 @@ import java.util.Arrays;
  */
 public class ArgbImageSource implements ArgbSource {
 	private final Image image;
-	private int[] fullArgbCache;
+	private int @Nullable[] fullArgbCache;
 	private int hash;
 
 	/**
 	 * @param image
 	 * 		Wrapped image.
 	 */
-	public ArgbImageSource(@NonNull Image image) {
+	public ArgbImageSource(Image image) {
 		this.image = image;
 	}
 
@@ -47,7 +47,7 @@ public class ArgbImageSource implements ArgbSource {
 	}
 
 	@Override
-	public int[] getArgb(int x, int y, int width, int height) {
+	public int @Nullable[] getArgb(int x, int y, int width, int height) {
 		try {
 			IntBuffer buffer = IntBuffer.allocate(width * height);
 			image.getPixelReader().getPixels(x, y, width, height, PixelFormat.getIntArgbInstance(), buffer, width);
@@ -59,10 +59,9 @@ public class ArgbImageSource implements ArgbSource {
 	}
 
 	@Override
-	public int @NonNull [] getArgb() {
+	public int[] getArgb() {
 		// We will likely be using this a bit, so it makes sense to cache the result.
-		if (fullArgbCache == null)
-			fullArgbCache = ArgbSource.super.getArgb();
+		fullArgbCache = ArgbSource.super.getArgb();
 		return fullArgbCache;
 	}
 
