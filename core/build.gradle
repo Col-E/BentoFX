@@ -1,5 +1,24 @@
 plugins {
+    id 'bento.project.project-convention'
+    id 'bento.release.publish-convention'
     alias(libs.plugins.buildconfig)
+    alias(libs.plugins.javafx)
+}
+
+description = 'A docking system for JavaFX'
+
+javafx {
+    def versionCatalog = versionCatalogs.named('libs')
+    version = versionCatalog.findVersion("javafx")
+    modules = ['javafx.controls']
+
+    // We don't want to include a specific version of JavaFX as a transitive
+    // dependency for users of the library.
+    configurations = ['compileOnlyApi']
+}
+
+dependencies {
+    compileOnly libs.jspecify
 }
 
 buildConfig {

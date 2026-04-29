@@ -1,0 +1,14 @@
+import static software.coley.gradle.lifecycle.BuildLifecycle.ALL_CLASSES_TASK_NAME
+
+plugins {
+    id 'bento.project.build-lifecycle'
+    id 'jvm-test-suite'
+}
+
+tasks.named(ALL_CLASSES_TASK_NAME) {
+    dependsOn tasks.named('testClasses')
+}
+
+tasks.named('check') {
+    dependsOn(tasks.named('test'))
+}

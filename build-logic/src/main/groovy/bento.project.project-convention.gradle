@@ -1,0 +1,134 @@
+import org.gradle.api.plugins.jvm.JvmTestSuite
+import org.gradlex.jvm.dependency.conflict.detection.rules.CapabilityDefinition.*
+import software.coley.gradle.artifacts.TestFxAlignmentRule
+import static software.coley.gradle.lifecycle.BuildLifecycle.ALL_CLASSES_TASK_NAME
+
+plugins {
+    id 'java-library'
+    id 'com.github.ben-manes.versions'
+    id 'bento.project.build-lifecycle'
+    id 'bento.test.unit-test-suite'
+}
+
+group = 'software.coley.bento-fx'
+version = '0.16.0'
+
+def versionCatalog = versionCatalogs.named('libs')
+
+// Get the Java JDK version specified in libs.versions.toml and accommodate all
+// the different ways Gradle and its plugins take the Java version...
+def jdkVersion = versionCatalog.findVersion("java-jdk").get().requiredVersion
+def javaLanguageVersion = JavaLanguageVersion.of(jdkVersion)
+def javaMajorVersionAsInt = javaLanguageVersion.asInt()
+
+dependencies {
+
+    components.all(TestFxAlignmentRule)
+
+    api platform(project(':platform'))
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+
+    withSourcesJar()
+    withJavadocJar()
+}
+
+javadoc {
+    options {
+        addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
+testing {
+    suites {
+        configureEach { suite ->
+            if (suite instanceof JvmTestSuite) {
+
+                def junitVersion =
+                        versionCatalog.findVersion('junit').get().requiredVersion
+
+                useJUnitJupiter(junitVersion)
+
+                targets.configureEach {
+                    testTask.configure {
+                        it.filter {
+                            includeTestsMatching '*Test'
+                            includeTestsMatching '*Test\$*'
+                            failOnNoDiscoveredTests = false
+                        }
+
+                        // Set system properties for the test JVM(s)
+                        systemProperty 'project.name', rootProject.name
+                        // Turns out we really DO need a graphics environment
+                        // to initialize the JavaFx platform used by some
+                        // JUnit tests. Therefore, we can NOT run JUnit
+                        // tests headless.
+                        systemProperty 'java.awt.headless', 'false'
+                    }
+                }
+            }
+        }
+    }
+}
+
+tasks.named(ALL_CLASSES_TASK_NAME) {
+    dependsOn(tasks.named('classes'))
+}
+
+tasks.withType(JavaCompile).configureEach {
+
+    it.options.with {
+        // The character encoding to be used when reading source files into
+        // the Java compiler. Defaults to null, in which case the platform
+        // default encoding will be used. This is separable from the value
+        // set in gradle.properties, which (currently) specifies encoding as
+        // UTF-8. UTF-8 is a multibyte encoding that can represent any
+        // Unicode character. ISO 8859-1 is a single-byte encoding that can
+        // represent the first 256 Unicode characters. Both encode ASCII
+        // exactly the same way.
+        encoding = 'UTF-8'
+        release = javaMajorVersionAsInt
+        fork = true
+        forkOptions.memoryMaximumSize = '1g'
+        options.compilerArgs << '-parameters'
+    }
+}
+
+tasks.withType(Jar).configureEach {
+
+    // Name JARs using full project name, based on the project path.
+    // Otherwise, we might get JARs with the same names that will collide
+    // when aggregated by tasks like an installer task.
+    def jarBaseName =
+            project.path
+            // Delete the leading ':'
+                    .substring(1)
+            // Replace the remaining ':' with '.'
+                    .replace(':', '.')
+
+    archiveBaseName.set(jarBaseName)
+
+    from(project.isolated.rootProject.projectDirectory) {
+        include 'LICENSE'
+        into 'META-INF'
+        rename { 'LICENSE.txt' }
+    }
+}
+
+tasks.withType(JavaExec).configureEach {
+
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = javaLanguageVersion
+    }
+}
+
+tasks.withType(Test).configureEach {
+
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = javaLanguageVersion
+    }
+}

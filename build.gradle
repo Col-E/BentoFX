@@ -1,123 +1,10 @@
+import static org.gradle.api.tasks.wrapper.Wrapper.DistributionType.BIN
+
 plugins {
-    id 'java'
-    alias(libs.plugins.javafx) apply false
-    alias(libs.plugins.jreleaser)
-    alias(libs.plugins.benmanes.versions) apply false
-    alias(libs.plugins.buildconfig) apply false
-}
-
-ext.pluginId = { provider -> provider.get().pluginId }
-
-allprojects {
-    group = 'software.coley.bento-fx'
-    version = '0.16.0'
-}
-
-subprojects { sub ->
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
-    apply plugin: pluginId(libs.plugins.javafx)
-    apply plugin: pluginId(libs.plugins.benmanes.versions)
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-
-    dependencies {
-        // Shared annotations for all modules
-        compileOnly(libs.bundles.annotations)
-        testCompileOnly(libs.bundles.annotations)
-
-        // Test dependencies
-        testImplementation(libs.bundles.test.libraries)
-        testRuntimeOnly(libs.bundles.test.runtime)
-    }
-
-    javafx {
-        version = '21.0.9'
-        modules = ['javafx.controls']
-
-        // We don't want to include a specific version of JavaFX as a transitive dependency for users of the library
-        configurations = ['compileOnly', 'testImplementation']
-    }
-
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
-        }
-
-        withJavadocJar()
-        withSourcesJar()
-    }
-
-    tasks.withType(JavaCompile).configureEach {
-        options.compilerArgs << '-parameters'
-    }
-
-    tasks.named('jar') {
-        from(rootProject.layout.projectDirectory) {
-            include 'LICENSE'
-            into 'META-INF'
-            rename { 'LICENSE.txt' }
-        }
-    }
-
-    javadoc {
-        options {
-            addStringOption('Xdoclint:none', '-quiet')
-        }
-    }
-
-    test {
-        useJUnitPlatform()
-
-        // Not all subprojects have tests, so don't fail the build if no tests are found.
-        failOnNoDiscoveredTests = false
-    }
-
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                groupId = sub.group
-                artifactId = sub.name
-                version = sub.version
-
-                from sub.components.java
-
-                pom {
-                    name = sub.name
-                    description = 'A docking system for JavaFX.'
-                    url = 'https://github.com/Col-E/BentoFX'
-                    inceptionYear = '2025'
-                    licenses {
-                        license {
-                            name = 'MIT'
-                            url = 'https://spdx.org/licenses/MIT.html'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id = 'Col-E'
-                            name = 'Matt Coley'
-                        }
-                    }
-                    scm {
-                        connection = 'scm:git:https://github.com/Col-E/BentoFX.git'
-                        developerConnection = 'scm:git:ssh://github.com/Col-E/BentoFX.git'
-                        url = 'https://github.com/Col-E/BentoFX'
-                    }
-                }
-            }
-        }
-        repositories {
-            mavenLocal()
-            maven {
-                // All modules will publish to the same staging directory.
-                url = rootProject.layout.projectDirectory.dir("build/staging-deploy")
-            }
-        }
-    }
+    // Apply the base plugin to add `clean` to the root project.
+    id 'base'
+    alias libs.plugins.jreleaser
+    alias libs.plugins.benmanes.versions
 }
 
 jreleaser {
@@ -153,4 +40,22 @@ jreleaser {
             }
         }
     }
+}
+
+// Using this task to upgrade Gradle keeps the gradle-wrapper.properties,
+// distribution JAR, and wrapper scripts (./gradle and ./gradlew.bat) in sync.
+tasks.named("wrapper", Wrapper).configure {
+
+    def versionCatalog = versionCatalogs.named('libs')
+
+    // The Gradle version and checksum are specified in libs.versions.toml
+    gradleVersion =
+            versionCatalog.findVersion("gradle").get().requiredVersion
+    distributionSha256Sum =
+            versionCatalog.findVersion("gradle-checksum").get().requiredVersion
+
+    // Use `ALL` instead of `BIN` to provide support for developers using the
+    // Gradle scripts.
+    distributionType = BIN
+    networkTimeout = 60000
 }
