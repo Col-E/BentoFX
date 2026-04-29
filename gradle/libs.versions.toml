@@ -1,28 +1,45 @@
 [versions]
 # Libraries
-assertj = "3.27.3"
-junit = "5.13.4"
-junit-launch = "1.13.4"
+assertj = "3.27.7"
+# `gradle` and `gradle-checksum` are used in the root project's build.gradle.kts
+gradle = "9.4.1"
+gradle-checksum = "2ab2958f2a1e51120c326cad6f385153bb11ee93b3c216c5fccebfdfbb7ec6cb"
+# `java-jdk` is used in project-convention.gradle.kts
+java-jdk = "21"
+javafx = "21.0.9"
+jspecify = "1.0.0"
+junit = "6.0.3"
 testfx = "4.0.18"
+testfx-monocle = "21.0.2"
+
 # Plugins
 benmanes-versions = "0.52.0"
 buildconfig = "6.0.9"
 javafx-plugin = "0.1.0"
-jreleaser = "1.22.0"
-jspecify = "1.0.0"
+jreleaser = "1.23.0"
 
 [libraries]
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
-junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
-junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
-junit-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
-junit-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-launch" }
+benmanes-versions-gradlePlugin-dependency = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "benmanes-versions" }
+javafx-base = { module = "org.openjfx:javafx-base", version.ref = "javafx" }
+javafx-controls = { module = "org.openjfx:javafx-controls", version.ref = "javafx" }
+javafx-gradlePlugin-dependency = { module = "org.openjfx.javafxplugin:org.openjfx.javafxplugin.gradle.plugin", version.ref = "javafx-plugin" }
+javafx-graphics = { module = "org.openjfx:javafx-graphics", version.ref = "javafx" }
+jreleaser-gradlePlugin-dependency = { module = "org.jreleaser:org.jreleaser.gradle.plugin", version.ref = "jreleaser" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api" }
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
+junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+junit-params = { module = "org.junit.jupiter:junit-jupiter-params" }
 testfx = { module = "org.testfx:testfx-junit5", version.ref = "testfx" }
+testfx-core = { module = "org.testfx:testfx-core", version.ref = "testfx" }
+testfx-monocle = { module = "org.testfx:openjfx-monocle", version.ref = "testfx-monocle" }
 
 [bundles]
 annotations = ["jspecify"]
-test-libraries = ["assertj", "junit-api",  "junit-params", "testfx"]
+javafx = [ "javafx-base", "javafx-controls", "javafx-graphics", ]
+test-libraries = ["assertj", "junit-api",  "junit-params", "testfx", "testfx-core","testfx-monocle"]
 test-runtime = ["junit-engine", "junit-launcher"]
 
 [plugins]

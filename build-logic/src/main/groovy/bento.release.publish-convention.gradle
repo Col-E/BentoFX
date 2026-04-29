@@ -1,0 +1,55 @@
+plugins {
+    id 'java'
+    id 'bento.project.project-convention'
+    id 'maven-publish'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+
+            artifactId = project.path
+                // Delete the leading ':'
+                .substring(1)
+                // Replace the remaining ':' with '-'
+                .replace(':', '-')
+
+            from components['java']
+
+            pom {
+                url.set( 'https://github.com/Col-E/BentoFX ')
+                inceptionYear.set( '2025 ')
+
+                licenses {
+                    license {
+                        name.set( 'MIT ')
+                        url.set( 'https://spdx.org/licenses/MIT.html ')
+                    }
+                }
+                developers {
+                    developer {
+                        id =  'Col-E '
+                        name =  'Matt Coley '
+                    }
+                    developer {
+                        id.set( 'philliplbryant ')
+                        name.set( 'Phil Bryant ')
+                    }
+                }
+                scm {
+                    connection.set( 'scm:git:https://github.com/Col-E/BentoFX.git ')
+                    developerConnection.set( 'scm:git:ssh://github.com/Col-E/BentoFX.git ')
+                    url.set( 'https://github.com/Col-E/BentoFX ')
+                }
+            }
+        }
+    }
+
+    repositories {
+
+        mavenLocal()
+        maven {
+            url = uri(layout.buildDirectory.dir( 'staging-deploy '))
+        }
+    }
+}

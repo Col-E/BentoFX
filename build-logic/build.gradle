@@ -1,0 +1,16 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+description =
+        'Used to apply plugins to projects and to configure dependencies and tasks. Runs during project ' +
+                'configuration, after settings.'
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+
+    implementation libs.benmanes.versions.gradlePlugin.dependency
+    implementation libs.javafx.gradlePlugin.dependency
+    implementation libs.jreleaser.gradlePlugin.dependency
+}

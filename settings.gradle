@@ -1,8 +1,29 @@
+pluginManagement {
+
+    includeBuild 'build-logic'
+
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+
+    includeBuild 'build-logic'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
 rootProject.name = 'bento-fx'
 
 enableFeaturePreview('STABLE_CONFIGURATION_CACHE')
 enableFeaturePreview('TYPESAFE_PROJECT_ACCESSORS')
 
+include 'platform'
+
 include 'core'
-include 'demos'
 include 'demos:basic'
