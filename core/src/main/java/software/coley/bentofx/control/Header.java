@@ -168,6 +168,7 @@ public class Header extends Region {
 
 		// Layout
 		Label graphicHolder = new Label();
+		graphicHolder.managedProperty().bind(graphicProperty.isNotNull()); // Only take up space when there is a graphic to show
 		graphicHolder.graphicProperty().bind(graphicProperty);
 		graphicWrapper.getChildren().add(graphicHolder);
 		sideProperty.addListener((ob, old, cur) -> recomputeLayout(cur));
@@ -427,7 +428,6 @@ public class Header extends Region {
 	private @Nullable Side getSide() {
 		return sideProperty.get();
 	}
-
 
 	@Override
 	public String toString() {
