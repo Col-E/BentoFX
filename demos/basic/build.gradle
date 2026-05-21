@@ -25,15 +25,3 @@ dependencies {
 
     compileOnly libs.jspecify
 }
-
-tasks.withType(JavaExec)
-        // Currently, IntelliJ run configurations are not compatible with
-        // configuration cache
-        .matching { it.name == 'run' || it.name.endsWith('main()') }
-        .configureEach {
-            notCompatibleWithConfigurationCache(
-                    "Cannot serialize object of type `org.gradle.api.internal.project.DefaultProject`, " +
-                            "a subtype of `org.gradle.api.Project`, as these are not " +
-                            "supported with the configuration cache."
-            )
-        }
