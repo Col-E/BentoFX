@@ -88,7 +88,6 @@ tasks.named(ALL_CLASSES_TASK_NAME) {
 }
 
 tasks.withType(JavaCompile).configureEach {
-
     it.options.with {
         encoding = 'UTF-8'
         release = javaMajorVersionAsInt
@@ -99,7 +98,6 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.withType(Jar).configureEach {
-
     archiveBaseName = normalizedProjectName
 
     from(project.isolated.rootProject.projectDirectory) {
@@ -110,14 +108,12 @@ tasks.withType(Jar).configureEach {
 }
 
 tasks.withType(JavaExec).configureEach {
-
     javaLauncher = javaToolchains.launcherFor {
         languageVersion = javaLanguageVersion
     }
 }
 
 tasks.withType(Test).configureEach {
-
     javaLauncher = javaToolchains.launcherFor {
         languageVersion = javaLanguageVersion
     }

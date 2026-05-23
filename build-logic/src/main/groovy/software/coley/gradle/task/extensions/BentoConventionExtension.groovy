@@ -9,7 +9,6 @@ import javax.inject.Inject
  * convention script plugins.
  */
 abstract class BentoConventionExtension {
-
     /**
      * The fully qualified project name, normalized as a valid for use as an
      * artifact ID, JAR file name, etc.

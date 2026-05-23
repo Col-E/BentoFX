@@ -9,7 +9,6 @@ def bentoConvention = extensions.getByName('bentoConvention')
 publishing {
     publications {
         mavenJava(MavenPublication) {
-
             artifactId = bentoConvention.normalizedProjectName.get()
 
             from components['java']
@@ -44,7 +43,6 @@ publishing {
     }
 
     repositories {
-
         mavenLocal()
         maven {
             url = uri(layout.buildDirectory.dir( 'staging-deploy'))

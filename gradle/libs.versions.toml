@@ -1,8 +1,4 @@
 [versions]
-
-# The following versions are acquired by version catalog Project extension functions
-# and, as such, are indicated as unused by IntelliJ and Qodana.
-
 # noinspection UnusedVersionCatalogEntry
 bentofx = "0.16.0"
 # noinspection UnusedVersionCatalogEntry

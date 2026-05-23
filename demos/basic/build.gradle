@@ -20,7 +20,6 @@ javafx {
 }
 
 dependencies {
-
     implementation projects.core
 
     compileOnly libs.jspecify

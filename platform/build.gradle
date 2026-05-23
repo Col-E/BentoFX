@@ -2,36 +2,27 @@ plugins {
     id 'java-platform'
 }
 
-// See also Gradle Version Catalog at '<root>\gradle\libs.versions.toml'.
-
 javaPlatform {
     allowDependencies()
 }
 
+// See also Gradle Version Catalog at '<root>\gradle\libs.versions.toml'.
 dependencies {
-
     /*
      * BOMs
+     *
      * Ordering matters! Declaring a BOM before subsequent platform declarations
      * will cause third-party dependencies declared in the BOM to be overridden
      * by those platform declarations.
      */
-
     api platform(libs.junit.bom.get())
 
     constraints {
-
-        /*
-         * Bundles
-         */
         api libs.bundles.javafx
         api libs.bundles.test.libraries
         api libs.bundles.annotations
         api libs.bundles.test.runtime
 
-        /*
-         * Individual Dependencies
-         */
         api libs.junit.api
         api libs.junit.engine
         api libs.junit.params
