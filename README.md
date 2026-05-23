@@ -6,8 +6,8 @@ A docking system for JavaFX.
 
 Requirements:
 
-- JavaFX 19+
-- Java 17+
+- JavaFX 21+
+- Java 21+
 
 Gradle syntax:
 

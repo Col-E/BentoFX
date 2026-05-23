@@ -1,0 +1,120 @@
+import org.gradle.api.plugins.jvm.JvmTestSuite
+import org.gradlex.jvm.dependency.conflict.detection.rules.CapabilityDefinition.*
+import software.coley.gradle.artifacts.TestFxAlignmentRule
+import software.coley.gradle.task.extensions.BentoConventionExtension
+
+import static software.coley.gradle.lifecycle.BuildLifecycle.ALL_CLASSES_TASK_NAME
+
+plugins {
+    id 'java-library'
+    id 'com.github.ben-manes.versions'
+    id 'bento.project.build-lifecycle'
+    id 'bento.test.unit-test-suite'
+}
+
+def versionCatalog = versionCatalogs.named('libs')
+
+group = 'software.coley.bento-fx'
+version = versionCatalog.findVersion("bentofx").get().requiredVersion
+
+def normalizedProjectName = providers.provider {
+    project.path.substring(1).replace(':', '.')
+}
+
+extensions.create('bentoConvention', BentoConventionExtension, normalizedProjectName)
+
+// Get the Java JDK version specified in libs.versions.toml and accommodate all
+// the different ways Gradle and its plugins take the Java version...
+def jdkVersion = versionCatalog.findVersion("java-jdk").get().requiredVersion
+def javaLanguageVersion = JavaLanguageVersion.of(jdkVersion)
+def javaMajorVersionAsInt = javaLanguageVersion.asInt()
+
+dependencies {
+
+    components.all(TestFxAlignmentRule)
+
+    api platform(project(':platform'))
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(javaMajorVersionAsInt)
+    }
+
+    withSourcesJar()
+    withJavadocJar()
+}
+
+javadoc {
+    options {
+        addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
+testing {
+    suites {
+        configureEach { suite ->
+            if (suite instanceof JvmTestSuite) {
+
+                def junitVersion =
+                        versionCatalog.findVersion('junit').get().requiredVersion
+
+                useJUnitJupiter(junitVersion)
+
+                targets.configureEach {
+                    testTask.configure {
+                        it.filter {
+                            includeTestsMatching '*Test'
+                            includeTestsMatching '*Test\$*'
+                            failOnNoDiscoveredTests = false
+                        }
+
+                        // Set system properties for the test JVM(s)
+                        systemProperty 'project.name', rootProject.name
+                        // Turns out we really DO need a graphics environment
+                        // to initialize the JavaFx platform used by some
+                        // JUnit tests. Therefore, we can NOT run JUnit
+                        // tests headless.
+                        systemProperty 'java.awt.headless', 'false'
+                    }
+                }
+            }
+        }
+    }
+}
+
+tasks.named(ALL_CLASSES_TASK_NAME) {
+    dependsOn(tasks.named('classes'))
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.with {
+        encoding = 'UTF-8'
+        release = javaMajorVersionAsInt
+        fork = true
+        forkOptions.memoryMaximumSize = '1g'
+        options.compilerArgs << '-parameters'
+    }
+}
+
+tasks.withType(Jar).configureEach {
+    archiveBaseName = normalizedProjectName
+
+    from(project.isolated.rootProject.projectDirectory) {
+        include 'LICENSE'
+        into 'META-INF'
+        rename { 'LICENSE.txt' }
+    }
+}
+
+tasks.withType(JavaExec).configureEach {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = javaLanguageVersion
+    }
+}
+
+tasks.withType(Test).configureEach {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = javaLanguageVersion
+    }
+}

@@ -1,0 +1,6 @@
+import static software.coley.gradle.lifecycle.BuildLifecycle.ALL_CLASSES_TASK_NAME
+
+tasks.register(ALL_CLASSES_TASK_NAME) {
+    description = 'Compiles all main and test code for all applicable subprojects and test suites.'
+    group = LifecycleBasePlugin.BUILD_GROUP
+}
