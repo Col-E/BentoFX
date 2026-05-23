@@ -203,7 +203,11 @@ public class HeaderPane extends BorderPane {
 		button.setEllipsisString("≡");
 		button.getStyleClass().addAll("corner-button", "context-button");
 		button.setOnMousePressed(e -> button.setContextMenu(container.buildContextMenu()));
-		button.setOnMouseClicked(e -> button.getContextMenu().show(button, e.getScreenX(), e.getScreenY()));
+		button.setOnMouseClicked(e -> {
+			ContextMenu menu = button.getContextMenu();
+			if (menu != null)
+				menu.show(button, e.getScreenX(), e.getScreenY());
+		});
 		button.visibleProperty().bind(container.menuFactoryProperty().isNotNull());
 		button.managedProperty().bind(button.visibleProperty());
 		return button;
