@@ -1,13 +1,16 @@
 package software.coley.bentofx.control;
 
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.AccessibleRole;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -30,6 +33,10 @@ import static software.coley.bentofx.util.BentoStates.*;
 public class HeaderPane extends BorderPane {
 	private final DockContainerLeaf container;
 	private final ContentWrapper contentWrapper;
+	private final ChangeListener<Node> focusOwnerListener;
+	private @Nullable Node lastContentFocusOwner;
+	private @Nullable Header lastFocusedHeader;
+	private long focusGeneration;
 	private @Nullable Headers headers;
 
 	/**
@@ -39,6 +46,14 @@ public class HeaderPane extends BorderPane {
 	public HeaderPane(DockContainerLeaf container) {
 		this.container = container;
 		this.contentWrapper = container.getBento().controlsBuilding().newContentWrapper(container);
+		this.focusOwnerListener = (ob, old, cur) -> {
+			if (isContentNode(cur)) {
+				lastContentFocusOwner = cur;
+				lastFocusedHeader = null;
+			} else if (!isHeaderNode(cur)) {
+				lastFocusedHeader = null;
+			}
+		};
 
 		getStyleClass().add("header-pane");
 		setAccessibleRole(AccessibleRole.TAB_PANE);
@@ -47,10 +62,26 @@ public class HeaderPane extends BorderPane {
 		// This will allow us to style the active view's subclasses specially.
 		container.focusWithinProperty().addListener((ob, old, cur) -> pseudoClassStateChanged(PSEUDO_ACTIVE, cur));
 
+		// Track the last focused node in the currently displayed dockable's content. JavaFX's default
+		// focus traversal can move focus from a content control to an unrelated header, so this gives
+		// us a focus target to restore when that happens.
+		sceneProperty().addListener((ob, old, cur) -> {
+			if (old != null)
+				old.focusOwnerProperty().removeListener(focusOwnerListener);
+			lastContentFocusOwner = null;
+			lastFocusedHeader = null;
+			focusGeneration++;
+			if (cur != null)
+				cur.focusOwnerProperty().addListener(focusOwnerListener);
+		});
+
 		// Setup layout + observers to handle layout updates
 		recomputeLayout(container.getSide());
 		container.sideProperty().addListener((ob, old, cur) -> recomputeLayout(cur));
 		container.selectedDockableProperty().addListener((ob, old, cur) -> {
+			lastContentFocusOwner = null;
+			focusGeneration++;
+
 			Header oldSelectedHeader = getHeader(old);
 			Header newSelectedHeader = getHeader(cur);
 
@@ -99,6 +130,154 @@ public class HeaderPane extends BorderPane {
 		setCenter(contentWrapper);
 	}
 
+	/**
+	 * Restore focus to the last focused node in the current dockable's content.
+	 *
+	 * @return {@code true} when a valid focus target was found and focus was requested.
+	 */
+	public boolean restoreContentFocus() {
+		Node focusTarget = findContentFocusTarget();
+		if (focusTarget == null)
+			return false;
+		long restoreGeneration = focusGeneration;
+
+		// Let JavaFX finish its current traversal operation before restoring focus. Otherwise
+		// the traversal engine may re-apply the header focus after this listener returns.
+		focusTarget.requestFocus();
+		restoreContentFocus(focusTarget, restoreGeneration, 4);
+		return true;
+	}
+
+	/**
+	 * @return {@code true} when the current focus transition originated from another header.
+	 */
+	public boolean isHeaderFocusOrigin() {
+		return lastFocusedHeader != null;
+	}
+
+	/**
+	 * Mark that the given header is the last focused header.
+	 *
+	 * @param header
+	 * 		The header that was last focused.
+	 */
+	public void markHeaderFocused(Header header) {
+		lastFocusedHeader = header;
+	}
+
+	/**
+	 * Restore focus to the given target node in the content area.
+	 *
+	 * @param focusTarget
+	 * 		The node to restore focus to.
+	 * @param restoreGeneration
+	 * 		The generation of the focus restoration request.
+	 * @param attemptsRemaining
+	 * 		The number of attempts remaining to restore focus.
+	 * 		If the focus restoration fails, this method will be called again with one less attempt.
+	 */
+	private void restoreContentFocus(Node focusTarget, long restoreGeneration, int attemptsRemaining) {
+		Platform.runLater(() -> {
+			if (focusGeneration != restoreGeneration || !isFocusableContentNode(focusTarget))
+				return;
+			focusTarget.requestFocus();
+
+			// We may have to try multiple times to restore focus.
+			// If the focus restoration fails, we will try again with one less attempt.
+			if (!focusTarget.isFocused() && attemptsRemaining > 0)
+				restoreContentFocus(focusTarget, restoreGeneration, attemptsRemaining - 1);
+		});
+	}
+
+	/**
+	 * @return The last focused node in the content area,
+	 * or a focusable descendant of the current content if the last focused node is no longer valid.
+	 * If neither can be found, then {@code null}.
+	 */
+	@Nullable
+	private Node findContentFocusTarget() {
+		// First check if the last focused node is still valid and focusable.
+		if (isFocusableContentNode(lastContentFocusOwner))
+			return lastContentFocusOwner;
+
+		// If not, then find a focusable descendant of the current content.
+		return findFocusableDescendant(contentWrapper.getCenter());
+	}
+
+	@Nullable
+	private Node findFocusableDescendant(@Nullable Node node) {
+		if (node == null)
+			return null;
+
+		// Check if the node itself is focusable and valid.
+		if (isFocusableContentNode(node))
+			return node;
+
+		// Check children for focusable descendants.
+		if (node instanceof Parent parent) {
+			for (Node child : parent.getChildrenUnmodifiable()) {
+				Node focusTarget = findFocusableDescendant(child);
+				if (focusTarget != null)
+					return focusTarget;
+			}
+		}
+		return null;
+	}
+
+	private boolean isFocusableContentNode(@Nullable Node node) {
+		// Sanity checks:
+		//  - Must be a content node (not a header)
+		//  - Must be in the same scene as this pane
+		//  - Must be focus traversable, visible, and not disabled
+		if (!isContentNode(node)
+				|| node.getScene() != getScene()
+				|| !node.isFocusTraversable()
+				|| !node.isVisible()
+				|| node.isDisabled())
+			return false;
+
+		// Must be able to walk up from the node to the content wrapper without hitting a disabled or invisible node.
+		for (Node current = node; current != null; current = current.getParent()) {
+			if (!current.isVisible() || current.isDisabled())
+				return false;
+			if (current == contentWrapper)
+				return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param node
+	 * 		Node to check.
+	 *
+	 * @return {@code true} when the given node is a child of the {@link #contentWrapper}.
+	 */
+	private boolean isContentNode(@Nullable Node node) {
+		if (node == null)
+			return false;
+		for (Node current = node; current != null; current = current.getParent())
+			if (current == contentWrapper)
+				return true;
+		return false;
+	}
+
+	/**
+	 * @param node
+	 * 		Node to check.
+	 *
+	 * @return {@code true} when the given node is a child of the {@link #headers}.
+	 */
+	private boolean isHeaderNode(@Nullable Node node) {
+		return node != null && headers != null && headers.getChildren().contains(node);
+	}
+
+	/**
+	 * Recompute the layout of this pane based on the given side.
+	 *
+	 * @param side
+	 * 		The side to place the headers on, or {@code null} to remove headers entirely.
+	 */
 	private void recomputeLayout(@Nullable Side side) {
 		// Clear CSS state
 		pseudoClassStateChanged(PSEUDO_SIDE_TOP, false);

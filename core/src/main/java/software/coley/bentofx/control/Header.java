@@ -169,7 +169,19 @@ public class Header extends Region {
 
 		// Focusing a tab (via tab press) should select it.
 		focusedProperty().addListener((ob, old, cur) -> {
-			if (cur) parentPane.getContainer().selectDockable(dockable);
+			if (cur) {
+				DockContainerLeaf container = parentPane.getContainer();
+				boolean headerOrigin = parentPane.isHeaderFocusOrigin();
+				if (container.getSelectedDockable() == dockable || headerOrigin) {
+					container.selectDockable(dockable);
+				} else {
+					// Focus arriving from content is JavaFX's automatic fallback. Restore content focus
+					// when possible, but never let the fallback select a different dockable.
+					parentPane.restoreContentFocus();
+				}
+				if (isFocused())
+					parentPane.markHeaderFocused(this);
+			}
 		});
 
 		// Delegate click handling to whatever is specified by the bento behavior implementation.
