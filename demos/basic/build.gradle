@@ -14,8 +14,7 @@ application {
 }
 
 javafx {
-    def versionCatalog = versionCatalogs.named('libs')
-    version = versionCatalog.findVersion("javafx")
+    version = libs.javafx.base.orNull.version
     modules = ['javafx.base', 'javafx.controls', 'javafx.graphics']
 }
 

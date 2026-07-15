@@ -6,6 +6,8 @@ javaPlatform {
     allowDependencies()
 }
 
+version = libs.versions.bentofx.get()
+
 // See also Gradle Version Catalog at '<root>\gradle\libs.versions.toml'.
 dependencies {
     /*

@@ -12,10 +12,8 @@ plugins {
     id 'bento.test.unit-test-suite'
 }
 
-def versionCatalog = versionCatalogs.named('libs')
-
 group = 'software.coley.bento-fx'
-version = versionCatalog.findVersion("bentofx").get().requiredVersion
+version = libs.versions.bentofx.getOrNull()
 
 def normalizedProjectName = providers.provider {
     project.path.substring(1).replace(':', '.')
@@ -25,7 +23,7 @@ extensions.create('bentoConvention', BentoConventionExtension, normalizedProject
 
 // Get the Java JDK version specified in libs.versions.toml and accommodate all
 // the different ways Gradle and its plugins take the Java version...
-def jdkVersion = versionCatalog.findVersion("java-jdk").get().requiredVersion
+def jdkVersion = libs.versions.java.jdk.getOrNull()
 def javaLanguageVersion = JavaLanguageVersion.of(jdkVersion)
 def javaMajorVersionAsInt = javaLanguageVersion.asInt()
 
@@ -56,8 +54,7 @@ testing {
         configureEach { suite ->
             if (suite instanceof JvmTestSuite) {
 
-                def junitVersion =
-                        versionCatalog.findVersion('junit').get().requiredVersion
+                def junitVersion = libs.versions.junit.getOrNull()
 
                 useJUnitJupiter(junitVersion)
 
