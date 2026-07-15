@@ -197,6 +197,7 @@ It outlines all of the classes and pseudo-states used by controls.
 .container:collapsed .corner-button { -fx-background-color: -color-bg-subtle; }
 
 /* Misc */
-.dock-ghost-zone {
-    -fx-opacity: 0.3;
+.dock-insertion-indicator {
+    -fx-stroke: -color-accent-4;
+    -fx-stroke-width: 2px;
 }

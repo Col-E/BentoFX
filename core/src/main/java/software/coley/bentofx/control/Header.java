@@ -18,15 +18,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
@@ -61,9 +63,13 @@ public class Header extends Region {
 	private final Text label = new Text();
 	private final Pane graphicWrapper = new Pane();
 	private final Pane closeWrapper = new Pane();
-	private final BorderPane ghostWrapper = new BorderPane();
+	private final Line insertionIndicator = new Line();
+	private final StackPane wrapper = new StackPane();
 	private final HeaderPane parentPane;
 	private final Dockable dockable;
+	private @Nullable Header insertionPreviewSource;
+	private @Nullable Boolean insertionAfter;
+	private double insertionMidpoint = Double.NaN;
 
 	/**
 	 * @param dockable
@@ -76,7 +82,10 @@ public class Header extends Region {
 		this.dockable = dockable;
 
 		getStyleClass().add("header");
-		ghostWrapper.getStyleClass().add("dock-ghost-zone");
+		insertionIndicator.getStyleClass().add("dock-insertion-indicator");
+		insertionIndicator.setVisible(false);
+		insertionIndicator.setManaged(false);
+		insertionIndicator.setMouseTransparent(true);
 
 		// Setup current side/orientation state
 		sideProperty.set(parentPane.getContainer().getSide());
@@ -177,9 +186,9 @@ public class Header extends Region {
 		grid.setVgap(6);
 		grid.setPadding(new Insets(6));
 		grid.setAlignment(Pos.CENTER);
-		BorderPane wrapper = new BorderPane();
-		wrapper.setCenter(grid);
-		wrapper.setLeft(ghostWrapper);
+		wrapper.getChildren().addAll(grid, insertionIndicator);
+		wrapper.widthProperty().addListener((ob, old, cur) -> updateInsertionIndicator());
+		wrapper.heightProperty().addListener((ob, old, cur) -> updateInsertionIndicator());
 		getChildren().add(wrapper);
 		recomputeLayout(getSide());
 	}
@@ -219,7 +228,8 @@ public class Header extends Region {
 			}
 		});
 
-		// Any header can be the target of drag-n-drop. Dropped items will be inserted before the target (this) tab.
+		// Any header can be the target of drag-n-drop. Dropped items are inserted before or after
+		// the target depending on which half of the header receives the drop.
 		setOnDragOver(e -> {
 			Dragboard dragboard = e.getDragboard();
 			String dockableIdentifier = DragUtils.extractIdentifier(dragboard);
@@ -232,30 +242,50 @@ public class Header extends Region {
 				if (!dockable.getIdentifier().equals(dockableIdentifier)) {
 					DockablePath dragSourcePath = bento.search().dockable(dockableIdentifier);
 					if (dragSourcePath != null) {
+						// Must be able to receive the dockable in order to show a preview.
+						// Either the source is the same container as this header, or the target container can receive it.
 						Dockable dragSourceDockable = dragSourcePath.dockable();
 						DockContainerLeaf container = parentPane.getContainer();
-						if (container.canReceiveDockable(dragSourceDockable, getSide())) {
-							// TODO: This may be a bit dumb. If it ever presents a problem
-							//  we can reimplement this as creating a new header from the drag-drop dockable.
+						if (dragSourcePath.leafContainer() == container
+								|| container.canReceiveDockable(dragSourceDockable, getSide())) {
 							Header dragSourceHeader = dragSourcePath.leafContainer().getHeader(dragSourceDockable);
-							if (dragSourceHeader != null)
-								enableInsertionGhost(dragSourceHeader);
-							container.drawCanvasHint(ghostWrapper);
+							if (dragSourceHeader != null) {
+								enableInsertionIndicator(dragSourceHeader, isDropAfter(e));
+								container.clearCanvas();
+							} else {
+								disableInsertionIndicator();
+								container.clearCanvas();
+							}
 						} else {
-							disableInsertionGhost();
+							// Cannot receive the dockable, so don't show a preview.
+							disableInsertionIndicator();
 							container.clearCanvas();
 						}
+					} else {
+						// Cannot find the dockable in the bento instance, so don't show a preview.
+						disableInsertionIndicator();
+						parentPane.getContainer().clearCanvas();
 					}
+				} else {
+					// Cannot show a preview for our own header, so don't show a preview.
+					disableInsertionIndicator();
+					parentPane.getContainer().clearCanvas();
 				}
+
+				// Accept the drag so that the drag-done handler doesn't try and plop the header into a new window.
 				e.acceptTransferModes(TransferMode.MOVE);
+			} else {
+				// Dragboard does not contain a dockable identifier, so don't show a preview.
+				disableInsertionIndicator();
+				parentPane.getContainer().clearCanvas();
 			}
 
 			// Do not propagate upwards.
 			e.consume();
 		});
 		setOnDragExited(e -> {
-			// Update insertion ghost and re-layout the parent.
-			disableInsertionGhost();
+			// Clear the insertion indicator.
+			disableInsertionIndicator();
 
 			// Clear canvas/drawing.
 			parentPane.getContainer().clearCanvas();
@@ -289,17 +319,22 @@ public class Header extends Region {
 			boolean sameContainer = parentContainer == sourceContainer;
 			if (sameContainer || parentContainer.canReceiveDockable(sourceDockable, getSide())) {
 				// Move the header over to the target container and select it.
-				int insertionIndex = parentContainer.getDockables().indexOf(dockable);
-
-				// Need to offset the target when re-ordering in the same container to accommodate for the initial
-				// removal shifting the intended target by one.
-				if (sameContainer && insertionIndex >= parentContainer.getDockables().indexOf(sourceDockable))
+				int targetIndex = parentContainer.getDockables().indexOf(dockable);
+				int sourceIndex = sourceContainer.getDockables().indexOf(sourceDockable);
+				int insertionIndex = targetIndex + (isDropAfter(e) ? 1 : 0);
+				if (sameContainer && insertionIndex > sourceIndex)
 					insertionIndex--;
 
 				// Remove from source, put into target at given index, and select it.
 				sourceContainer.removeDockable(sourceDockable);
 				parentContainer.addDockable(insertionIndex, sourceDockable);
 				parentContainer.selectDockable(sourceDockable);
+
+				// Clear the insertion indicator and canvas.
+				disableInsertionIndicator();
+				parentContainer.clearCanvas();
+
+				// Finish the drag operation.
 				DragUtils.completeDnd(e, sourceDockable, DragDropTarget.HEADER);
 			}
 		});
@@ -343,6 +378,12 @@ public class Header extends Region {
 		return this;
 	}
 
+	/**
+	 * Recompute the layout of the header based on the given side/orientation.
+	 *
+	 * @param side
+	 * 		Side/orientation to use for layout.
+	 */
 	private void recomputeLayout(@Nullable Side side) {
 		grid.getChildren().clear();
 		switch (side) {
@@ -372,37 +413,90 @@ public class Header extends Region {
 	}
 
 	/**
-	 * Draws the given header as a ghost, intended for insertion just before this header.
+	 * Shows a thin insertion indicator before or after this header.
 	 *
 	 * @param header
-	 * 		Some other header to draw as a ghost.
+	 * 		Some other header being dragged.
 	 */
-	private void enableInsertionGhost(Header header) {
-		grid.setMouseTransparent(true);
-		grid.setManaged(false);
-		Orientation ourOrientation = BentoUtils.sideToOrientation(getSide());
-		Orientation otherOrientation = BentoUtils.sideToOrientation(header.getSide());
-		if (ourOrientation == HORIZONTAL) {
-			grid.setTranslateX(otherOrientation == ourOrientation ? header.getLayoutBounds().getWidth() : header.getLayoutBounds().getHeight());
-		} else {
-			grid.setTranslateY(otherOrientation == ourOrientation ? header.getLayoutBounds().getHeight() : header.getLayoutBounds().getWidth());
-		}
-		ghostWrapper.setCenter(new Header(header.dockable, parentPane));
-		getParent().requestLayout();
+	private void enableInsertionIndicator(Header header, boolean after) {
+		boolean sourceChanged = insertionPreviewSource != header;
+		boolean sideChanged = insertionAfter == null || insertionAfter != after;
+		if (!sourceChanged && !sideChanged)
+			return;
+
+		insertionPreviewSource = header;
+		insertionAfter = after;
+		insertionIndicator.setVisible(true);
+		updateInsertionIndicator();
 	}
 
 	/**
-	 * Clears the {@link #ghostWrapper}.
+	 * Clears the insertion indicator.
 	 *
-	 * @see #enableInsertionGhost(Header)
+	 * @see #enableInsertionIndicator(Header, boolean)
 	 */
-	private void disableInsertionGhost() {
-		grid.setMouseTransparent(false);
-		grid.setManaged(true);
-		grid.setTranslateX(0);
-		grid.setTranslateY(0);
-		ghostWrapper.setCenter(null);
-		getParent().requestLayout();
+	private void disableInsertionIndicator() {
+		insertionIndicator.setVisible(false);
+		insertionPreviewSource = null;
+		insertionAfter = null;
+		insertionMidpoint = Double.NaN;
+	}
+
+	/**
+	 * Updates the insertion indicator to be at the left/right
+	 * or top/bottom edge of this header depending on the current side/orientation.
+	 */
+	private void updateInsertionIndicator() {
+		// Skip if the indicator is not visible or if we don't know where to put it.
+		if (!insertionIndicator.isVisible() || insertionAfter == null)
+			return;
+
+		// For horizontal headers, the indicator is a vertical line at the left or right edge of the header.
+		// For vertical headers, the indicator is a horizontal line at the top or bottom edge of the header.
+		Orientation orientation = BentoUtils.sideToOrientation(getSide());
+		if (orientation == HORIZONTAL) {
+			double x = insertionAfter ? Math.max(0, wrapper.getWidth() - 1) : 1;
+			insertionIndicator.setStartX(x);
+			insertionIndicator.setEndX(x);
+			insertionIndicator.setStartY(0);
+			insertionIndicator.setEndY(wrapper.getHeight());
+		} else {
+			double y = insertionAfter ? Math.max(0, wrapper.getHeight() - 1) : 1;
+			insertionIndicator.setStartX(0);
+			insertionIndicator.setEndX(wrapper.getWidth());
+			insertionIndicator.setStartY(y);
+			insertionIndicator.setEndY(y);
+		}
+	}
+
+	/**
+	 * Determines if the given drag event is on the "after" half of this header.
+	 *
+	 * @param event
+	 * 		Drag event to check.
+	 *
+	 * @return {@code true} when the event is on the "after" half of this header,
+	 * {@code false} when it is on the "before" half.
+	 */
+	private boolean isDropAfter(DragEvent event) {
+		Orientation orientation = BentoUtils.sideToOrientation(getSide());
+
+		// Determine the coordinate of the event and the extent of the header in the orientation direction.
+		double coordinate;
+		double extent;
+		if (orientation == HORIZONTAL) {
+			coordinate = event.getX();
+			extent = getWidth();
+		} else {
+			coordinate = event.getY();
+			extent = getHeight();
+		}
+
+		// Capture the midpoint before the first preview so the insertion boundary remains
+		// stable for the whole drag, even if the target is resized while it is hovered.
+		if (Double.isNaN(insertionMidpoint))
+			insertionMidpoint = extent / 2;
+		return coordinate > insertionMidpoint;
 	}
 
 	/**
