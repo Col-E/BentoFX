@@ -1,11 +1,11 @@
 plugins {
-    id 'bento.project.project-convention'
-    id 'bento.release.publish-convention'
     alias(libs.plugins.buildconfig)
     alias(libs.plugins.javafx)
 }
 
 description = 'A docking system for JavaFX'
+
+apply from: '../gradle/publishing.gradle'
 
 javafx {
     version = libs.javafx.base.get().version

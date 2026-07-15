@@ -1,0 +1,47 @@
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            if (plugins.hasPlugin('java-platform')) {
+                from components.javaPlatform
+            } else {
+                from components.java
+            }
+
+            pom {
+                name = project.name
+                description = project.description
+                url = 'https://github.com/Col-E/BentoFX'
+                inceptionYear = '2025'
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://spdx.org/licenses/MIT.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'Col-E'
+                        name = 'Matt Coley'
+                    }
+                    developer {
+                        id = 'philliplbryant'
+                        name = 'Phil Bryant'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/Col-E/BentoFX.git'
+                    developerConnection = 'scm:git:ssh://github.com/Col-E/BentoFX.git'
+                    url = 'https://github.com/Col-E/BentoFX'
+                }
+            }
+        }
+    }
+    repositories {
+        mavenLocal()
+        maven {
+            url = uri(rootProject.layout.buildDirectory.dir('staging-deploy'))
+        }
+    }
+}

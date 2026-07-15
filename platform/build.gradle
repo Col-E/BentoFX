@@ -7,6 +7,9 @@ javaPlatform {
 }
 
 version = libs.versions.bentofx.get()
+description = 'BentoFX Platform BOM'
+
+apply from: '../gradle/publishing.gradle'
 
 // See also Gradle Version Catalog at '<root>\gradle\libs.versions.toml'.
 dependencies {

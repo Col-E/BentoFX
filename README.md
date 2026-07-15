@@ -80,6 +80,8 @@ and the associated JavaFX `Node` to display when placed into a `DockContainerLea
 
 ![containers](assets/example.png)
 
+> You can run the basic example via `./gradlew :demos:basic:run`
+
 In this example we create a layout structure that loosely models how an IDE is laid out.
 There are tool-tabs on the left and bottom sides. The primary content like Java sources files
 reside in the middle and occupy the most space. The tool tabs are intended to be smaller and not

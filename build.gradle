@@ -7,6 +7,78 @@ plugins {
     alias libs.plugins.benmanes.versions
 }
 
+allprojects {
+    group = 'software.coley.bento-fx'
+    version = libs.versions.bentofx.getOrNull()
+}
+
+subprojects {
+    // Platform is special, skip it.
+    if (it.name == 'platform')
+        return
+
+    apply plugin: 'java-library'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    // Get the Java JDK version specified in libs.versions.toml and accommodate all
+    // the different ways Gradle and its plugins take the Java version...
+    def jdkVersion = libs.versions.java.jdk.getOrNull()
+    def javaLanguageVersion = JavaLanguageVersion.of(jdkVersion)
+    def javaMajorVersionAsInt = javaLanguageVersion.asInt()
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(javaMajorVersionAsInt)
+        }
+
+        withSourcesJar()
+        withJavadocJar()
+    }
+
+    // Append options for unchecked/deprecation, debug info, and parameter names.
+    tasks.withType(JavaCompile).configureEach {
+        options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation' << '-g' << '-parameters'
+        options.encoding = 'UTF-8'
+        options.incremental = true
+    }
+
+    // All modules should have the same test framework setup.
+    test {
+        useJUnitPlatform()
+
+        systemProperty 'junit.jupiter.execution.parallel.enabled', true
+        systemProperty 'junit.jupiter.execution.parallel.mode.default', 'concurrent'
+
+        testLogging {
+            showStandardStreams = true
+            events "passed", "skipped", "failed"
+        }
+    }
+
+    // All modules with Java components should share the same test dependencies.
+    plugins.withType(JavaPlugin).configureEach {
+        dependencies {
+            testImplementation libs.bundles.javafx
+            testImplementation(platform(libs.junit.bom))
+            testImplementation(libs.junit.api)
+            testImplementation(libs.junit.params)
+            testImplementation(libs.assertj)
+            testRuntimeOnly(libs.junit.engine)
+            testRuntimeOnly(libs.junit.launcher)
+        }
+    }
+
+    // Suppress javadoc warnings for missing documentation, minor formatting issues.
+    javadoc {
+        options {
+            addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
+}
+
 jreleaser {
     signing {
         pgp {
@@ -52,30 +124,4 @@ tasks.named('wrapper', Wrapper).configure {
     // Use `ALL` instead of `BIN` to provide support for developers using the Gradle scripts.
     distributionType = BIN
     networkTimeout = 60000
-}
-
-// Stupid ass hack to mimic how the old 'gradlew properties' command worked in extracting the version for CI.
-tasks.register('printVersion').configure {
-    group = 'help'
-    description = 'Prints the project version.'
-
-    // Configuration
-    def inputFile = file('gradle/libs.versions.toml')
-    def prefix = 'bentofx = '
-
-    doLast {
-        if (!inputFile.exists()) {
-            throw new GradleException("File not found: ${inputFile}")
-        }
-        boolean found = false
-        inputFile.eachLine { line ->
-            if (line.startsWith(prefix)) {
-                println 'version: ' + line.replace('"', '').substring(line.lastIndexOf(' ')).trim()
-                found = true
-            }
-        }
-        if (!found) {
-            println "No line found starting with prefix: '${prefix}'"
-        }
-    }
 }
