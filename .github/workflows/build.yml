@@ -118,8 +118,12 @@ jobs:
           git show-ref --tags --verify -- "refs/tags/${{ env.PROJECT_VERSION }}"
           exit 1
       # Make release with JReleaser, only running when the project version does not exist as a tag on the repository.
+      # The publish and release tasks are separated since we otherwise have 'org.gradle.parallel=true' which
+      # can cause a race condition when publishing to Maven Central before the longer signing process finishes.
       - name: Publish release
-        run: ./gradlew publish jreleaserFullRelease
+        run: |
+          ./gradlew publish
+          ./gradlew jreleaserFullRelease
         env:
           JRELEASER_PROJECT_VERSION: ${{ env.PROJECT_VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
