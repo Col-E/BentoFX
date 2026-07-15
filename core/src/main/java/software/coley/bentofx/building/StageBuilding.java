@@ -19,6 +19,8 @@ import software.coley.bentofx.layout.container.DockContainerLeaf;
 import software.coley.bentofx.layout.container.DockContainerLeafMenuFactory;
 import software.coley.bentofx.layout.container.DockContainerRootBranch;
 
+import java.util.function.Consumer;
+
 /**
  * Builders for {@link DragDropStage}.
  */
@@ -48,12 +50,23 @@ public class StageBuilding {
 	 * @return Newly created stage.
 	 */
 	public DragDropStage newStageForDockable(Scene sourceScene, DockContainerLeaf source, Dockable dockable) {
+		// Base setup for the new stage's root/leaf.
+		DockBuilding builder = bento.dockBuilding();
+		DockContainerRootBranch root = builder.root();
+		DockContainerLeaf leaf = builder.leaf();
+
+		// Copying the size of the source container to the new stage.
 		Region sourceRegion = source.asRegion();
 		double width = sourceRegion.getWidth();
 		double height = sourceRegion.getHeight();
-		final DockContainerLeafMenuFactory leafMenuFactory = source.getMenuFactory();
-		final Side side = source.getSide();
-		return newStageForDockable(sourceScene, dockable, width, height, leafMenuFactory, side);
+
+		// Copying other attributes from the source to the new stage/scene.
+		DockContainerLeafMenuFactory leafMenuFactory = source.getMenuFactory();
+		Side side = source.getSide();
+		return newStageForDockable(sourceScene, root, leaf, dockable, width, height, l -> {
+			l.setMenuFactory(leafMenuFactory);
+			l.setSide(side);
+		});
 	}
 
 	/**
@@ -67,26 +80,20 @@ public class StageBuilding {
 	 * 		Preferred stage width.
 	 * @param height
 	 * 		Preferred stage height.
-	 * @param leafMenuFactory
-	 * 		DockContainerLeafMenuFactory for creating leaf menus
-	 * @param side
-	 * 		Side of this container to place {@code Header} displays on.
-	 *        {@code null} to not display any headers.
 	 *
 	 * @return Newly created stage.
 	 */
 	public DragDropStage newStageForDockable(@Nullable Scene sourceScene,
 	                                         Dockable dockable,
 	                                         double width,
-	                                         double height,
-	                                         @Nullable DockContainerLeafMenuFactory leafMenuFactory,
-	                                         @Nullable Side side) {
+	                                         double height) {
+		// Base setup for the new stage's root/leaf.
 		DockBuilding builder = bento.dockBuilding();
 		DockContainerRootBranch root = builder.root();
 		DockContainerLeaf leaf = builder.leaf();
-		leaf.setMenuFactory(leafMenuFactory);
-		leaf.setSide(side);
-		return newStageForDockable(sourceScene, root, leaf, dockable, width, height);
+
+		// Width and height are provided, so we can just use them directly.
+		return newStageForDockable(sourceScene, root, leaf, dockable, width, height, null);
 	}
 
 	/**
@@ -112,6 +119,35 @@ public class StageBuilding {
 	                                         DockContainerLeaf leaf,
 	                                         Dockable dockable,
 	                                         double width, double height) {
+		return newStageForDockable(sourceScene, root, leaf, dockable, width, height, null);
+	}
+
+	/**
+	 * Create a new stage for the given dockable.
+	 *
+	 * @param sourceScene
+	 * 		Original scene to copy state from.
+	 * @param root
+	 * 		Newly created root branch to place into the resulting stage.
+	 * @param leaf
+	 * 		Newly created leaf container to place the dockable into.
+	 * @param dockable
+	 * 		Dockable to place into the newly created stage.
+	 * @param width
+	 * 		Preferred stage width.
+	 * @param height
+	 * 		Preferred stage height.
+	 * @param leafSetup
+	 * 		Optional consumer to perform additional setup on the leaf before the stage is returned.
+	 *
+	 * @return Newly created stage.
+	 */
+	public DragDropStage newStageForDockable(@Nullable Scene sourceScene,
+	                                         DockContainerRootBranch root,
+	                                         DockContainerLeaf leaf,
+	                                         Dockable dockable,
+	                                         double width, double height,
+	                                         @Nullable Consumer<DockContainerLeaf> leafSetup) {
 		// Sanity check, leaf shouldn't have an existing parent.
 		if (leaf.getParentContainer() != root && leaf.getParentContainer() != null)
 			leaf.removeFromParent();
@@ -153,6 +189,10 @@ public class StageBuilding {
 			stage.setX(x);
 			stage.setY(y);
 		}
+
+		// Do final setup for the leaf, if any was provided.
+		if (leafSetup != null)
+			leafSetup.accept(leaf);
 
 		return stage;
 	}
