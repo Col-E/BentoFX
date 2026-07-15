@@ -87,8 +87,6 @@ jreleaser {
         }
     }
     release {
-        // TODO: This doesn't auto-publish github releases and the 'distribution' block also isn't a viable alternative
-        //  Need to look into why it doesn't work. Probably related to the project's "alternative" artifact model...
         github {
             tagName = libs.versions.bentofx.getOrNull()
             changelog {
