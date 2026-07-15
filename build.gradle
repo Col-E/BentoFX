@@ -44,7 +44,7 @@ jreleaser {
 
 // Using this task to upgrade Gradle keeps the gradle-wrapper.properties,
 // distribution JAR, and wrapper scripts (./gradle and ./gradlew.bat) in sync.
-tasks.named("wrapper", Wrapper).configure {
+tasks.named('wrapper', Wrapper).configure {
     // The Gradle version and checksum are specified in libs.versions.toml
     gradleVersion = libs.versions.gradle.wrapper.getOrNull()
     distributionSha256Sum = libs.versions.gradle.checksum.getOrNull()
@@ -52,4 +52,30 @@ tasks.named("wrapper", Wrapper).configure {
     // Use `ALL` instead of `BIN` to provide support for developers using the Gradle scripts.
     distributionType = BIN
     networkTimeout = 60000
+}
+
+// Stupid ass hack to mimic how the old 'gradlew properties' command worked in extracting the version for CI.
+tasks.register('printVersion').configure {
+    group = 'help'
+    description = 'Prints the project version.'
+
+    // Configuration
+    def inputFile = file('gradle/libs.versions.toml')
+    def prefix = 'bentofx = '
+
+    doLast {
+        if (!inputFile.exists()) {
+            throw new GradleException("File not found: ${inputFile}")
+        }
+        boolean found = false
+        inputFile.eachLine { line ->
+            if (line.startsWith(prefix)) {
+                println 'version: ' + line.replace('"', '').substring(line.lastIndexOf(' ')).trim()
+                found = true
+            }
+        }
+        if (!found) {
+            println "No line found starting with prefix: '${prefix}'"
+        }
+    }
 }

@@ -95,8 +95,10 @@ jobs:
       # Set environment variable for the project version: "var_to_set=$(command_to_run)" >> sink
       #  - For maven:  echo "PROJECT_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
       #  - For gradle: echo "PROJECT_VERSION=$(./gradlew properties | grep -Po '(?<=version: ).*')" >> $GITHUB_ENV
+      #     - For this project specifically, the properties doesn't have anything useful due to the configured conventions
+      #       so we have made a custom task to print the version instead.
       - name: Extract project version to environment variable
-        run: echo "PROJECT_VERSION=$(./gradlew properties | grep -Po '(?<=version\W ).*')" >> $GITHUB_ENV
+        run: echo "PROJECT_VERSION=$(./gradlew printVersion | grep -Po '(?<=version\W ).*')" >> $GITHUB_ENV
       # Check if a tag exists that matches the current project version.
       # Write the existence state to the step output 'tagExists'.
       - name: Check the package version has corresponding Git tag
@@ -121,6 +123,8 @@ jobs:
       - name: Publish release
         run: ./gradlew publish jreleaserFullRelease
         env:
+          # Stupid hack because root project with conventions doesn't know about shared groupId or versions
+          JRELEASER_PROJECT_JAVA_GROUP_ID: software.coley.bento-fx
           JRELEASER_PROJECT_VERSION: ${{ env.PROJECT_VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
