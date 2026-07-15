@@ -1,5 +1,6 @@
 package software.coley.bentofx.control;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -27,6 +28,17 @@ public class ButtonHBar extends HBox {
 			if (child instanceof Region childRegion)
 				childRegion.prefHeightProperty().bind(parent.heightProperty());
 			getChildren().add(child);
+			child.managedProperty().addListener((ob, old, cur) -> {
+				requestLayout();
+				requestParentLayout();
+
+				// A managed change can happen while the parent is laying out its children. Defer one
+				// more request so the parent recalculates this bar's preferred width on the next pulse.
+				Platform.runLater(() -> {
+					requestLayout();
+					requestParentLayout();
+				});
+			});
 		}
 	}
 }

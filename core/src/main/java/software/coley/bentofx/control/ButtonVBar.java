@@ -1,5 +1,6 @@
 package software.coley.bentofx.control;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -27,6 +28,17 @@ public class ButtonVBar extends VBox {
 			if (child instanceof Region childRegion)
 				childRegion.prefWidthProperty().bind(parent.widthProperty());
 			getChildren().add(child);
+			child.managedProperty().addListener((ob, old, cur) -> {
+				requestLayout();
+				requestParentLayout();
+
+				// A managed change can happen while the parent is laying out its children. Defer one
+				// more request so the parent recalculates this bar's preferred height on the next pulse.
+				Platform.runLater(() -> {
+					requestLayout();
+					requestParentLayout();
+				});
+			});
 		}
 	}
 }
