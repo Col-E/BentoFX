@@ -70,13 +70,6 @@ subprojects {
             testRuntimeOnly(libs.junit.launcher)
         }
     }
-
-    // Suppress javadoc warnings for missing documentation, minor formatting issues.
-    javadoc {
-        options {
-            addStringOption('Xdoclint:none', '-quiet')
-        }
-    }
 }
 
 jreleaser {

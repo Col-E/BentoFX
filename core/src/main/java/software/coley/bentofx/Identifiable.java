@@ -1,21 +1,26 @@
 package software.coley.bentofx;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Outline of an <i>(ideally uniquely)</i> identifiable object.
  *
  * @author Matt Coley
  */
 public interface Identifiable {
+
 	/**
-	 * @return This objects identifier.
+	 * {@return This object's identifier.}
 	 */
 	String getIdentifier();
 
 	/**
-	 * @param other
-	 * 		Another identifiable object.
+	 * {@return {@code true} when the other object has the same identifier.}
 	 *
-	 * @return {@code true} when the other object has the same identifier.
+	 * @param other Another identifiable object.
 	 */
-	boolean matchesIdentity(Identifiable other);
+	default boolean matchesIdentity(final @Nullable Identifiable other) {
+		return other != null &&
+				this.getIdentifier().equals(other.getIdentifier());
+	}
 }

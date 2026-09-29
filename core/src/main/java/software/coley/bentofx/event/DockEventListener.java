@@ -7,6 +7,8 @@ package software.coley.bentofx.event;
  */
 public interface DockEventListener {
 	/**
+	 * Called when a {@link DockEvent} is fired.
+	 *
 	 * @param event
 	 * 		Event fired.
 	 */

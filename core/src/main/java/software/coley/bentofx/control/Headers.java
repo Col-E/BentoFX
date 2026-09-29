@@ -23,6 +23,8 @@ import static software.coley.bentofx.util.BentoStates.*;
  */
 public class Headers extends LinearItemPane {
 	/**
+	 * Creates a headers pane laying out the given container's headers.
+	 *
 	 * @param container
 	 * 		Parent container.
 	 * @param orientation

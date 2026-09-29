@@ -10,6 +10,8 @@ import software.coley.bentofx.path.DockablePath;
  */
 public interface DockableCloseListener {
 	/**
+	 * Called when the dockable is closed.
+	 *
 	 * @param path
 	 * 		Path to dockable prior to closure.
 	 * @param dockable

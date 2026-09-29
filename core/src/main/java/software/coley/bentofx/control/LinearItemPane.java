@@ -30,6 +30,8 @@ public class LinearItemPane extends Pane {
 	private final ObjectProperty<Node> keepInView = new SimpleObjectProperty<>();
 
 	/**
+	 * Creates a linear item pane laid out along the given axis.
+	 *
 	 * @param orientation
 	 * 		Which axis to layout children on.
 	 */

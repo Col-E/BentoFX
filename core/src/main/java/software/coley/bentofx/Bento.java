@@ -16,12 +16,15 @@ import software.coley.bentofx.layout.DockContainer;
 import software.coley.bentofx.layout.container.DockContainerRootBranch;
 import software.coley.bentofx.search.SearchHandler;
 
+import java.util.Objects;
+
 /**
  * Top level controller for docking operations.
  *
  * @author Matt Coley
  */
-public class Bento {
+public class Bento implements Identifiable {
+	private final String identifier;
 	private final ObservableList<DockContainerRootBranch> rootContainers = FXCollections.observableArrayList();
 	private final ObservableList<DockContainerRootBranch> rootContainersView = FXCollections.unmodifiableObservableList(rootContainers);
 	private final EventBus eventBus = newEventBus();
@@ -32,6 +35,24 @@ public class Bento {
 	private final PlaceholderBuilding placeholderBuilding = newPlaceholderBuilding();
 	private final DockableDragDropBehavior dragDropBehavior = newDragDropBehavior();
 	private final DockableClickBehavior clickBehavior = newClickBehavior();
+
+	/**
+	 * Creates a {@code Bento} with a generated identifier.
+	 */
+	public Bento() {
+		identifier = DockBuilding.uid("cbento");
+	}
+
+	/**
+	 * Creates a {@code Bento} with the given identifier.
+	 *
+	 * @param identifier
+	 * 		This bento's identifier.
+	 */
+	public Bento(final String identifier) {
+		Objects.requireNonNull(identifier, "identifier");
+		this.identifier = identifier;
+	}
 
 	protected EventBus newEventBus() {
 		return new EventBus();
@@ -158,5 +179,15 @@ public class Bento {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * {@return the identifier specified when creating this {@code Bento}}
+	 * <p>
+	 * This identifier is not guaranteed to be unique.
+	 */
+	@Override
+	public String getIdentifier() {
+		return identifier;
 	}
 }

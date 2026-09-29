@@ -15,6 +15,8 @@ import static software.coley.bentofx.util.BentoStates.PSEUDO_ORIENTATION_H;
  */
 public class ButtonHBar extends HBox {
 	/**
+	 * Creates a horizontal button bar whose children track the given parent's height.
+	 *
 	 * @param parent
 	 * 		Parent region to bind child height to.
 	 * @param children

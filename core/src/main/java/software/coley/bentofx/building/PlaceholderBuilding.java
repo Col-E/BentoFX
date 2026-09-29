@@ -28,6 +28,8 @@ public class PlaceholderBuilding implements DockablePlaceholderFactory, DockCont
 	}
 
 	/**
+	 * Sets the placeholder factory for dockables with no content to show.
+	 *
 	 * @param dockablePlaceholderFactory
 	 * 		Placeholder factory for dockables with no content to show.
 	 */
@@ -43,6 +45,8 @@ public class PlaceholderBuilding implements DockablePlaceholderFactory, DockCont
 	}
 
 	/**
+	 * Sets the placeholder factory for containers with no content to show.
+	 *
 	 * @param containerPlaceholderFactory
 	 * 		Placeholder factory for containers with no content to show.
 	 */

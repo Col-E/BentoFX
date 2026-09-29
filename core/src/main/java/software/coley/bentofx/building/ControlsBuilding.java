@@ -36,6 +36,8 @@ public class ControlsBuilding implements HeaderPaneFactory, HeadersFactory, Head
 	}
 
 	/**
+	 * Sets the factory used to create {@link HeaderPane} instances.
+	 *
 	 * @param headerPaneFactory
 	 * 		Factory for creating {@link HeaderPane}.
 	 *        {@code null} to use the default factory.
@@ -54,6 +56,8 @@ public class ControlsBuilding implements HeaderPaneFactory, HeadersFactory, Head
 	}
 
 	/**
+	 * Sets the factory used to create {@link Headers} instances.
+	 *
 	 * @param headersFactory
 	 * 		Factory for creating {@link Headers}.
 	 *        {@code null} to use the default factory.
@@ -72,6 +76,8 @@ public class ControlsBuilding implements HeaderPaneFactory, HeadersFactory, Head
 	}
 
 	/**
+	 * Sets the factory used to create {@link Header} instances.
+	 *
 	 * @param headerFactory
 	 * 		Factory for creating {@link Header}.
 	 *        {@code null} to use the default factory.
@@ -90,6 +96,8 @@ public class ControlsBuilding implements HeaderPaneFactory, HeadersFactory, Head
 	}
 
 	/**
+	 * Sets the factory used to create {@link ContentWrapper} instances.
+	 *
 	 * @param contentWrapperFactory
 	 * 		Factory for creating {@link ContentWrapper}.
 	 *        {@code null} to use the default factory.
@@ -108,6 +116,8 @@ public class ControlsBuilding implements HeaderPaneFactory, HeadersFactory, Head
 	}
 
 	/**
+	 * Sets the factory used to create {@link PixelCanvas} instances.
+	 *
 	 * @param canvasFactory
 	 * 		Factory for creating {@link PixelCanvas}.
 	 *        {@code null} to use the default factory.

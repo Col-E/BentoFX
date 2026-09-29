@@ -10,6 +10,8 @@ import software.coley.bentofx.path.DockablePath;
  */
 public interface DockableOpenListener {
 	/**
+	 * Called when the dockable is opened.
+	 *
 	 * @param path
 	 * 		Path to opened dockable.
 	 * @param dockable

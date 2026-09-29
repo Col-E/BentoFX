@@ -26,6 +26,8 @@ public class SearchHandler {
 	private final Bento bento;
 
 	/**
+	 * Creates a search handler for the given bento instance.
+	 *
 	 * @param bento
 	 * 		Parent bento instance.
 	 */

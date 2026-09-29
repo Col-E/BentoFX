@@ -10,6 +10,8 @@ import software.coley.bentofx.path.DockablePath;
  */
 public interface DockableMoveListener {
 	/**
+	 * Called when the dockable is moved to a new location.
+	 *
 	 * @param oldPath
 	 * 		Path to old dockable location.
 	 * @param newPath

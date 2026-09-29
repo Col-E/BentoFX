@@ -1,11 +1,6 @@
 package software.coley.bentofx.layout.container;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -18,7 +13,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import org.jspecify.annotations.Nullable;
 import software.coley.bentofx.Bento;
-import software.coley.bentofx.Identifiable;
 import software.coley.bentofx.control.Header;
 import software.coley.bentofx.control.HeaderPane;
 import software.coley.bentofx.control.canvas.PixelCanvas;
@@ -55,6 +49,8 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	private boolean pruneWhenEmpty = true;
 
 	/**
+	 * Creates a leaf container.
+	 *
 	 * @param bento
 	 * 		Parent bento instance.
 	 * @param identifier
@@ -255,6 +251,8 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	}
 
 	/**
+	 * Draws a full-region overlay hint on this container's canvas.
+	 *
 	 * @param target
 	 * 		Region to draw as an overlay on this container's canvas.
 	 */
@@ -263,6 +261,8 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	}
 
 	/**
+	 * Draws an overlay hint on this container's canvas.
+	 *
 	 * @param target
 	 * 		Region to draw as an overlay on this container's canvas.
 	 * @param side
@@ -356,6 +356,8 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	}
 
 	/**
+	 * Updates the tracked size to apply once this container is uncollapsed.
+	 *
 	 * @param size
 	 * 		Uncollapsed size.
 	 */
@@ -368,6 +370,8 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	}
 
 	/**
+	 * Sets the collapsed pseudo-state, without adjusting layout.
+	 *
 	 * @param collapse
 	 * 		New collapsed state.
 	 */
@@ -405,7 +409,7 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	/**
 	 * @return Uncollapsed size of this container.
 	 */
-	protected double getUncollapsedSize() {
+	public double getUncollapsedSize() {
 		return switch (getSide()) {
 			case TOP, BOTTOM -> uncollapsedHeight.get();
 			case LEFT, RIGHT -> uncollapsedWidth.get();
@@ -434,6 +438,8 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	}
 
 	/**
+	 * Sets the side to place {@link Header} displays on.
+	 *
 	 * @param side
 	 * 		Side of this container to place {@link Header} displays on.
 	 *        {@code null} to not display any headers.
@@ -503,6 +509,8 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	}
 
 	/**
+	 * Sets the context menu factory for this container.
+	 *
 	 * @param menuFactory
 	 * 		Menu factory for this container.
 	 */
@@ -528,11 +536,41 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	}
 
 	/**
+	 * Sets whether this leaf can be split via drag-n-drop operations.
+	 *
 	 * @param canSplit
 	 *        {@code true} if this leaf can be split via drag-n-drop operations.
 	 */
 	public void setCanSplit(boolean canSplit) {
 		canSplitProperty().set(canSplit);
+	}
+
+	/**
+	 * Sets the size this container will occupy when it is uncollapsed. The public
+	 * counterpart to {@link #getUncollapsedSize()}, intended for restoring a size
+	 * that was recorded earlier - for instance by a layout persistence layer
+	 * re-applying a saved layout.
+	 * <p>
+	 * While this container is uncollapsed the tracking properties are bound to its
+	 * live width and height, so a value set here would be overwritten immediately
+	 * and is ignored. Call this only while {@link #isCollapsed()} is {@code true},
+	 * which is when the tracking properties are unbound and the value is the one
+	 * that will be restored on expansion.
+	 *
+	 * @param size
+	 * 		Size to occupy once uncollapsed.
+	 *
+	 * @return {@code true} when the size was applied, {@code false} when it was
+	 * ignored because this container is not collapsed.
+	 *
+	 * @see #getUncollapsedSize()
+	 */
+	public boolean setUncollapsedSize(double size) {
+		if (uncollapsedWidth.isBound() || uncollapsedHeight.isBound())
+			return false;
+
+		updateCollapsedSize(size);
+		return true;
 	}
 
 	@Override
@@ -543,11 +581,6 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	@Override
 	public String getIdentifier() {
 		return identifier;
-	}
-
-	@Override
-	public boolean matchesIdentity(Identifiable other) {
-		return identifier.equals(other.getIdentifier());
 	}
 
 	@Override

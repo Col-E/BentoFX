@@ -18,6 +18,8 @@ public class ArgbImageSource implements ArgbSource {
 	private int hash;
 
 	/**
+	 * Wraps the given image as an ARGB source.
+	 *
 	 * @param image
 	 * 		Wrapped image.
 	 */

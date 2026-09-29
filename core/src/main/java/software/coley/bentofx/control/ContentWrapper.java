@@ -23,6 +23,8 @@ import java.util.Objects;
  */
 public class ContentWrapper extends BorderPane {
 	/**
+	 * Creates a content wrapper with drag-drop handling for the given container.
+	 *
 	 * @param container
 	 * 		Parent container.
 	 */

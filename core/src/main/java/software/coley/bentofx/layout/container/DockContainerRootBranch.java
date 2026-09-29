@@ -20,6 +20,8 @@ public class DockContainerRootBranch extends DockContainerBranch {
 	private final DockContainerPath path = new DockContainerPath(Collections.singletonList(this));
 
 	/**
+	 * Creates a root branch container.
+	 *
 	 * @param bento
 	 * 		Parent bento instance.
 	 * @param identifier

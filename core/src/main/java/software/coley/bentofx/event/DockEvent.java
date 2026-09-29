@@ -85,6 +85,8 @@ public sealed interface DockEvent {
 		private boolean cancelled;
 
 		/**
+		 * Creates the event for a dockable about to be closed.
+		 *
 		 * @param dockable
 		 * 		Dockable being closed.
 		 * @param container

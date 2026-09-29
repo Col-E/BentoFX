@@ -133,6 +133,8 @@ public sealed interface DockContainer extends BentoBacked, Identifiable permits 
 	boolean doPruneWhenEmpty();
 
 	/**
+	 * Sets whether this container should be pruned when it has no remaining dockables.
+	 *
 	 * @param pruneWhenEmpty
 	 *        {@code true} to {@link #removeFromParent() prune} when this container has no remaining dockables.
 	 */

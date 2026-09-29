@@ -82,6 +82,8 @@ public class Header extends Region {
 	private double insertionMidpoint = Double.NaN;
 
 	/**
+	 * Creates a header wrapping the given dockable.
+	 *
 	 * @param dockable
 	 * 		Dockable to wrap.
 	 * @param parentPane

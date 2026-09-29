@@ -7,6 +7,15 @@ description = 'A docking system for JavaFX'
 
 apply from: '../gradle/publishing.gradle'
 
+javadoc {
+    options {
+        // Only the public API exposed in module-info.java; configure Javadoc
+        // to match it.
+        showFromPublic()
+        addBooleanOption('Xdoclint:all,-missing', true)
+    }
+}
+
 javafx {
     version = libs.javafx.base.get().version
     modules = ['javafx.controls']

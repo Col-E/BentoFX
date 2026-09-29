@@ -15,6 +15,8 @@ import static software.coley.bentofx.util.BentoStates.PSEUDO_ORIENTATION_V;
  */
 public class ButtonVBar extends VBox {
 	/**
+	 * Creates a vertical button bar whose children track the given parent's width.
+	 *
 	 * @param parent
 	 * 		Parent region to bind child width to.
 	 * @param children

@@ -9,6 +9,8 @@ import software.coley.bentofx.path.DockablePath;
  */
 public interface DockableSelectListener {
 	/**
+	 * Called when the dockable is selected.
+	 *
 	 * @param path
 	 * 		Path to selected dockable.
 	 * @param dockable

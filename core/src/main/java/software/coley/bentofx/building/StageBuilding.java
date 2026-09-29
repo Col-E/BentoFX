@@ -236,6 +236,8 @@ public class StageBuilding {
 	}
 
 	/**
+	 * Sets the factory used to create new stages.
+	 *
 	 * @param factory
 	 * 		New factory for creating stages.
 	 */
@@ -246,6 +248,8 @@ public class StageBuilding {
 	}
 
 	/**
+	 * Sets the factory used to create new scenes.
+	 *
 	 * @param factory
 	 * 		New factory for creating scenes.
 	 */
@@ -256,6 +260,8 @@ public class StageBuilding {
 	}
 
 	/**
+	 * Sets whether newly created stages have their owner set to the source stage.
+	 *
 	 * @param applySourceAsOwner
 	 *        {@code true} to make newly created stages have their owner set to the source stage the dockable is being dragged out of.
 	 *        {@code false} to not set an owner, allowing the new stage to be handled independently of the source stage.

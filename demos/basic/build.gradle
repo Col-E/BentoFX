@@ -22,3 +22,10 @@ dependencies {
 
     compileOnly libs.jspecify
 }
+
+// Demo code isn't public API.
+javadoc {
+    options {
+        addStringOption('Xdoclint:none', '-quiet')
+    }
+}

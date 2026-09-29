@@ -15,6 +15,8 @@ public class DockableVisitor implements SearchVisitor {
 	private @Nullable Dockable result;
 
 	/**
+	 * Creates a visitor that yields the first dockable matching the given predicate.
+	 *
 	 * @param matcher
 	 * 		Dockable predicate.
 	 */
