@@ -4,12 +4,7 @@ import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.*;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.paint.Color;
@@ -52,9 +47,9 @@ public class BoxApp extends Application {
 		leafTools.setPruneWhenEmpty(false);
 
 		// Add dummy menus to each.
-		leafTools.setMenuFactory(d -> addSideOptions(new ContextMenu(), leafTools));
-		leafWorkspaceHeaders.setMenuFactory(d -> addSideOptions(new ContextMenu(), leafWorkspaceHeaders));
-		leafWorkspaceTools.setMenuFactory(d -> addSideOptions(new ContextMenu(), leafWorkspaceTools));
+		leafTools.setMenuFactory(d -> addSideOptions(new ContextMenu(), d));
+		leafWorkspaceHeaders.setMenuFactory(d -> addSideOptions(new ContextMenu(), d));
+		leafWorkspaceTools.setMenuFactory(d -> addSideOptions(new ContextMenu(), d));
 
 		// These leaves shouldn't auto-expand. They are intended to be a set size.
 		DockContainerBranch.setResizableWithParent(leafTools, false);
