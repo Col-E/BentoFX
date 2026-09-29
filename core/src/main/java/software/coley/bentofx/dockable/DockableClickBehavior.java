@@ -32,8 +32,7 @@ public interface DockableClickBehavior {
 		if (e.getButton() == MouseButton.PRIMARY) {
 			if (container.getSelectedDockable() == dockable || container.isCollapsed()) {
 				container.toggleCollapse(dockable);
-			}
-			else if (container.getSelectedDockable() != dockable) {
+			} else if (container.getSelectedDockable() != dockable) {
 				container.selectDockable(dockable);
 				header.requestFocus();
 			}
