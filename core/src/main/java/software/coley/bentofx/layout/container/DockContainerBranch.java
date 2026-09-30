@@ -122,7 +122,7 @@ public non-sealed class DockContainerBranch extends SplitPane implements DockCon
 		if (childContainers.contains(container))
 			return false;
 
-		childContainers.add(container);
+		childContainers.add(index, container);
 
 		container.setParentContainer(this);
 		getItems().add(index, container.asRegion());
