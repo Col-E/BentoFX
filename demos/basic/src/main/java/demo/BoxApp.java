@@ -52,9 +52,9 @@ public class BoxApp extends Application {
 		leafTools.setPruneWhenEmpty(false);
 
 		// Add dummy menus to each.
-		leafTools.setMenuFactory(d -> addSideOptions(new ContextMenu(), leafTools));
-		leafWorkspaceHeaders.setMenuFactory(d -> addSideOptions(new ContextMenu(), leafWorkspaceHeaders));
-		leafWorkspaceTools.setMenuFactory(d -> addSideOptions(new ContextMenu(), leafWorkspaceTools));
+		leafTools.setMenuFactory(d -> addSideOptions(new ContextMenu(), d));
+		leafWorkspaceHeaders.setMenuFactory(d -> addSideOptions(new ContextMenu(), d));
+		leafWorkspaceTools.setMenuFactory(d -> addSideOptions(new ContextMenu(), d));
 
 		// These leaves shouldn't auto-expand. They are intended to be a set size.
 		DockContainerBranch.setResizableWithParent(leafTools, false);
