@@ -330,16 +330,22 @@ public non-sealed class DockContainerLeaf extends StackPane implements DockConta
 	 * @return {@link #isCollapsed()} after toggling.
 	 */
 	public boolean toggleCollapse(@Nullable Dockable selectedDockable) {
+		DockContainerBranch currentParent = parent;
+
+		// No parent means there is nothing to collapse this leaf against.
+		if (currentParent == null)
+			return isCollapsed();
+
 		boolean result;
 		if (isCollapsed()) {
-			parent.setContainerCollapsed(this, false);
+			currentParent.setContainerCollapsed(this, false);
 			result = isCollapsed();
 
 			// If we were collapsed, and no longer are, select the given dockable.
 			if (!result)
 				selectDockable(selectedDockable);
 		} else {
-			parent.setContainerCollapsed(this, true);
+			currentParent.setContainerCollapsed(this, true);
 			result = isCollapsed();
 
 			// If we were uncollapsed but now are collapsed, clear the selected dockable.

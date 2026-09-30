@@ -39,3 +39,7 @@ build/
 
 ### Generated Content ###
 **/generated/**
+
+### Local-only working notes ###
+# Scratch notes, reviews and drafts that are not part of the published project.
+.ignore/

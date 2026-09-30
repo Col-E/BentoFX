@@ -44,8 +44,18 @@ import java.util.List;
 
 import static javafx.geometry.Orientation.HORIZONTAL;
 import static javafx.geometry.Orientation.VERTICAL;
-import static javafx.scene.input.KeyCode.*;
-import static software.coley.bentofx.util.BentoStates.*;
+import static javafx.scene.input.KeyCode.DELETE;
+import static javafx.scene.input.KeyCode.DOWN;
+import static javafx.scene.input.KeyCode.ENTER;
+import static javafx.scene.input.KeyCode.LEFT;
+import static javafx.scene.input.KeyCode.RIGHT;
+import static javafx.scene.input.KeyCode.UP;
+import static software.coley.bentofx.util.BentoStates.PSEUDO_HOVER;
+import static software.coley.bentofx.util.BentoStates.PSEUDO_SELECTED;
+import static software.coley.bentofx.util.BentoStates.PSEUDO_SIDE_BOTTOM;
+import static software.coley.bentofx.util.BentoStates.PSEUDO_SIDE_LEFT;
+import static software.coley.bentofx.util.BentoStates.PSEUDO_SIDE_RIGHT;
+import static software.coley.bentofx.util.BentoStates.PSEUDO_SIDE_TOP;
 
 /**
  * Visual model for a {@link Dockable}.

@@ -28,6 +28,18 @@ javafx {
 dependencies {
     compileOnly libs.jspecify
     testImplementation libs.bundles.javafx
+    testImplementation libs.testfx
+    testImplementation libs.testfx.core
+    testRuntimeOnly libs.testfx.monocle
+}
+
+// Run JavaFX tests headless so they work on CI runners without a display.
+test {
+    systemProperty 'testfx.robot', 'glass'
+    systemProperty 'testfx.headless', 'true'
+    systemProperty 'glass.platform', 'Monocle'
+    systemProperty 'monocle.platform', 'Headless'
+    systemProperty 'prism.order', 'sw'
 }
 
 buildConfig {

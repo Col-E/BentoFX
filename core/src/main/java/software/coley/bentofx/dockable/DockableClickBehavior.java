@@ -3,7 +3,6 @@ package software.coley.bentofx.dockable;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import org.jspecify.annotations.NonNull;
 import software.coley.bentofx.control.Header;
 import software.coley.bentofx.layout.container.DockContainerLeaf;
 

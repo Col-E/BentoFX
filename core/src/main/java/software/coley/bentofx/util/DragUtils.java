@@ -192,7 +192,7 @@ public class DragUtils {
 
 		Object dockableContent = content.apply(DOCKABLE_FORMAT);
 
-		return dockableContent instanceof String string ? string.split(";") : null;
+		return dockableContent instanceof String string ? string.split(";", -1) : null;
 	}
 
 	/**
