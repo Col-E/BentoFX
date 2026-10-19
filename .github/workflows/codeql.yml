@@ -33,13 +33,13 @@ jobs:
       # Switch to build-mode manual with a real ./gradlew build if CodeQL starts
       # reporting extraction errors, which is where buildless usually gives out.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4.38.2
+        uses: github/codeql-action/init@v4.39.0
         with:
           languages: java-kotlin
           build-mode: none
       - name: Analyze
         id: analyze
-        uses: github/codeql-action/analyze@v4.38.2
+        uses: github/codeql-action/analyze@v4.39.0
       # 'analyze' uploads results and never fails on findings, and the ruleset
       # rule for code scanning only gates pull requests into the default branch.
       # This makes an alert fail the branch build too. The path filter matches the
