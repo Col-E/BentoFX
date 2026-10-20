@@ -4,16 +4,16 @@ maven-group = "software.coley.bento-fx"
 # noinspection UnusedVersionCatalogEntry
 bentofx = "0.16.1-SNAPSHOT"
 # noinspection UnusedVersionCatalogEntry
-gradle-wrapper = "9.8.1"
+gradle-wrapper = "9.8.2"
 # noinspection UnusedVersionCatalogEntry
-gradle-checksum = "dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f"
+gradle-checksum = "21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607"
 # noinspection UnusedVersionCatalogEntry
 java-jdk = "21"
 
 # Libraries
 assertj = "3.27.7"
 errorprone = "2.50.0"
-javafx = "21.0.12"
+javafx = "21.0.13"
 jspecify = "1.0.1"
 junit = "6.1.3"
 nullaway = "0.14.2"
