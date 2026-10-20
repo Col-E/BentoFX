@@ -40,9 +40,7 @@ It outlines all of the classes and pseudo-states used by controls.
     -fx-background-color: -color-bg-default;
 }
 
-.container-leaf {}
-.container-branch {}
-.container-branch:root {}
+/* '.container-leaf' and '.container-branch:root' need no styling here. */
 .container-branch {
     -fx-background-insets: 0;
     -fx-padding: 0;
@@ -59,9 +57,8 @@ It outlines all of the classes and pseudo-states used by controls.
     -fx-background-color: -color-bg-subtle;
     -fx-padding: 1px 5px 1px 5px;
 }
-.container-branch > .split-pane-divider:hover {}
-.container-branch > .split-pane-divider:pressed {}
-.container-branch > .split-pane-divider:disabled {}
+/* ':hover', ':pressed', and ':disabled' on the divider itself need no styling
+   here. The grabber rules below cover the first two. */
 .container-branch > .split-pane-divider:hover> .horizontal-grabber,
 .container-branch > .split-pane-divider:hover> .vertical-grabber {
     -fx-background-color: -color-accent-emphasis;
@@ -127,12 +124,8 @@ It outlines all of the classes and pseudo-states used by controls.
     -fx-fill-width: true;
 }
 
-/* HeaderRegion (Wrapper) */
-.header-region-wrapper {}
-.header-pane:top .header-region-wrapper {}
-.header-pane:bottom .header-region-wrapper {}
-.header-pane:left .header-region-wrapper {}
-.header-pane:right .header-region-wrapper {}
+/* HeaderRegion (Wrapper). '.header-region-wrapper' needs no styling here, in
+   any of the ':top', ':bottom', ':left', and ':right' header positions. */
 
 /* HeaderRegion */
 .header-region {
@@ -150,7 +143,7 @@ It outlines all of the classes and pseudo-states used by controls.
 .header-region:right {
     -fx-background-insets: 0, 0 0 0 1px;
 }
-.header-region .node-wrapper {}
+/* '.header-region .node-wrapper' needs no styling here. */
 
 /* Header */
 .header {
