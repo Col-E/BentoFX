@@ -1,5 +1,6 @@
 package software.coley.bentofx.control;
 
+import com.uber.nullaway.annotations.Contract;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
@@ -262,6 +263,7 @@ public class HeaderPane extends BorderPane {
 	 *
 	 * @return {@code true} when the given node is a child of the {@link #contentWrapper}.
 	 */
+	@Contract("null -> false")
 	private boolean isContentNode(@Nullable Node node) {
 		if (node == null)
 			return false;

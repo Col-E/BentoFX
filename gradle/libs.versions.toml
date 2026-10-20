@@ -2,25 +2,26 @@
 # noinspection UnusedVersionCatalogEntry
 bentofx = "0.16.0"
 # noinspection UnusedVersionCatalogEntry
-gradle-wrapper = "9.4.1"
+gradle-wrapper = "9.8.2"
 # noinspection UnusedVersionCatalogEntry
-gradle-checksum = "2ab2958f2a1e51120c326cad6f385153bb11ee93b3c216c5fccebfdfbb7ec6cb"
+gradle-checksum = "21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607"
 # noinspection UnusedVersionCatalogEntry
 java-jdk = "21"
 
 # Libraries
 assertj = "3.27.7"
-javafx = "21.0.9"
-jspecify = "1.0.0"
-junit = "6.0.3"
+javafx = "21.0.13"
+jspecify = "1.0.1"
+junit = "6.1.3"
+nullaway = "0.14.2"
 testfx = "4.0.18"
 testfx-monocle = "21.0.2"
 
 # Plugins
-benmanes-versions = "0.52.0"
-buildconfig = "6.0.9"
+benmanes-versions = "0.66.0"
+buildconfig = "6.1.2"
 javafx-plugin = "0.1.0"
-jreleaser = "1.24.0"
+jreleaser = "1.26.0"
 
 [libraries]
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
@@ -36,6 +37,7 @@ junit-api = { module = "org.junit.jupiter:junit-jupiter-api" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
 junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 junit-params = { module = "org.junit.jupiter:junit-jupiter-params" }
+nullaway-annotations = { module = "com.uber.nullaway:nullaway-annotations", version.ref = "nullaway" }
 testfx = { module = "org.testfx:testfx-junit5", version.ref = "testfx" }
 testfx-core = { module = "org.testfx:testfx-core", version.ref = "testfx" }
 testfx-monocle = { module = "org.testfx:openjfx-monocle", version.ref = "testfx-monocle" }
@@ -47,7 +49,7 @@ test-libraries = ["assertj", "junit-api",  "junit-params", "testfx", "testfx-cor
 test-runtime = ["junit-engine", "junit-launcher"]
 
 [plugins]
-benmanes-versions = { id = "com.github.ben-manes.versions", version.ref = "benmanes-versions" }
+benmanes-versions = { id = "io.github.ben-manes.versions", version.ref = "benmanes-versions" }
 buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
 javafx = { id = "org.openjfx.javafxplugin", version.ref = "javafx-plugin" }
 jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }
