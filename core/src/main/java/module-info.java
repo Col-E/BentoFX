@@ -8,7 +8,8 @@ import org.jspecify.annotations.NullMarked;
  */
 @NullMarked
 open module bento.fx {
-	requires static org.jspecify;
+    requires static com.uber.nullaway.annotations;
+    requires static org.jspecify;
 
 	requires javafx.base;
 	requires javafx.graphics;

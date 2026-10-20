@@ -27,6 +27,8 @@ javafx {
 
 dependencies {
     compileOnly libs.jspecify
+    compileOnly libs.nullaway.annotations
+
     testImplementation libs.bundles.javafx
     testImplementation libs.testfx
     testImplementation libs.testfx.core

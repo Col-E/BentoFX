@@ -100,8 +100,11 @@ public class PixelCanvas extends Region {
 
 		checkDirty();
 
-		pixelPainter.commit(image.getPixelWriter());
-		view.setImage(image);
+		// Nothing to commit onto when image is null
+		if (image != null) {
+			pixelPainter.commit(image.getPixelWriter());
+			view.setImage(image);
+		}
 	}
 
 	/**
