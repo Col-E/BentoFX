@@ -60,7 +60,10 @@ public class Headers extends LinearItemPane {
 		fitChildrenToPerpendicularProperty().set(true);
 
 		// Keep the selected dockable in view.
-		keepInViewProperty().bind(container.selectedDockableProperty().map(container::getHeader));
+		keepInViewProperty().bind(
+				container.selectedDockableProperty()
+						.map(dockable -> dockable == null ? null : container.getHeader(dockable))
+		);
 
 		// Support drag-drop.
 		setupDragDrop(container);

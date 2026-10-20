@@ -49,6 +49,7 @@ junit-api = { module = "org.junit.jupiter:junit-jupiter-api" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 # noinspection UnusedVersionCatalogEntry
 nullaway = { module = "com.uber.nullaway:nullaway", version.ref = "nullaway" }
+nullaway-annotations = { module = "com.uber.nullaway:nullaway-annotations", version.ref = "nullaway" }
 nullaway-gradlePlugin-dependency = { module = "net.ltgt.nullaway:net.ltgt.nullaway.gradle.plugin", version.ref = "nullaway-plugin" }
 testfx = { module = "org.testfx:testfx-junit5", version.ref = "testfx" }
 testfx-core = { module = "org.testfx:testfx-core", version.ref = "testfx" }

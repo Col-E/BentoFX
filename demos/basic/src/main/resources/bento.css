@@ -41,7 +41,6 @@ It outlines all of the classes and pseudo-states used by controls.
 }
 
 .container-leaf {}
-.container-branch {}
 .container-branch:root {}
 .container-branch {
     -fx-background-insets: 0;

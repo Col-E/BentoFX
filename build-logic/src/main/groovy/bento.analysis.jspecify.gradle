@@ -13,6 +13,11 @@ dependencies {
     errorprone versionCatalog.findLibrary('nullaway').get()
     compileOnly versionCatalog.findLibrary('jspecify').get()
     testCompileOnly versionCatalog.findLibrary('jspecify').get()
+    // NullAway's own annotations (e.g. @Contract) are compile-only, provided
+    // through the convention rather than per-module so every project that
+    // applies this plugin can use them uniformly.
+    compileOnly versionCatalog.findLibrary('nullaway-annotations').get()
+    testCompileOnly versionCatalog.findLibrary('nullaway-annotations').get()
 }
 
 nullaway {
