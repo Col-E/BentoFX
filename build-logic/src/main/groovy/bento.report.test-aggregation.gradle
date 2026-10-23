@@ -2,7 +2,7 @@ import static org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_
 import static software.coley.gradle.lifecycle.TestLifecycle.*
 
 plugins {
-    id 'test-report-aggregation'
+	id 'test-report-aggregation'
 }
 
 def checkAllTask = tasks.named(CHECK_ALL_TASK_NAME)
@@ -14,28 +14,28 @@ def integrationTestGraphicalAggregateTestReportTask = tasks.named('integrationTe
 def integrationTestParallelAggregateTestReportTask = tasks.named('integrationTestParallelAggregateTestReport')
 
 def aggregateTestReportTasks = [
-        testAggregateTestReportTask,
-        integrationTestAggregateTestReportTask,
-        integrationTestGraphicalAggregateTestReportTask,
-        integrationTestParallelAggregateTestReportTask,
+		testAggregateTestReportTask,
+		integrationTestAggregateTestReportTask,
+		integrationTestGraphicalAggregateTestReportTask,
+		integrationTestParallelAggregateTestReportTask,
 ]
 
 aggregateTestReportTasks.each { reportTaskProvider ->
-    reportTaskProvider.configure {
-        group = VERIFICATION_GROUP
-    }
+	reportTaskProvider.configure {
+		group = VERIFICATION_GROUP
+	}
 }
 
 checkAllTask.configure {
-    dependsOn(aggregateTestReportTasks)
+	dependsOn(aggregateTestReportTasks)
 }
 
 checkIntegrationTask.configure {
-    dependsOn(integrationTestAggregateTestReportTask)
-    dependsOn(integrationTestGraphicalAggregateTestReportTask)
-    dependsOn(integrationTestParallelAggregateTestReportTask)
+	dependsOn(integrationTestAggregateTestReportTask)
+	dependsOn(integrationTestGraphicalAggregateTestReportTask)
+	dependsOn(integrationTestParallelAggregateTestReportTask)
 }
 
 checkTask.configure {
-    dependsOn(testAggregateTestReportTask)
+	dependsOn(testAggregateTestReportTask)
 }

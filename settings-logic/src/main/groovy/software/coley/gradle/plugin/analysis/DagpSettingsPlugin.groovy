@@ -12,21 +12,21 @@ import org.gradle.api.initialization.Settings
 @CompileStatic
 class DagpSettingsPlugin implements Plugin<Settings> {
 
-    @Override
-    void apply(final Settings settings) {
-        settings.pluginManager.apply('com.autonomousapps.build-health')
-        configureDependencyAnalysis(settings)
-    }
+	@Override
+	void apply(final Settings settings) {
+		settings.pluginManager.apply('com.autonomousapps.build-health')
+		configureDependencyAnalysis(settings)
+	}
 
-    @CompileDynamic
-    private static void configureDependencyAnalysis(final Settings settings) {
-        settings.extensions.configure('dependencyAnalysis') { extension ->
-            extension.usage {
-                analysis {
-                    checkSuperClasses(true)
-                }
-            }
-            extension.useTypesafeProjectAccessors(true)
-        }
-    }
+	@CompileDynamic
+	private static void configureDependencyAnalysis(final Settings settings) {
+		settings.extensions.configure('dependencyAnalysis') { extension ->
+			extension.usage {
+				analysis {
+					checkSuperClasses(true)
+				}
+			}
+			extension.useTypesafeProjectAccessors(true)
+		}
+	}
 }

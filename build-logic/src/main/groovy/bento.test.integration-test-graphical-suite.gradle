@@ -6,17 +6,17 @@ import static software.coley.gradle.lifecycle.BuildLifecycle.ALL_CLASSES_TASK_NA
 import static software.coley.gradle.lifecycle.TestLifecycle.*
 
 plugins {
-    id 'jacoco'
-    id 'jvm-test-suite'
-    id 'bento.project.build-lifecycle'
-    id 'bento.test.test-lifecycle'
-    id 'com.autonomousapps.dependency-analysis'
+	id 'jacoco'
+	id 'jvm-test-suite'
+	id 'bento.project.build-lifecycle'
+	id 'bento.test.test-lifecycle'
+	id 'com.autonomousapps.dependency-analysis'
 }
 
 def nonParallelBuildService =
-        gradle.sharedServices.registerIfAbsent('nonParallelBuildService', SimpleBuildService) {
-            maxParallelUsages = 1
-        }
+		gradle.sharedServices.registerIfAbsent('nonParallelBuildService', SimpleBuildService) {
+			maxParallelUsages = 1
+		}
 
 def allClassesTask = tasks.named(ALL_CLASSES_TASK_NAME)
 def checkIntegrationTask = tasks.named(CHECK_INTEGRATION_TASK_NAME)
@@ -25,99 +25,99 @@ def testSuiteDirName = 'itg'
 def testSuiteTestSuffix = 'ITG'
 
 dependencyAnalysis {
-    abi {
-        exclusions {
-            excludeSourceSets(testSuiteName)
-        }
-    }
+	abi {
+		exclusions {
+			excludeSourceSets(testSuiteName)
+		}
+	}
 }
 
 testing {
-    suites {
-        register(testSuiteName, JvmTestSuite) {
-            dependencies {
-                implementation project()
-            }
+	suites {
+		register(testSuiteName, JvmTestSuite) {
+			dependencies {
+				implementation project()
+			}
 
-            sources {
-                java {
-                    setSrcDirs(["src/${testSuiteDirName}/java"])
-                }
-                resources {
-                    setSrcDirs(["src/${testSuiteDirName}/resources"])
-                }
-            }
+			sources {
+				java {
+					setSrcDirs(["src/${testSuiteDirName}/java"])
+				}
+				resources {
+					setSrcDirs(["src/${testSuiteDirName}/resources"])
+				}
+			}
 
-            targets.configureEach {
-                testTask.configure {
-                    filter {
-                        includeTestsMatching "*${testSuiteTestSuffix}"
-                        includeTestsMatching "*${testSuiteTestSuffix}\$*"
-                        failOnNoMatchingTests = false
-                    }
+			targets.configureEach {
+				testTask.configure {
+					filter {
+						includeTestsMatching "*${testSuiteTestSuffix}"
+						includeTestsMatching "*${testSuiteTestSuffix}\$*"
+						failOnNoMatchingTests = false
+					}
 
-                    def headless = project.providers.gradleProperty('headless').orNull
-                    if (headless == 'true') {
-                        systemProperty 'prism.order', 'sw'
-                        systemProperty 'prism.text', 't2k'
-                        systemProperty 'testfx.headless', 'true'
-                        systemProperty 'testfx.robot', 'glass'
-                    }
-                    usesService(nonParallelBuildService)
+					def headless = project.providers.gradleProperty('headless').orNull
+					if (headless == 'true') {
+						systemProperty 'prism.order', 'sw'
+						systemProperty 'prism.text', 't2k'
+						systemProperty 'testfx.headless', 'true'
+						systemProperty 'testfx.robot', 'glass'
+					}
+					usesService(nonParallelBuildService)
 
-                    maxHeapSize = '2g'
-                    modularity.inferModulePath.set(false)
-                    jvmArgs = (jvmArgs ?: []).findAll { !it.contains('--module-path') }
-                }
-            }
-        }
-    }
+					maxHeapSize = '2g'
+					modularity.inferModulePath.set(false)
+					jvmArgs = (jvmArgs ?: []).findAll { !it.contains('--module-path') }
+				}
+			}
+		}
+	}
 }
 
 dependencies {
-    def versionCatalog = versionCatalogs.named('libs')
-    add("${testSuiteName}Implementation", versionCatalog.findLibrary('testfx').get())
-    add("${testSuiteName}Implementation", versionCatalog.findLibrary('testfx-core').get())
-    add("${testSuiteName}RuntimeOnly", versionCatalog.findLibrary('testfx-monocle').get())
+	def versionCatalog = versionCatalogs.named('libs')
+	add("${testSuiteName}Implementation", versionCatalog.findLibrary('testfx').get())
+	add("${testSuiteName}Implementation", versionCatalog.findLibrary('testfx-core').get())
+	add("${testSuiteName}RuntimeOnly", versionCatalog.findLibrary('testfx-monocle').get())
 }
 
 def integrationTestGraphicalClassesTask = tasks.named('integrationTestGraphicalClasses')
 def integrationTestGraphicalTask = tasks.named('integrationTestGraphical', Test)
 
 allClassesTask.configure {
-    dependsOn(integrationTestGraphicalClassesTask)
+	dependsOn(integrationTestGraphicalClassesTask)
 }
 
 integrationTestGraphicalTask.configure {
-    def suiteSourceSet = sourceSets.named(testSuiteName).get()
-    testClassesDirs = suiteSourceSet.output.classesDirs
-    classpath = suiteSourceSet.runtimeClasspath
-    modularity.inferModulePath.set(false)
+	def suiteSourceSet = sourceSets.named(testSuiteName).get()
+	testClassesDirs = suiteSourceSet.output.classesDirs
+	classpath = suiteSourceSet.runtimeClasspath
+	modularity.inferModulePath.set(false)
 }
 
 jacoco {
-    toolVersion = libs.versions.jacoco.get()
+	toolVersion = libs.versions.jacoco.get()
 }
 
 def jacocoExecutionData = integrationTestGraphicalTask.map { testTask ->
-    testTask.extensions.getByType(JacocoTaskExtension).destinationFile
+	testTask.extensions.getByType(JacocoTaskExtension).destinationFile
 }
 
 def jacocoIntegrationTestGraphicalReportTask = tasks.register('jacocoIntegrationTestGraphicalReport', JacocoReport) { reportTask ->
-    reportTask.group = VERIFICATION_GROUP
-    reportTask.description = 'Generates JaCoCo coverage report for the graphical integration test task.'
-    reportTask.dependsOn(integrationTestGraphicalTask)
-    reportTask.executionData(jacocoExecutionData)
-    reportTask.onlyIf { jacocoExecutionData.get().exists() }
-    reportTask.sourceSets(sourceSets.main)
-    reportTask.reports {
-        csv.required = ENABLE_CSV_REPORT
-        html.required = ENABLE_HTML_REPORT
-        xml.required = ENABLE_XML_REPORT
-    }
+	reportTask.group = VERIFICATION_GROUP
+	reportTask.description = 'Generates JaCoCo coverage report for the graphical integration test task.'
+	reportTask.dependsOn(integrationTestGraphicalTask)
+	reportTask.executionData(jacocoExecutionData)
+	reportTask.onlyIf { jacocoExecutionData.get().exists() }
+	reportTask.sourceSets(sourceSets.main)
+	reportTask.reports {
+		csv.required = ENABLE_CSV_REPORT
+		html.required = ENABLE_HTML_REPORT
+		xml.required = ENABLE_XML_REPORT
+	}
 }
 
 checkIntegrationTask.configure {
-    dependsOn(integrationTestGraphicalTask)
-    dependsOn(jacocoIntegrationTestGraphicalReportTask)
+	dependsOn(integrationTestGraphicalTask)
+	dependsOn(jacocoIntegrationTestGraphicalReportTask)
 }

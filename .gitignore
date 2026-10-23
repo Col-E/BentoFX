@@ -45,3 +45,4 @@ out/
 ### SonarQube ###
 # Scanner working directory, written by a local 'sonar-scanner' run.
 .scannerwork/
+.qodana/

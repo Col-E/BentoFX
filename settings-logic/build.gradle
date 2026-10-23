@@ -1,6 +1,6 @@
 plugins {
-    id 'groovy-gradle-plugin'
-    id 'java-gradle-plugin'
+	id 'groovy-gradle-plugin'
+	id 'java-gradle-plugin'
 }
 
 /**
@@ -11,39 +11,39 @@ plugins {
  * other configurations in build-logic instead.
  */
 description = 'Discovers projects and decides which projects participate in the ' +
-        'aggregation project. Runs before Gradle configures projects.'
+		'aggregation project. Runs before Gradle configures projects.'
 
 def versionCatalog = versionCatalogs.named('libs')
 def jdkVersion = versionCatalog.findVersion("java-jdk").get().requiredVersion
 def javaLanguageVersion = JavaLanguageVersion.of(jdkVersion)
 
 java {
-    toolchain {
-        languageVersion = javaLanguageVersion
-    }
+	toolchain {
+		languageVersion = javaLanguageVersion
+	}
 }
 
 dependencies {
-    implementation libs.ben.manes.versions.gradlePlugin.dependency
-    implementation libs.dependencyAnalysis.buildHealth.gradlePlugin.dependency
+	implementation libs.ben.manes.versions.gradlePlugin.dependency
+	implementation libs.dependencyAnalysis.buildHealth.gradlePlugin.dependency
 }
 
 gradlePlugin {
-    plugins {
-        dagpSettingsPlugin {
-            id = 'bento.analysis.dagp-settings'
-            implementationClass =
-                    'software.coley.gradle.plugin.analysis.DagpSettingsPlugin'
-        }
-        reportAggregationProjectsSettingsPlugin {
-            id = 'bento.report.aggregation-settings'
-            implementationClass =
-                    'software.coley.gradle.plugin.report.ReportAggregationSettingsPlugin'
-        }
-        benManesVersionsSettingsPlugin {
-            id = 'bento.analysis.ben-manes-versions-settings'
-            implementationClass =
-                    'software.coley.gradle.plugin.analysis.BenManesVersionsSettingsPlugin'
-        }
-    }
+	plugins {
+		dagpSettingsPlugin {
+			id = 'bento.analysis.dagp-settings'
+			implementationClass =
+					'software.coley.gradle.plugin.analysis.DagpSettingsPlugin'
+		}
+		reportAggregationProjectsSettingsPlugin {
+			id = 'bento.report.aggregation-settings'
+			implementationClass =
+					'software.coley.gradle.plugin.report.ReportAggregationSettingsPlugin'
+		}
+		benManesVersionsSettingsPlugin {
+			id = 'bento.analysis.ben-manes-versions-settings'
+			implementationClass =
+					'software.coley.gradle.plugin.analysis.BenManesVersionsSettingsPlugin'
+		}
+	}
 }

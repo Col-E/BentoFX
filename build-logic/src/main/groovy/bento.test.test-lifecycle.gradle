@@ -2,20 +2,20 @@ import static org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_
 import static software.coley.gradle.lifecycle.TestLifecycle.*
 
 plugins {
-    id 'base'
+	id 'base'
 }
 
 def checkTask = tasks.named('check')
 
 def checkIntegrationTask = tasks.register(CHECK_INTEGRATION_TASK_NAME) {
-    description = 'Runs integration tests for all applicable subprojects.'
-    group = VERIFICATION_GROUP
-    shouldRunAfter(checkTask)
+	description = 'Runs integration tests for all applicable subprojects.'
+	group = VERIFICATION_GROUP
+	shouldRunAfter(checkTask)
 }
 
 tasks.register(CHECK_ALL_TASK_NAME) {
-    description = 'Runs all tests for all applicable subprojects.'
-    group = VERIFICATION_GROUP
-    dependsOn(checkTask)
-    dependsOn(checkIntegrationTask)
+	description = 'Runs all tests for all applicable subprojects.'
+	group = VERIFICATION_GROUP
+	dependsOn(checkTask)
+	dependsOn(checkIntegrationTask)
 }

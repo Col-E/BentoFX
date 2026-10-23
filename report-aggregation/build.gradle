@@ -1,10 +1,10 @@
 plugins {
-    id 'bento.project.project-convention'
-    id 'bento.test.integration-test-graphical-suite'
-    id 'bento.test.integration-test-parallel-suite'
-    id 'bento.test.integration-test-suite'
-    id 'bento.report.test-aggregation'
-    id 'bento.report.jacoco-aggregation'
+	id 'bento.project.project-convention'
+	id 'bento.test.integration-test-graphical-suite'
+	id 'bento.test.integration-test-parallel-suite'
+	id 'bento.test.integration-test-suite'
+	id 'bento.report.test-aggregation'
+	id 'bento.report.jacoco-aggregation'
 }
 
 description = 'Aggregated reports for BentoFX library modules.'
@@ -16,24 +16,24 @@ description = 'Aggregated reports for BentoFX library modules.'
 def reportAggregationProjects = project.reportAggregationProjects
 
 dependencies {
-    reportAggregationProjects.each { String projectPath ->
-        def projectToReport = project(projectPath)
-        jacocoAggregation(projectToReport)
-        testReportAggregation(projectToReport)
-    }
+	reportAggregationProjects.each { String projectPath ->
+		def projectToReport = project(projectPath)
+		jacocoAggregation(projectToReport)
+		testReportAggregation(projectToReport)
+	}
 }
 
 dependencyAnalysis {
-    issues {
-        onUnusedDependencies {
-            // Exclude additional, common testing dependencies that we apply to
-            // all projects regardless of use (for the sake of convenience).
-            exclude(
-                'org.testfx:testfx-junit5',
-                'org.testfx:testfx-core',
-            )
-            // plugin conventions add the current project as a dependency
-            exclude(":report-aggregation")
-        }
-    }
+	issues {
+		onUnusedDependencies {
+			// Exclude additional, common testing dependencies that we apply to
+			// all projects regardless of use (for the sake of convenience).
+			exclude(
+				'org.testfx:testfx-junit5',
+				'org.testfx:testfx-core',
+			)
+			// plugin conventions add the current project as a dependency
+			exclude(":report-aggregation")
+		}
+	}
 }

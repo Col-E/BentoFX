@@ -1,27 +1,27 @@
 pluginManagement {
-    // Runs before Gradle configures projects.
-    includeBuild('settings-logic')
-    // Runs after settings and is used to configure projects.
-    includeBuild 'build-logic'
+	// Runs before Gradle configures projects.
+	includeBuild('settings-logic')
+	// Runs after settings and is used to configure projects.
+	includeBuild 'build-logic'
 
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-    }
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+	}
 }
 
 plugins {
-    id 'bento.analysis.ben-manes-versions-settings'
-    id 'bento.analysis.dagp-settings'
-    id 'bento.report.aggregation-settings'
+	id 'bento.analysis.ben-manes-versions-settings'
+	id 'bento.analysis.dagp-settings'
+	id 'bento.report.aggregation-settings'
 }
 
 dependencyResolutionManagement {
-    includeBuild 'build-logic'
+	includeBuild 'build-logic'
 
-    repositories {
-        mavenCentral()
-    }
+	repositories {
+		mavenCentral()
+	}
 }
 
 rootProject.name = 'bento-fx'
@@ -35,3 +35,78 @@ include 'report-aggregation'
 include 'core'
 
 include 'demos:basic'
+include 'demos:persistence'
+
+/*
+ * Declared flat as ':persistence-core' rather than nested as
+ * 'persistence:core', even though it lives in persistence/core with its
+ * siblings below.
+ *
+ * Gradle identifies a project within a build by its group and its *name*, not
+ * by its path, and every project here shares one group. Nesting this one would
+ * name it 'core', which the docking framework at the repository root is already
+ * called, so the two would claim the same identity and Gradle would resolve one
+ * into the other - this module's 'api projects.core' came back as a dependency
+ * on itself, and the build failed with a circular task graph. The published
+ * artifactId is derived from the path, so it reads 'persistence-core'.
+ *
+ * Renaming this project back to a nested 'persistence:core' brings that cycle
+ * back.
+ */
+include ':persistence-core'
+project(':persistence-core').projectDir = file('persistence/core')
+
+include 'persistence:codec:common'
+include 'persistence:codec:json'
+include 'persistence:codec:xml'
+include 'persistence:storage:file'
+include 'persistence:storage:db:h2'
+include 'persistence:test-fixtures'
+
+/*
+ * Refuses two projects that build something and share a name.
+ *
+ * Gradle identifies a project by its group and its name, and every project here
+ * shares one group, so a shared name means one identity for two projects and
+ * Gradle resolves one into the other. What that looks like is not a name clash:
+ * it is a dependency on ':core' coming back as a dependency on itself, reported
+ * as a circular task graph several projects away from the name that caused it.
+ * A build that fails here instead says which two projects, and why, before any
+ * of that.
+ *
+ * Only projects with a build script are checked. An intermediate project such
+ * as ':persistence' is a container that produces nothing, so it never resolves
+ * and cannot collide - ':demos:persistence' shares its name today and is
+ * harmless.
+ *
+ * Leaf names in this tree are ordinary words - 'common', 'json', 'file', 'h2' -
+ * so the next collision is a matter of when.
+ */
+def pathsByProjectName = [:]
+
+def collectProjectNames
+collectProjectNames = { descriptor ->
+	if (descriptor.buildFile.exists()) {
+		pathsByProjectName
+				.computeIfAbsent(descriptor.name) { [] }
+				.add(descriptor.path)
+	}
+	descriptor.children.each { child -> collectProjectNames(child) }
+}
+collectProjectNames(rootProject)
+
+def collidingProjects = pathsByProjectName.findAll { name, paths ->
+	paths.size() > 1
+}
+
+if (!collidingProjects.isEmpty()) {
+	throw new GradleException(
+			'Two projects that build something cannot share a name, because ' +
+					'Gradle would treat them as one module:\n' +
+					collidingProjects.collect { name, paths ->
+						"  '$name' is the name of ${paths.join(' and ')}"
+					}.join('\n') +
+					'\nRename one, or declare it flat at the root the way ' +
+					"':persistence-core' is."
+	)
+}

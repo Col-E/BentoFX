@@ -1,31 +1,31 @@
 import static org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
 
 plugins {
-    id 'bento.release.publish-metadata-convention'
+	id 'bento.release.publish-metadata-convention'
 }
 
 def bentoConvention = extensions.findByName('bentoConvention')
 def normalizedName = bentoConvention != null
-        ? bentoConvention.normalizedProjectName
-        : providers.provider { project.name }
+		? bentoConvention.normalizedProjectName
+		: providers.provider { project.name }
 
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId = normalizedName.get()
+	publications {
+		mavenJava(MavenPublication) {
+			artifactId = normalizedName.get()
 
-            from(components.findByName('java') ?: components.getByName('javaPlatform'))
+			from(components.findByName('java') ?: components.getByName('javaPlatform'))
 
-            pom {
-                name.set(normalizedName)
-                description.set(providers.provider { project.description })
-            }
-        }
-    }
+			pom {
+				name.set(normalizedName)
+				description.set(providers.provider { project.description })
+			}
+		}
+	}
 }
 
 def pomTask =
-        tasks.named('generatePomFileForMavenJavaPublication', GenerateMavenPom)
+		tasks.named('generatePomFileForMavenJavaPublication', GenerateMavenPom)
 def generatedPom = objects.fileProperty()
 generatedPom.fileProvider(pomTask.map { it.destination })
 
@@ -34,28 +34,28 @@ generatedPom.fileProvider(pomTask.map { it.destination })
  * nothing else in a build reads the POM a consumer gets.
  */
 def validatePomVersionsTask = tasks.register('validatePomVersions') {
-    description = 'Fails when the generated POM requests a dependency ' +
-            'version Maven cannot resolve.'
-    group = VERIFICATION_GROUP
+	description = 'Fails when the generated POM requests a dependency ' +
+			'version Maven cannot resolve.'
+	group = VERIFICATION_GROUP
 
-    inputs.file(generatedPom).withPropertyName('generatedPom')
+	inputs.file(generatedPom).withPropertyName('generatedPom')
 
-    doLast {
-        def pomFile = generatedPom.get().asFile
-        def malformedVersions = (pomFile.text =~ /<version>([^<]*)<\/version>/)
-                .collect { match -> match[1] }
-                .findAll { version -> !(version ==~ /[A-Za-z0-9][A-Za-z0-9._+-]*/) }
-                .unique()
+	doLast {
+		def pomFile = generatedPom.get().asFile
+		def malformedVersions = (pomFile.text =~ /<version>([^<]*)<\/version>/)
+				.collect { match -> match[1] }
+				.findAll { version -> !(version ==~ /[A-Za-z0-9][A-Za-z0-9._+-]*/) }
+				.unique()
 
-        if (malformedVersions) {
-            throw new GradleException(
-                    "$pomFile requests ${malformedVersions.size()} version(s) " +
-                            "that are not versions: ${malformedVersions.join(', ')}"
-            )
-        }
-    }
+		if (malformedVersions) {
+			throw new GradleException(
+					"$pomFile requests ${malformedVersions.size()} version(s) " +
+							"that are not versions: ${malformedVersions.join(', ')}"
+			)
+		}
+	}
 }
 
 tasks.named('check') {
-    dependsOn(validatePomVersionsTask)
+	dependsOn(validatePomVersionsTask)
 }

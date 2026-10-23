@@ -1,21 +1,21 @@
 pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-    }
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+	}
 }
 
 dependencyResolutionManagement {
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-        google()
-    }
-    versionCatalogs {
-        libs {
-            from(files('../gradle/libs.versions.toml'))
-        }
-    }
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+		google()
+	}
+	versionCatalogs {
+		libs {
+			from(files('../gradle/libs.versions.toml'))
+		}
+	}
 }
 
 rootProject.name = 'settings-logic'

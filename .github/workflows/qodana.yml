@@ -1,10 +1,17 @@
 name: Qodana
 
+# TODO enhancement/issue-13: The "github.repository == 'philliplbryant/BentoFX'"
+#   conditional below gates Qodana results to this fork's code-scanning. When
+#   adopting into Col-E/BentoFX, replace with 'Col-E/BentoFX' (or remove the
+#   gate). Repository secret required: QODANA_TOKEN.
+
 on:
   push:
+    # Every branch, but not tags. Covers same-repo pull requests through
+    # their head-branch push - adding `pull_request:` on top fires a
+    # duplicate run for every PR synchronize event.
     branches:
       - '**'
-  pull_request:
   workflow_dispatch:
 
 concurrency:
@@ -36,14 +43,33 @@ jobs:
       # with or without QODANA_TOKEN. The token only uploads the report to
       # Qodana Cloud; a pull request from a fork gets no secrets, so there the
       # analysis still runs and the upload is skipped.
+      # 'baseline' and 'fail-threshold' pass as CLI args rather than
+      # qodana.yaml keys: the standalone Qodana CLI the Action installs
+      # (v2026.2.2) rejects those keys as unknown even though the linter
+      # image accepts them. Passing them here puts the gate config where
+      # the runner actually reads it.
       - name: Run Qodana
         uses: JetBrains/qodana-action@3e8d76ff0e0241618abd808682f426afe84bab3f # v2026.2.2
         with:
           args: |
-            --within-docker false
+            --within-docker,false
+            --baseline,qodana.sarif.json
+            --fail-threshold,0
           upload-result: true
       - name: Upload Qodana SARIF
         if: always()
         uses: github/codeql-action/upload-sarif@v4.39.0
         with:
           sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
+      # Keep the raw SARIF downloadable as a workflow artifact so the
+      # tracked baseline (qodana.sarif.json at the repo root) can be
+      # regenerated from a current scan without re-running Qodana locally.
+      # To regenerate: download this artifact from the Actions run page,
+      # replace qodana.sarif.json at the repo root, commit.
+      - name: Upload Qodana SARIF as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qodana-sarif
+          path: ${{ runner.temp }}/qodana/results/qodana.sarif.json
+          retention-days: 14

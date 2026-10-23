@@ -1,5 +1,5 @@
 plugins {
-    id 'maven-publish'
+	id 'maven-publish'
 }
 
 // Modules applying 'bento.project.project-convention' (java-library) get their
@@ -9,39 +9,39 @@ plugins {
 // plain project name, which is used here.
 
 publishing {
-    publications.withType(MavenPublication).configureEach {
-        pom {
-            url.set('https://github.com/Col-E/BentoFX')
-            inceptionYear.set('2025')
+	publications.withType(MavenPublication).configureEach {
+		pom {
+			url.set('https://github.com/Col-E/BentoFX')
+			inceptionYear.set('2025')
 
-            licenses {
-                license {
-                    name.set('MIT')
-                    url.set('https://spdx.org/licenses/MIT.html')
-                }
-            }
-            developers {
-                developer {
-                    id = 'Col-E'
-                    name = 'Matt Coley'
-                }
-                developer {
-                    id.set('philliplbryant')
-                    name.set('Phil Bryant')
-                }
-            }
-            scm {
-                connection.set('scm:git:https://github.com/Col-E/BentoFX.git')
-                developerConnection.set('scm:git:ssh://github.com/Col-E/BentoFX.git')
-                url.set('https://github.com/Col-E/BentoFX')
-            }
-        }
-    }
+			licenses {
+				license {
+					name.set('MIT')
+					url.set('https://spdx.org/licenses/MIT.html')
+				}
+			}
+			developers {
+				developer {
+					id = 'Col-E'
+					name = 'Matt Coley'
+				}
+				developer {
+					id.set('philliplbryant')
+					name.set('Phil Bryant')
+				}
+			}
+			scm {
+				connection.set('scm:git:https://github.com/Col-E/BentoFX.git')
+				developerConnection.set('scm:git:ssh://github.com/Col-E/BentoFX.git')
+				url.set('https://github.com/Col-E/BentoFX')
+			}
+		}
+	}
 
-    repositories {
-        mavenLocal()
-        maven {
-            url = uri(layout.buildDirectory.dir('staging-deploy'))
-        }
-    }
+	repositories {
+		mavenLocal()
+		maven {
+			url = uri(layout.buildDirectory.dir('staging-deploy'))
+		}
+	}
 }

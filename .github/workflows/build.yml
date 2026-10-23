@@ -1,11 +1,21 @@
 name: Build
 
+# TODO enhancement/issue-13: Six "github.repository == 'philliplbryant/BentoFX'"
+#   conditionals below gate SonarCloud, Codecov, and PR-comment steps on this
+#   fork. When adopting into Col-E/BentoFX, replace with 'Col-E/BentoFX'. The
+#   release-publish job's "github.repository == 'Col-E/BentoFX'" is the
+#   intended target and should stay as-is. Repository secrets required:
+#   SONAR_TOKEN, CODECOV_TOKEN, JRELEASER_GPG_PASSPHRASE,
+#   JRELEASER_GPG_PUBLIC_KEY, JRELEASER_GPG_SECRET_KEY,
+#   JRELEASER_MAVENCENTRAL_TOKEN, JRELEASER_MAVENCENTRAL_USERNAME.
+
 on:
   push:
-    # Every branch, but not tags.
+    # Every branch, but not tags. Covers same-repo pull requests through
+    # their head-branch push - adding `pull_request:` on top fires a
+    # duplicate run for every PR synchronize event.
     branches:
       - '**'
-  pull_request:
   workflow_dispatch:
     inputs:
       is-a-release:

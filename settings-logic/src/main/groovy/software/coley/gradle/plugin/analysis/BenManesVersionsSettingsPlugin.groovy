@@ -11,8 +11,8 @@ import org.gradle.api.initialization.Settings
 @CompileStatic
 class BenManesVersionsSettingsPlugin implements Plugin<Settings> {
 
-    @Override
-    void apply(final Settings settings) {
-        settings.pluginManager.apply('io.github.ben-manes.versions.settings')
-    }
+	@Override
+	void apply(final Settings settings) {
+		settings.pluginManager.apply('io.github.ben-manes.versions.settings')
+	}
 }

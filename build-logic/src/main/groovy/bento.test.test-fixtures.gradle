@@ -1,4 +1,4 @@
 plugins {
-    id 'java-library'
-    id 'java-test-fixtures'
+	id 'java-library'
+	id 'java-test-fixtures'
 }

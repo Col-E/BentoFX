@@ -1,5 +1,5 @@
 plugins {
-    id 'groovy-gradle-plugin'
+	id 'groovy-gradle-plugin'
 }
 
 /**
@@ -10,37 +10,34 @@ plugins {
  * settings based decisions in settings-logic instead.
  */
 description = 'Used to apply plugins to projects and to configure ' +
-        'dependencies and tasks. Runs during project configuration, after ' +
-        'settings.'
+		'dependencies and tasks. Runs during project configuration, after ' +
+		'settings.'
 
 def versionCatalog = versionCatalogs.named('libs')
 def jdkVersion = versionCatalog.findVersion("java-jdk").get().requiredVersion
 def javaLanguageVersion = JavaLanguageVersion.of(jdkVersion)
 
 java {
-    toolchain {
-        languageVersion = javaLanguageVersion
-    }
+	toolchain {
+		languageVersion = javaLanguageVersion
+	}
 }
 
 dependencies {
-    implementation gradleApi()
-    implementation localGroovy()
+	implementation gradleApi()
+	implementation localGroovy()
 
-    implementation(libs.dependencyAnalysis.gradlePlugin.dependency) {
-        because(
-                "Declared here even though it's not used otherwise in buildSrc to work around " +
-                        "https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/issues/667"
-        )
-    }
+	implementation(libs.dependencyAnalysis.gradlePlugin.dependency) {
+		because(
+				"Declared here even though it's not used otherwise in buildSrc to work around " +
+						"https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/issues/667"
+		)
+	}
 
-    implementation libs.errorprone.gradlePlugin.dependency
-    implementation libs.javafx.gradlePlugin.dependency
-    // Brings a transitive dependency to 'org.apache.tika:tika-core:2.9.4',
-    // affected by CVE-2025-66516. The vulnerability is build-time only.
-    // JReleaser version 1.26.0 still contains it.
-    // TODO BENTO-13: Re-check on the next JReleaser release and drop this.
-    //noinspection VulnerableLibrariesLocal
-    implementation libs.jreleaser.gradlePlugin.dependency
-    implementation libs.nullaway.gradlePlugin.dependency
+	implementation libs.errorprone.gradlePlugin.dependency
+	implementation libs.javafx.gradlePlugin.dependency
+	// Brings in several transitive dependencies with vulnerabilities, but they are build-time only.
+	// noinspection VulnerableLibrariesLocal
+	implementation libs.jreleaser.gradlePlugin.dependency
+	implementation libs.nullaway.gradlePlugin.dependency
 }

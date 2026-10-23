@@ -1,10 +1,10 @@
 plugins {
-    id 'java-platform'
-    id 'bento.release.publish-convention'
+	id 'java-platform'
+	id 'bento.release.publish-convention'
 }
 
 javaPlatform {
-    allowDependencies()
+	allowDependencies()
 }
 
 group = libs.versions.maven.group.get()
@@ -13,19 +13,49 @@ description = 'BentoFX Platform BOM'
 
 // See also Gradle Version Catalog at '<root>\gradle\libs.versions.toml'.
 dependencies {
-    /*
-     * BOMs
-     *
-     * Ordering matters! Declaring a BOM before subsequent platform declarations
-     * will cause third-party dependencies declared in the BOM to be overridden
-     * by those platform declarations.
-     */
+	/*
+	 * BOMs
+	 *
+	 * Ordering matters! Declaring a BOM before subsequent platform declarations
+	 * will cause third-party dependencies declared in the BOM to be overridden
+	 * by those platform declarations.
+	 */
 
-    api platform(libs.junit.bom.get())
+	api platform(libs.jakarta.ee.bom.get()) {
+		version {
+			strictly(libs.versions.jakarta.ee.get())
+		}
+	}
 
-    constraints {
-        api libs.bundles.javafx
-        api libs.bundles.test.libraries
-        api libs.bundles.annotations
-    }
+	api platform(libs.jaxb.bom.get()) {
+		version {
+			strictly(libs.versions.jaxb.get())
+		}
+	}
+
+	api platform(libs.hibernate.bom.get()) {
+		version {
+			strictly(libs.versions.hibernate.orm.get())
+		}
+	}
+
+	api platform(libs.hibernate.validator.bom.get()) {
+		version {
+			strictly(libs.versions.hibernate.validator.get())
+		}
+	}
+
+	api platform(libs.jackson.bom.get()) {
+		version {
+			strictly(libs.versions.jackson.get())
+		}
+	}
+
+	api platform(libs.junit.bom.get())
+
+	constraints {
+		api libs.bundles.javafx
+		api libs.bundles.test.libraries
+		api libs.bundles.annotations
+	}
 }

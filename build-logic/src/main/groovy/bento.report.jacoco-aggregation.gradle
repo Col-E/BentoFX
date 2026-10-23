@@ -2,7 +2,7 @@ import static org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_
 import static software.coley.gradle.lifecycle.TestLifecycle.*
 
 plugins {
-    id 'jacoco-report-aggregation'
+	id 'jacoco-report-aggregation'
 }
 
 def integrationTestCodeCoverageReportTask = tasks.named('integrationTestCodeCoverageReport', JacocoReport)
@@ -11,37 +11,37 @@ def integrationTestParallelCodeCoverageReportTask = tasks.named('integrationTest
 def testCodeCoverageReportTask = tasks.named('testCodeCoverageReport', JacocoReport)
 
 def aggregateCoverageReportTasks = [
-        testCodeCoverageReportTask,
-        integrationTestCodeCoverageReportTask,
-        integrationTestGraphicalCodeCoverageReportTask,
-        integrationTestParallelCodeCoverageReportTask,
+		testCodeCoverageReportTask,
+		integrationTestCodeCoverageReportTask,
+		integrationTestGraphicalCodeCoverageReportTask,
+		integrationTestParallelCodeCoverageReportTask,
 ]
 
 aggregateCoverageReportTasks.each { reportTaskProvider ->
-    reportTaskProvider.configure { reportTask ->
-        reportTask.group = VERIFICATION_GROUP
-        reportTask.reports {
-            csv.required = ENABLE_CSV_REPORT
-            html.required = ENABLE_HTML_REPORT
-            xml.required = ENABLE_XML_REPORT
-        }
-        // 'JacocoReport' skips itself when no execution data exists, so a suite with
-        // no sources yet yields no report rather than 0%. Must be 'setOnlyIf', which
-        // replaces that internal spec; 'onlyIf' adds to it and still skips.
-        reportTask.setOnlyIf { true }
-    }
+	reportTaskProvider.configure { reportTask ->
+		reportTask.group = VERIFICATION_GROUP
+		reportTask.reports {
+			csv.required = ENABLE_CSV_REPORT
+			html.required = ENABLE_HTML_REPORT
+			xml.required = ENABLE_XML_REPORT
+		}
+		// 'JacocoReport' skips itself when no execution data exists, so a suite with
+		// no sources yet yields no report rather than 0%. Must be 'setOnlyIf', which
+		// replaces that internal spec; 'onlyIf' adds to it and still skips.
+		reportTask.setOnlyIf { true }
+	}
 }
 
 tasks.named('check') {
-    dependsOn(testCodeCoverageReportTask)
+	dependsOn(testCodeCoverageReportTask)
 }
 
 tasks.named(CHECK_ALL_TASK_NAME) {
-    dependsOn(aggregateCoverageReportTasks)
+	dependsOn(aggregateCoverageReportTasks)
 }
 
 tasks.named(CHECK_INTEGRATION_TASK_NAME) {
-    dependsOn(integrationTestCodeCoverageReportTask)
-    dependsOn(integrationTestGraphicalCodeCoverageReportTask)
-    dependsOn(integrationTestParallelCodeCoverageReportTask)
+	dependsOn(integrationTestCodeCoverageReportTask)
+	dependsOn(integrationTestGraphicalCodeCoverageReportTask)
+	dependsOn(integrationTestParallelCodeCoverageReportTask)
 }

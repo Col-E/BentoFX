@@ -4,11 +4,11 @@ import static software.coley.gradle.lifecycle.BuildLifecycle.ALL_CLASSES_TASK_NA
 import static software.coley.gradle.lifecycle.TestLifecycle.*
 
 plugins {
-    id 'jacoco'
-    id 'jvm-test-suite'
-    id 'bento.project.build-lifecycle'
-    id 'bento.test.test-lifecycle'
-    id 'com.autonomousapps.dependency-analysis'
+	id 'jacoco'
+	id 'jvm-test-suite'
+	id 'bento.project.build-lifecycle'
+	id 'bento.test.test-lifecycle'
+	id 'com.autonomousapps.dependency-analysis'
 }
 
 def allClassesTask = tasks.named(ALL_CLASSES_TASK_NAME)
@@ -18,86 +18,86 @@ def testSuiteDirName = 'itp'
 def testSuiteTestSuffix = 'ITP'
 
 testing {
-    suites {
-        register(testSuiteName, JvmTestSuite) {
-            dependencies {
-                implementation project()
-            }
+	suites {
+		register(testSuiteName, JvmTestSuite) {
+			dependencies {
+				implementation project()
+			}
 
-            sources {
-                java {
-                    setSrcDirs(["src/${testSuiteDirName}/java"])
-                }
-                resources {
-                    setSrcDirs(["src/${testSuiteDirName}/resources"])
-                }
-            }
+			sources {
+				java {
+					setSrcDirs(["src/${testSuiteDirName}/java"])
+				}
+				resources {
+					setSrcDirs(["src/${testSuiteDirName}/resources"])
+				}
+			}
 
-            targets.configureEach {
-                testTask.configure {
-                    filter {
-                        includeTestsMatching "*${testSuiteTestSuffix}"
-                        includeTestsMatching "*${testSuiteTestSuffix}\$*"
-                        failOnNoMatchingTests = false
-                    }
+			targets.configureEach {
+				testTask.configure {
+					filter {
+						includeTestsMatching "*${testSuiteTestSuffix}"
+						includeTestsMatching "*${testSuiteTestSuffix}\$*"
+						failOnNoMatchingTests = false
+					}
 
-                    maxParallelForks = Math.max((Runtime.runtime.availableProcessors() / 2) as int, 1)
+					maxParallelForks = Math.max((Runtime.runtime.availableProcessors() / 2) as int, 1)
 
-                    maxHeapSize = '2g'
-                    modularity.inferModulePath.set(false)
-                    jvmArgs = (jvmArgs ?: []).findAll { !it.contains('--module-path') }
-                }
-            }
-        }
-    }
+					maxHeapSize = '2g'
+					modularity.inferModulePath.set(false)
+					jvmArgs = (jvmArgs ?: []).findAll { !it.contains('--module-path') }
+				}
+			}
+		}
+	}
 }
 
 def integrationTestParallelTask = tasks.named('integrationTestParallel', Test)
 def integrationTestParallelClassesTask = tasks.named('integrationTestParallelClasses')
 
 dependencyAnalysis {
-    abi {
-        exclusions {
-            excludeSourceSets(testSuiteName)
-        }
-    }
+	abi {
+		exclusions {
+			excludeSourceSets(testSuiteName)
+		}
+	}
 }
 
 integrationTestParallelTask.configure {
-    def suiteSourceSet = sourceSets.named(testSuiteName).get()
-    testClassesDirs = suiteSourceSet.output.classesDirs
-    classpath = suiteSourceSet.runtimeClasspath
-    modularity.inferModulePath.set(false)
+	def suiteSourceSet = sourceSets.named(testSuiteName).get()
+	testClassesDirs = suiteSourceSet.output.classesDirs
+	classpath = suiteSourceSet.runtimeClasspath
+	modularity.inferModulePath.set(false)
 }
 
 allClassesTask.configure {
-    dependsOn(integrationTestParallelClassesTask)
+	dependsOn(integrationTestParallelClassesTask)
 }
 
 jacoco {
-    toolVersion = libs.versions.jacoco.get()
+	toolVersion = libs.versions.jacoco.get()
 }
 
 
 def jacocoExecutionData = integrationTestParallelTask.map { testTask ->
-    testTask.extensions.getByType(JacocoTaskExtension).destinationFile
+	testTask.extensions.getByType(JacocoTaskExtension).destinationFile
 }
 
 def jacocoIntegrationTestParallelReportTask = tasks.register('jacocoIntegrationTestParallelReport', JacocoReport) { reportTask ->
-    reportTask.group = VERIFICATION_GROUP
-    reportTask.description = 'Generates JaCoCo coverage report for the parallel integration test task.'
-    reportTask.dependsOn(integrationTestParallelTask)
-    reportTask.executionData(jacocoExecutionData)
-    reportTask.onlyIf { jacocoExecutionData.get().exists() }
-    reportTask.sourceSets(sourceSets.main)
-    reportTask.reports {
-        csv.required = ENABLE_CSV_REPORT
-        html.required = ENABLE_HTML_REPORT
-        xml.required = ENABLE_XML_REPORT
-    }
+	reportTask.group = VERIFICATION_GROUP
+	reportTask.description = 'Generates JaCoCo coverage report for the parallel integration test task.'
+	reportTask.dependsOn(integrationTestParallelTask)
+	reportTask.executionData(jacocoExecutionData)
+	reportTask.onlyIf { jacocoExecutionData.get().exists() }
+	reportTask.sourceSets(sourceSets.main)
+	reportTask.reports {
+		csv.required = ENABLE_CSV_REPORT
+		html.required = ENABLE_HTML_REPORT
+		xml.required = ENABLE_XML_REPORT
+	}
 }
 
 checkIntegrationTask.configure {
-    dependsOn(integrationTestParallelTask)
-    dependsOn(jacocoIntegrationTestParallelReportTask)
+	dependsOn(integrationTestParallelTask)
+	dependsOn(jacocoIntegrationTestParallelReportTask)
 }

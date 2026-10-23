@@ -2,48 +2,48 @@ import static org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_
 import static software.coley.gradle.lifecycle.TestLifecycle.CHECK_ALL_TASK_NAME
 
 plugins {
-    id 'net.ltgt.errorprone'
-    id 'net.ltgt.nullaway'
+	id 'net.ltgt.errorprone'
+	id 'net.ltgt.nullaway'
 }
 
 def versionCatalog = versionCatalogs.named('libs')
 
 dependencies {
-    errorprone versionCatalog.findLibrary('errorprone').get()
-    errorprone versionCatalog.findLibrary('nullaway').get()
-    compileOnly versionCatalog.findLibrary('jspecify').get()
-    testCompileOnly versionCatalog.findLibrary('jspecify').get()
-    // NullAway's own annotations (e.g. @Contract) are compile-only, provided
-    // through the convention rather than per-module so every project that
-    // applies this plugin can use them uniformly.
-    compileOnly versionCatalog.findLibrary('nullaway-annotations').get()
-    testCompileOnly versionCatalog.findLibrary('nullaway-annotations').get()
+	errorprone versionCatalog.findLibrary('errorprone').get()
+	errorprone versionCatalog.findLibrary('nullaway').get()
+	compileOnly versionCatalog.findLibrary('jspecify').get()
+	testCompileOnly versionCatalog.findLibrary('jspecify').get()
+	// NullAway's own annotations (e.g. @Contract) are compile-only, provided
+	// through the convention rather than per-module so every project that
+	// applies this plugin can use them uniformly.
+	compileOnly versionCatalog.findLibrary('nullaway-annotations').get()
+	testCompileOnly versionCatalog.findLibrary('nullaway-annotations').get()
 }
 
 nullaway {
-    // Analyze packages/classes that opt in with JSpecify @NullMarked rather
-    // than assuming every BentoFX package is fully annotated immediately.
-    onlyNullMarked = true
+	// Analyze packages/classes that opt in with JSpecify @NullMarked rather
+	// than assuming every BentoFX package is fully annotated immediately.
+	onlyNullMarked = true
 
-    // Enable NullAway's JSpecify-specific interpretation of annotations,
-    // including type-use and generic nullness.
-    jspecifyMode = true
+	// Enable NullAway's JSpecify-specific interpretation of annotations,
+	// including type-use and generic nullness.
+	jspecifyMode = true
 }
 
 def checkJSpecifyTask = tasks.register('checkJSpecify') { checkTask ->
-    checkTask.group = VERIFICATION_GROUP
-    checkTask.description = 'Runs JSpecify nullness analysis through Error Prone and NullAway.'
-    checkTask.dependsOn(tasks.withType(JavaCompile))
+	checkTask.group = VERIFICATION_GROUP
+	checkTask.description = 'Runs JSpecify nullness analysis through Error Prone and NullAway.'
+	checkTask.dependsOn(tasks.withType(JavaCompile))
 }
 
 plugins.withId('bento.test.test-lifecycle') {
-    tasks.named(CHECK_ALL_TASK_NAME).configure { checkAllTask ->
-        checkAllTask.dependsOn(checkJSpecifyTask)
-    }
+	tasks.named(CHECK_ALL_TASK_NAME).configure { checkAllTask ->
+		checkAllTask.dependsOn(checkJSpecifyTask)
+	}
 }
 
 tasks.withType(JavaCompile).configureEach { compileTask ->
-    compileTask.options.errorprone.disableWarningsInGeneratedCode = true
-    compileTask.options.errorprone.nullaway {
-    }
+	compileTask.options.errorprone.disableWarningsInGeneratedCode = true
+	compileTask.options.errorprone.nullaway {
+	}
 }

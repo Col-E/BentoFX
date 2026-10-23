@@ -5,27 +5,27 @@ import software.coley.gradle.task.extensions.BentoConventionExtension
 import static software.coley.gradle.lifecycle.BuildLifecycle.ALL_CLASSES_TASK_NAME
 
 plugins {
-    id 'java-library'
-    id 'com.autonomousapps.dependency-analysis'
-    id 'bento.analysis.jspecify'
-    id 'bento.analysis.sonar-classpath'
-    id 'bento.project.build-lifecycle'
-    id 'bento.test.unit-test-suite'
+	id 'java-library'
+	id 'com.autonomousapps.dependency-analysis'
+	id 'bento.analysis.jspecify'
+	id 'bento.analysis.sonar-classpath'
+	id 'bento.project.build-lifecycle'
+	id 'bento.test.unit-test-suite'
 }
 
 def versionCatalog = versionCatalogs.named('libs')
 
 plugins.withId('org.openjfx.javafxplugin') {
-    javafx {
-        version = versionCatalog.findVersion('javafx').get().requiredVersion
-    }
+	javafx {
+		version = versionCatalog.findVersion('javafx').get().requiredVersion
+	}
 }
 
 group = versionCatalog.findVersion("maven-group").get().requiredVersion
 version = versionCatalog.findVersion("bentofx").get().requiredVersion
 
 def normalizedProjectName = providers.provider {
-    project.path.substring(1).replace(':', '-')
+	project.path.substring(1).replace(':', '-')
 }
 
 extensions.create('bentoConvention', BentoConventionExtension, normalizedProjectName)
@@ -41,122 +41,122 @@ def classesTask = tasks.named('classes')
 
 dependencies {
 
-    components.all(JavaFxDependencyMetadataRule)
+	components.all(JavaFxDependencyMetadataRule)
 
-    api platform(project(':platform'))
+	api platform(project(':platform'))
 }
 
 dependencyAnalysis {
-    issues {
-        onDuplicateClassWarnings { severity('fail') }
-        onIncorrectConfiguration {
-            severity('fail')
-            exclude(
-                    // The JavaFX Gradle plugin uses the same
-                    // configuration(s) for all module dependencies,
-                    // resulting in dependencies sometimes using the
-                    // incorrect/most inclusive configuration. Ignore them.
-                    'org.openjfx:javafx-base',
-                    'org.openjfx:javafx-controls',
-                    'org.openjfx:javafx-graphics'
-            )
-        }
-        onModuleStructure { severity('fail') }
-        onUnusedDependencies {
-            severity('fail')
-            exclude(
-                    // Exclude common testing dependencies that we apply to all
-                    // projects regardless of use (for the sake of convenience).
-                    'junit:junit',
-                    'org.assertj:assertj-core',
-                    'org.junit.jupiter:junit-jupiter',
-                    'org.junit.jupiter:junit-jupiter-api',
-            )
-        }
-        onUnusedAnnotationProcessors { severity('fail') }
-        onUsedTransitiveDependencies { severity('fail') }
-    }
+	issues {
+		onDuplicateClassWarnings { severity('fail') }
+		onIncorrectConfiguration {
+			severity('fail')
+			exclude(
+					// The JavaFX Gradle plugin uses the same
+					// configuration(s) for all module dependencies,
+					// resulting in dependencies sometimes using the
+					// incorrect/most inclusive configuration. Ignore them.
+					'org.openjfx:javafx-base',
+					'org.openjfx:javafx-controls',
+					'org.openjfx:javafx-graphics'
+			)
+		}
+		onModuleStructure { severity('fail') }
+		onUnusedDependencies {
+			severity('fail')
+			exclude(
+					// Exclude common testing dependencies that we apply to all
+					// projects regardless of use (for the sake of convenience).
+					'junit:junit',
+					'org.assertj:assertj-core',
+					'org.junit.jupiter:junit-jupiter',
+					'org.junit.jupiter:junit-jupiter-api',
+			)
+		}
+		onUnusedAnnotationProcessors { severity('fail') }
+		onUsedTransitiveDependencies { severity('fail') }
+	}
 }
 
 java {
-    toolchain {
-        languageVersion = javaLanguageVersion
-    }
+	toolchain {
+		languageVersion = javaLanguageVersion
+	}
 
-    withSourcesJar()
-    withJavadocJar()
+	withSourcesJar()
+	withJavadocJar()
 }
 
 testing {
-    suites {
-        configureEach { suite ->
-            if (suite instanceof JvmTestSuite) {
+	suites {
+		configureEach { suite ->
+			if (suite instanceof JvmTestSuite) {
 
-                def junitVersion =
-                        versionCatalog.findVersion('junit').get().requiredVersion
+				def junitVersion =
+						versionCatalog.findVersion('junit').get().requiredVersion
 
-                suite.useJUnitJupiter(junitVersion)
+				suite.useJUnitJupiter(junitVersion)
 
-                suite.targets.configureEach { target ->
-                    target.testTask.configure {testTask ->
-                        testTask.filter {
-                            includeTestsMatching '*Test'
-                            includeTestsMatching '*Test\$*'
-                            failOnNoDiscoveredTests = false
-                        }
+				suite.targets.configureEach { target ->
+					target.testTask.configure {testTask ->
+						testTask.filter {
+							includeTestsMatching '*Test'
+							includeTestsMatching '*Test\$*'
+							failOnNoDiscoveredTests = false
+						}
 
-                        // Set system properties for the test JVM(s)
-                        testTask.systemProperty 'project.name', rootProject.name
-                        // Turns out we really DO need a graphics environment
-                        // to initialize the JavaFx platform used by some
-                        // JUnit tests. Therefore, we can NOT run JUnit
-                        // tests headless.
-                        testTask.systemProperty 'java.awt.headless', 'false'
-                    }
-                }
+						// Set system properties for the test JVM(s)
+						testTask.systemProperty 'project.name', rootProject.name
+						// Turns out we really DO need a graphics environment
+						// to initialize the JavaFx platform used by some
+						// JUnit tests. Therefore, we can NOT run JUnit
+						// tests headless.
+						testTask.systemProperty 'java.awt.headless', 'false'
+					}
+				}
 
-                suite.dependencies {
-                    implementation(platform(project(":platform")))
-                    implementation(versionCatalog.findLibrary("assertj").get())
-                    implementation(versionCatalog.findLibrary("junit-api").get())
-                }
-            }
-        }
-    }
+				suite.dependencies {
+					implementation(platform(project(":platform")))
+					implementation(versionCatalog.findLibrary("assertj").get())
+					implementation(versionCatalog.findLibrary("junit-api").get())
+				}
+			}
+		}
+	}
 }
 
 allClassesTask.configure {
-    dependsOn(classesTask)
+	dependsOn(classesTask)
 }
 
 tasks.withType(Jar).configureEach {
-    archiveBaseName = normalizedProjectName
+	archiveBaseName = normalizedProjectName
 
-    from(project.isolated.rootProject.projectDirectory) {
-        include 'LICENSE'
-        into 'META-INF'
-        rename { 'LICENSE.txt' }
-    }
+	from(project.isolated.rootProject.projectDirectory) {
+		include 'LICENSE'
+		into 'META-INF'
+		rename { 'LICENSE.txt' }
+	}
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.with {
-        encoding = 'UTF-8'
-        release = javaMajorVersionAsInt
-        fork = true
-        forkOptions.memoryMaximumSize = '1g'
-        options.compilerArgs << '-parameters'
-    }
+	it.options.with {
+		encoding = 'UTF-8'
+		release = javaMajorVersionAsInt
+		fork = true
+		forkOptions.memoryMaximumSize = '1g'
+		options.compilerArgs << '-parameters'
+	}
 }
 
 tasks.withType(JavaExec).configureEach {
-    javaLauncher = javaToolchains.launcherFor {
-        languageVersion = javaLanguageVersion
-    }
+	javaLauncher = javaToolchains.launcherFor {
+		languageVersion = javaLanguageVersion
+	}
 }
 
 tasks.withType(Test).configureEach {
-    javaLauncher = javaToolchains.launcherFor {
-        languageVersion = javaLanguageVersion
-    }
+	javaLauncher = javaToolchains.launcherFor {
+		languageVersion = javaLanguageVersion
+	}
 }

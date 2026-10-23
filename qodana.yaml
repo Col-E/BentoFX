@@ -9,12 +9,10 @@ projectJDK: "21"
 profile:
   name: qodana.starter
 
-# TODO BENTO-13: Reinstate 'failThreshold: 0' once a 'qodana.sarif.json' baseline
-# is committed, so the gate holds at zero *new* problems.
-#
-# 'core' and 'demos/basic' are analyzed now and carry a pre-existing backlog. With
-# no threshold they report without failing, and the workflow's SARIF upload still
-# puts every problem in the GitHub Security tab.
+# Baseline and fail-threshold are passed as CLI args in
+# .github/workflows/qodana.yml: the standalone Qodana CLI the Action
+# installs rejects those keys here, even though the linter image accepts
+# them. The baseline file 'qodana.sarif.json' is tracked at repo root.
 
 coverage:
   reportProblems: false
@@ -23,7 +21,6 @@ exclude:
   - name: All
     paths:
       - build
-      # TODO BENTO-13: Enable analysis on these modules
       - core
       - demos/basic
-      - demos/persistence/src/main/resources
+      - demos/persistence/src/main/resources/bento.css

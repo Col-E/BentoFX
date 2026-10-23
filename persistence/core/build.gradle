@@ -1,0 +1,67 @@
+plugins {
+	alias(libs.plugins.javafx)
+	id 'bento.project.project-convention'
+	id 'bento.release.publish-convention'
+	id 'bento.test.integration-test-graphical-suite'
+}
+
+description = "BentoFX Persistence Core"
+
+/**
+ * Checks that the Javadoc in this module is well-formed - unterminated
+ * {@code @link} tags, bad references, broken HTML - and fails the build when it
+ * is not.
+ *
+ * <p>The {@code missing} group stays off: this checks the Javadoc that exists
+ * rather than demanding a comment on every member.</p>
+ */
+javadoc {
+	options {
+		addStringOption('Xdoclint:all,-missing', '-quiet')
+	}
+}
+
+/**
+ * Lints Javadoc that the published {@code javadoc} task cannot see.
+ *
+ * <p>That task documents public and protected members only, so a malformed
+ * {@code @link} on a package-private class passes it silently. This task lints
+ * the same source at {@code PRIVATE} member level.</p>
+ */
+def javadocLint = tasks.register('javadocLint', Javadoc) {
+	description = 'Fails when any Javadoc in this module is malformed, including on non-public members.'
+	group = 'verification'
+
+	source = sourceSets.main.allJava
+	classpath = sourceSets.main.compileClasspath
+	destinationDir = layout.buildDirectory.dir('docs/javadoc-lint').get().asFile
+
+	options.memberLevel = JavadocMemberLevel.PRIVATE
+	options.addStringOption('Xdoclint:all,-missing', '-quiet')
+}
+
+tasks.named('check') {
+	dependsOn javadocLint
+}
+
+javafx {
+	modules = ['javafx.base', 'javafx.controls', 'javafx.graphics']
+	configurations = ['api','integrationTestGraphicalImplementation']
+}
+
+dependencies {
+	api projects.core
+
+	implementation libs.slf4j.api
+
+	testImplementation testFixtures(projects.persistence.testFixtures)
+
+	testImplementation libs.equals.verifier
+	testImplementation libs.junit.params
+
+	integrationTestGraphicalImplementation testFixtures(projects.persistence.testFixtures)
+
+	integrationTestGraphicalImplementation libs.junit.params
+
+	integrationTestGraphicalRuntimeOnly libs.slf4j.simple
+}

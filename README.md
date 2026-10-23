@@ -7,20 +7,50 @@
 
 A docking system for JavaFX.
 
-## Usage
+## Table of Contents
 
-Requirements:
+- [Requirements](#requirements)
+- [Core Framework](#core-framework)
+  - [Usage](#core-usage)
+    - [Gradle (Groovy DSL)](#core-gradle-groovy-dsl)
+    - [Gradle (Kotlin DSL)](#core-gradle-kotlin-dsl)
+    - [Maven](#core-maven)
+  - [Overview](#overview)
+    - [Containers](#containers)
+    - [Controls](#controls)
+    - [Dockables](#dockables)
+  - [Basic Example](#basic-example)
+    - [Construct the Default Docking Layout](#construct-the-default-layout)
+    - [Show It](#show-it)
+- [Persistence Framework](#persistence-framework)
+- [Miscellany](#miscellany)
+    - [Contributing Guide](CONTRIBUTING.md)
+    - [Maintainers Guide](MAINTAINERS.md)
+
+## Requirements
 
 - JavaFX 21+
 - Java 21+
 
-Gradle syntax:
+## Core Framework
+
+The [core](./core) module is a framework of user interface controls that can be used to group, dock, and undock other user interface controls using drag and drop.
+
+<h3 id="core-usage">Usage</h3>
+
+<h4 id="core-gradle-groovy-dsl">Gradle (Groovy DSL)</h4>
 
 ```groovy
 implementation "software.coley.bento-fx:core:${version}"
 ```
 
-Maven syntax:
+<h4 id="core-gradle-kotlin-dsl">Gradle (Kotlin DSL)</h4>
+
+```kotlin
+implementation("software.coley.bento-fx:core:${version}")
+```
+
+<h4 id="core-maven">Maven</h4>
 
 ```xml
 <dependency>
@@ -30,7 +60,7 @@ Maven syntax:
 </dependency>
 ```
 
-## Overview
+<h3 id="overview">Overview</h3>
 
 ![overview](assets/overview.png)
 
@@ -44,7 +74,7 @@ In terms of hierarchy, the `Node` structure of Bento goes like:
 Each level of `*DockContainer` in the given hierarchy and `Dockable` instances can be constructed via a `Bento`
 instance's builder offered by `bento.dockBuilding()`.
 
-### Containers
+<h4 id="containers">Containers</h4>
 
 ![containers](assets/containers.png)
 
@@ -56,7 +86,7 @@ display `Dockable` items and handle drag-n-drop operations.
 | `DockContainerBranch` | Used to show multiple child `DockContainer` instances in a `SplitPane` display. Orientation and child node scaling are thus specified the same way as with `SplitPane`. |
 | `DockContainerLeaf`   | Used to show any number of `Dockable` instance rendered by a `HeaderPane`.                                                                                              |
 
-### Controls
+<h4 id="controls">Controls</h4>
 
 ![controls](assets/controls.png)
 
@@ -73,7 +103,7 @@ in [`bento.css`](demos/basic/src/main/resources/bento.css).
 | `Headers`                   | Child of `HeaderPane` that acts as a `HBox`/`VBox` holding multiple `Headers`.                                                                    |
 | `ButtonHBar` / `ButtonVBar` | Child of `HeaderPane` used to show buttons for the `DockContainerLeaf` for things like context menus and selection of overflowing `Header` items. |
 
-### Dockable
+<h4 id="dockables">Dockables</h4>
 
 The `Dockable` can be thought of as the model behind each of a `HeaderPane`'s `Header` _(Much like a `Tab` of
 a `TabPane`)_.
@@ -81,17 +111,16 @@ It outlines capabilities like whether the `Header` can be draggable, where it ca
 display,
 and the associated JavaFX `Node` to display when placed into a `DockContainerLeaf`.
 
-## Example
-
+<h3 id="basic-example">Basic Example</h3>
 ![containers](assets/example.png)
-
-> You can run the basic example via `./gradlew :demos:basic:run`
 
 In this example we create a layout structure that loosely models how an IDE is laid out.
 There are tool-tabs on the left and bottom sides. The primary content like Java sources files
 reside in the middle and occupy the most space. The tool tabs are intended to be smaller and not
 automatically scale when we resize the window since we want the primary content to take up all
 of the available space when possible.
+
+<h4 id="construct-the-default-layout">Construct the Default Docking Layout</h4>
 
 We'll first create a vertically split container and put tools like logging/terminal at the bottom.
 The bottom section will be set to not resize with the parent for the reason mentioned previously.
@@ -107,7 +136,7 @@ but we'll want to make sure the tools have some additional values set.
 
 All tool tabs will be constructed such that they are not closable and all belong to a shared
 drag group called `TOOLS`. Since these tabs all have a shared group they can be dragged
-amongst one another. However, the primary docking container tabs with our _"project files"_ cannot be
+among one another. However, the primary docking container tabs with our _"project files"_ cannot be
 dragged into the areas housing our tools. If you try this out in IntelliJ you'll find it
 follows the same behavior.
 
@@ -145,7 +174,7 @@ leafTools.setCanSplit(false);
 // Primary editor space should not prune when empty
 leafWorkspaceHeaders.setPruneWhenEmpty(false);
 
-// Set intended sizes for tools (leaf does not need to be a direct child, just some level down in the 
+// Set intended sizes for tools (leaf does not need to be a direct child, just some level down in the
 branchRoot.setContainerSizePx(leafTools, 200);
 branchRoot.setContainerSizePx(leafWorkspaceTools, 300);
 
@@ -170,8 +199,11 @@ leafWorkspaceHeaders.addDockables(
 		buildDockable(builder, 0, 3, "Class 4"),
 		buildDockable(builder, 0, 4, "Class 5")
 );
+```
 
-// Show it
+<h4 id="show-it">Show it</h4>
+
+```java
 Scene scene = new Scene(branchRoot);
 scene.getStylesheets().add("/bento.css");
 stage.setScene(scene);
@@ -182,3 +214,23 @@ stage.show();
 For a more real-world example you can check out [Recaf](https://github.com/Col-E/Recaf/)
 
 ![containers](assets/example-recaf.png)
+
+## Persistence Framework
+
+The persistence framework consists of [persistence](./persistence) modules that supplement the [core](#core-framework) by saving and restoring BentoFX docking layouts across application executions. The [persistence/core module](./persistence/core) also provides a customizable `Layouts` menu that allows users to manage multiple named layouts of their own using a ready-made control.
+
+The persistence guide covers:
+* The modules to depend on
+* The provider interfaces an application must implement
+* Saving and restoring layouts
+* Managing named layouts
+* The ready-made `Layouts` menu
+* How to change text in the `Layouts` menu
+* How to add custom codec and storage implementations
+
+**[Read the persistence guide &rarr;](./docs/persistence/guide.md)**
+
+## Miscellany
+
+- The **[Contributing Guide](CONTRIBUTING.md)** explains how to build BentoFX, develop new features, and submit pull requests.
+- The **[Maintainers Guide](MAINTAINERS.md)** covers repository administration, project health, CI/CD, and releases.

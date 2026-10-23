@@ -1,0 +1,36 @@
+plugins {
+	alias(libs.plugins.javafx)
+	id 'bento.project.project-convention'
+	id 'bento.project.application-convention'
+}
+
+description = 'BentoFX Persistence Demo'
+
+application {
+	applicationName = description ?: name
+	mainModule = 'bento.fx.demo.persistence'
+	mainClass = 'software.coley.bentofx.demo.persistence.Runner'
+	applicationDefaultJvmArgs = ['-Xms256m', '-Xmx1024m']
+}
+
+javafx {
+	modules = ['javafx.base', 'javafx.controls', 'javafx.graphics']
+}
+
+dependencies {
+
+	implementation projects.core
+	implementation projects.persistenceCore
+
+	implementation libs.slf4j.api
+
+	// Only include one codec implementation
+	 runtimeOnly projects.persistence.codec.json
+	// runtimeOnly projects.persistence.codec.xml
+
+	// Only include one storage implementation
+	runtimeOnly projects.persistence.storage.file
+	// runtimeOnly projects.persistence.storage.db.h2
+
+	runtimeOnly libs.slf4j.jdk14
+}

@@ -1,10 +1,17 @@
 name: CodeQL
 
+# TODO enhancement/issue-13: The "github.repository == 'philliplbryant/BentoFX'"
+#   conditional below gates CodeQL results to this fork's code-scanning. When
+#   adopting into Col-E/BentoFX, replace with 'Col-E/BentoFX' (or remove the
+#   gate if results should post from any fork).
+
 on:
   push:
+    # Every branch, but not tags. Covers same-repo pull requests through
+    # their head-branch push - adding `pull_request:` on top fires a
+    # duplicate run for every PR synchronize event.
     branches:
       - '**'
-  pull_request:
   workflow_dispatch:
 
 concurrency:
@@ -45,7 +52,6 @@ jobs:
       # This makes an alert fail the branch build too. The path filter matches the
       # exclusions in 'sonar-project.properties' and 'qodana.yaml', so the three
       # tools agree on what is in scope.
-      # TODO BENTO-13: Remove the path filter once those modules are clean.
       - name: Fail on CodeQL alerts
         if: always() && steps.analyze.outcome == 'success'
         env:
