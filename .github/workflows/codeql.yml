@@ -1,0 +1,76 @@
+name: CodeQL
+
+# TODO enhancement/issue-13: The "github.repository == 'philliplbryant/BentoFX'"
+#   conditional below gates CodeQL results to this fork's code-scanning. When
+#   adopting into Col-E/BentoFX, replace with 'Col-E/BentoFX' (or remove the
+#   gate if results should post from any fork).
+
+on:
+  push:
+    # Every branch, but not tags. Covers same-repo pull requests through
+    # their head-branch push - adding `pull_request:` on top fires a
+    # duplicate run for every PR synchronize event.
+    branches:
+      - '**'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: CodeQL Java analysis
+    # Results go to this repository's code scanning, so the job runs only here,
+    # the way build.yml gates its SonarQube steps.
+    if: github.repository == 'philliplbryant/BentoFX'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      # Buildless analysis: CodeQL extracts the sources directly instead of
+      # observing a compile. That skips the JDK setup, the Gradle cache, and the
+      # xvfb dance the test job needs - and the project is already compiled twice
+      # over by the build and Qodana workflows, so a third pass buys nothing.
+      # Switch to build-mode manual with a real ./gradlew build if CodeQL starts
+      # reporting extraction errors, which is where buildless usually gives out.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4.39.0
+        with:
+          languages: java-kotlin
+          build-mode: none
+      - name: Analyze
+        id: analyze
+        uses: github/codeql-action/analyze@v4.39.0
+      # 'analyze' uploads results and never fails on findings, and the ruleset
+      # rule for code scanning only gates pull requests into the default branch.
+      # This makes an alert fail the branch build too. The path filter matches the
+      # exclusions in 'sonar-project.properties' and 'qodana.yaml', so the three
+      # tools agree on what is in scope.
+      - name: Fail on CodeQL alerts
+        if: always() && steps.analyze.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          alerts=$(gh api \
+            "repos/${{ github.repository }}/code-scanning/alerts?ref=${{ github.ref }}&state=open&tool_name=CodeQL&per_page=100" \
+            --jq '[.[]
+                   | select(((.most_recent_instance.location.path // "") | startswith("core/")) == false)
+                   | select(((.most_recent_instance.location.path // "") | startswith("demos/basic/")) == false)
+                   | select(.rule.severity == "error"
+                            or (.rule.security_severity_level // "") == "critical"
+                            or (.rule.security_severity_level // "") == "high")
+                   | "\(.rule.id) at \(.most_recent_instance.location.path):\(.most_recent_instance.location.start_line)"]')
+          count=$(printf '%s' "$alerts" | jq 'length')
+          if [ "$count" -gt 0 ]; then
+            echo "::error::CodeQL reported ${count} alert(s) at or above the threshold."
+            printf '%s' "$alerts" | jq -r '.[] | "  " + .'
+            exit 1
+          fi
+          echo "No CodeQL alerts at or above the threshold."

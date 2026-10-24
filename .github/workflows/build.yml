@@ -1,20 +1,34 @@
-name: CI/CD
+name: Build
+
+# TODO enhancement/issue-13: Six "github.repository == 'philliplbryant/BentoFX'"
+#   conditionals below gate SonarCloud, Codecov, and PR-comment steps on this
+#   fork. When adopting into Col-E/BentoFX, replace with 'Col-E/BentoFX'. The
+#   release-publish job's "github.repository == 'Col-E/BentoFX'" is the
+#   intended target and should stay as-is. Repository secrets required:
+#   SONAR_TOKEN, CODECOV_TOKEN, JRELEASER_GPG_PASSPHRASE,
+#   JRELEASER_GPG_PUBLIC_KEY, JRELEASER_GPG_SECRET_KEY,
+#   JRELEASER_MAVENCENTRAL_TOKEN, JRELEASER_MAVENCENTRAL_USERNAME.
 
 on:
   push:
+    # Every branch, but not tags. Covers same-repo pull requests through
+    # their head-branch push - adding `pull_request:` on top fires a
+    # duplicate run for every PR synchronize event.
     branches:
-      - master
-  pull_request:
-    branches:
-      - master
+      - '**'
   workflow_dispatch:
     inputs:
       is-a-release:
         description: Publish release? (Only works on master, and for untagged versions)
         type: boolean
 
-permissions:
-  contents: write
+# Building every branch means a quick series of pushes would otherwise stack up
+# whole matrix builds that nobody is waiting on. Let a newer push supersede the
+# run it replaces - except on master, where cancelling could abort a release
+# partway through publishing.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 jobs:
   test:
@@ -26,72 +40,171 @@ jobs:
         java-version: [ 21 ]
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Sonar needs master to diff PRs against, and history for blame
       - name: Setup JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 21
           check-latest: true
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-      - name: Run tests
-        run: ./gradlew test
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+      - name: Run build, analysis, tests, and coverage reports
+        run: xvfb-run -a ./gradlew build checkAll
+      - name: Write coverage summary
+        if: always()
+        run: python3 .github/scripts/coverage-summary.py
+      # ':sonarClasspath' writes one list per module during the build. The
+      # scanner takes them as a single property, so they are joined here.
+      - name: Collect the Sonar Java classpath
+        if: github.repository == 'philliplbryant/BentoFX'
+        run: |
+          join() {
+            find . -path "*/build/sonar/$1" -exec cat {} \; -exec echo \; \
+              | grep -v '^$' | paste -sd, -
+          }
+          {
+            echo "SONAR_JAVA_LIBRARIES=$(join libraries.txt)"
+            echo "SONAR_JAVA_TEST_LIBRARIES=$(join test-libraries.txt)"
+          } >> "$GITHUB_ENV"
+      # Runs after the build so the aggregated coverage reports it reads already
+      # exist. Source and test classification, coverage report paths, and the
+      # module exclusions all live in 'sonar-project.properties'.
+      - name: SonarQube Scan
+        if: github.repository == 'philliplbryant/BentoFX'
+        uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9 # v8.3.0
+        with:
+          args: >-
+            -Dsonar.java.libraries=${{ env.SONAR_JAVA_LIBRARIES }}
+            -Dsonar.java.test.libraries=${{ env.SONAR_JAVA_TEST_LIBRARIES }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # The scan above submits the analysis and returns without waiting for
+      # results from the server, so on its own it gates nothing. This polls for
+      # those results. 'continue-on-error' is what turns a slow or unreachable
+      # server into a warning instead of a failed build: the step below is what
+      # fails the build, and only on an explicit FAILED.
+      - name: Wait for the SonarQube quality gate
+        id: sonar-gate
+        if: github.repository == 'philliplbryant/BentoFX'
+        continue-on-error: true
+        timeout-minutes: 6
+        uses: SonarSource/sonarqube-quality-gate-action@7a5fffe8e523c40e0c740b6bc2712ab503e52efa # v1.2.1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          pollingTimeoutSec: '300'
+      - name: Fail on a failed SonarQube quality gate
+        if: github.repository == 'philliplbryant/BentoFX'
+        shell: bash
+        run: |
+          status='${{ steps.sonar-gate.outputs.quality-gate-status }}'
+          case "$status" in
+            PASSED)
+              echo "SonarQube quality gate passed."
+              ;;
+            WARN)
+              echo "::warning::SonarQube quality gate returned WARN."
+              ;;
+            FAILED)
+              echo "::error::SonarQube quality gate FAILED. See the analysis on SonarQube Cloud."
+              exit 1
+              ;;
+            *)
+              echo "::warning::No SonarQube quality gate verdict within the polling timeout. Not failing the build."
+              ;;
+          esac
+      # Guarded by repository the way the SonarQube steps above are: only this
+      # repository is registered with Codecov, and 'fail_ci_if_error' is
+      # deliberate - silent coverage loss is worse - so an unregistered fork
+      # without CODECOV_TOKEN would fail the build on every run.
+      #
+      # 'files' has to stay on one line. The action splits it on commas without
+      # trimming, so a block scalar leaves a newline glued to every path after
+      # the first and only the first report uploads.
+      - name: Upload coverage to Codecov
+        if: github.repository == 'philliplbryant/BentoFX'
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          disable_search: true
+          fail_ci_if_error: true
+          files: report-aggregation/build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml,report-aggregation/build/reports/jacoco/integrationTestCodeCoverageReport/integrationTestCodeCoverageReport.xml,report-aggregation/build/reports/jacoco/integrationTestGraphicalCodeCoverageReport/integrationTestGraphicalCodeCoverageReport.xml,report-aggregation/build/reports/jacoco/integrationTestParallelCodeCoverageReport/integrationTestParallelCodeCoverageReport.xml
+          name: bentofx-aggregated
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          if-no-files-found: ignore
+          name: Coverage reports
+          retention-days: 21
+          path: |
+            **/reports/jacoco/**
+            **/reports/tests/**
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
+          if-no-files-found: ignore
           name: Test artifacts
           retention-days: 21
           path: |
             **/TEST-*
             **/hs_err_pid*
-
-  # Publishes the test results of 'test'
   publish-test-results:
     name: Publish tests results
     needs: test
     if: always()
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       checks: write
+      contents: read
       pull-requests: write
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
       - name: Publish test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: hashFiles('artifacts/**/TEST-*.xml') != ''
+        uses: EnricoMi/publish-unit-test-result-action@7622c5bf3d112a72ab4fa3951c2aa5723d8ab92d # v2.25.0
         with:
           check_name: Unit Test results
+          fail_on: nothing
           files: |
-            **/TEST-*
+            artifacts/**/TEST-*.xml
 
   # Builds the projects and attempts to publish a release if the current project version
   # does not match any existing tags in the repository.
   build-and-release:
     name: Publish release
     needs: test
-    if: inputs.is-a-release && github.repository == 'Col-E/BentoFX' && github.ref == 'refs/heads/master'
+    if: ${{ inputs['is-a-release'] && github.repository == 'Col-E/BentoFX' && github.ref == 'refs/heads/master' }}
     strategy:
       fail-fast: false
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Required depth for JReleaser
       - name: Setup Java JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 21
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
       # Set environment variable for the project version: "var_to_set=$(command_to_run)" >> sink
       #  - For maven:  echo "PROJECT_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
       #  - For gradle: echo "PROJECT_VERSION=$(./gradlew properties | grep -Po '(?<=version: ).*')" >> $GITHUB_ENV
@@ -134,10 +247,41 @@ jobs:
           JRELEASER_MAVENCENTRAL_TOKEN: ${{ secrets.JRELEASER_MAVENCENTRAL_TOKEN }}
       # Upload JRelease debug log
       - name: JReleaser output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: jreleaser-release
           path: |
             build/jreleaser/trace.log
             build/jreleaser/output.properties
+
+  # Without this, GitHub's dependency graph for the repository contains only the
+  # Actions used by these workflows - no Gradle dependency appears in it, so
+  # Dependabot alerts cover none of them. This resolves the build and submits the
+  # full graph, transitive dependencies included.
+  #
+  # Runs on the default branch only, because the dependency graph is per
+  # repository and derived from that branch. Submitting from every feature branch
+  # would keep overwriting it. It needs 'contents: write', which is why this is a
+  # separate job rather than a step in 'test'.
+  #
+  # Gated by repository as well, the way the SonarQube and Codecov steps are, so
+  # it only ever submits this repository's graph.
+  dependency-submission:
+    name: Submit dependency graph
+    if: github.repository == 'philliplbryant/BentoFX' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup JDK
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+          check-latest: true
+      - name: Submit dependency graph
+        uses: gradle/actions/dependency-submission@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0

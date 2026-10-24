@@ -1,118 +1,140 @@
 import static org.gradle.api.tasks.wrapper.Wrapper.DistributionType.BIN
+import static org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
 
 plugins {
-    // Apply the base plugin to add `clean` to the root project.
-    id 'base'
-    alias libs.plugins.jreleaser
-    alias libs.plugins.benmanes.versions
+	// Apply the base plugin to add `clean` to the root project.
+	id 'base'
+	alias libs.plugins.jreleaser
 }
 
-allprojects {
-    group = 'software.coley.bento-fx'
-    version = libs.versions.bentofx.getOrNull()
+def versionCatalog = versionCatalogs.named('libs')
+
+group = versionCatalog.findVersion("maven-group").get().requiredVersion
+
+// The root project publishes nothing, but the release workflow reads its version
+// with './gradlew properties' to derive the release tag. Without this it reports
+// 'unspecified'.
+version = versionCatalog.findVersion("bentofx").get().requiredVersion
+
+// Each published module writes to its own build/staging-deploy (see
+// bento.release.publish-convention.gradle); sharing one output directory
+// across independent Gradle tasks breaks up-to-date/stale-output tracking,
+// so JReleaser needs a separate stagingRepository entry per module,
+// resolved relative to the root project.
+def publishedModuleStagingRepositories = [
+		// The BOM consumers resolve to align BentoFX versions. It is a released
+		// artifact like any other, so it stages and deploys alongside them.
+		'platform/build/staging-deploy',
+		'core/build/staging-deploy',
+		'persistence/core/build/staging-deploy',
+		'persistence/codec/common/build/staging-deploy',
+		'persistence/codec/json/build/staging-deploy',
+		'persistence/codec/xml/build/staging-deploy',
+		'persistence/storage/db/h2/build/staging-deploy',
+		'persistence/storage/file/build/staging-deploy',
+]
+
+def checkAllTask = tasks.register('checkAll') {
+	description = 'Runs all whole-build verification tasks. Run it from this ' +
+			'project to combine it with the task of the same name in every ' +
+			'subproject.'
+	group = VERIFICATION_GROUP
 }
 
-subprojects {
-    // Platform is special, skip it.
-    if (it.name == 'platform')
-        return
+plugins.withId('com.autonomousapps.dependency-analysis') {
+	checkAllTask.configure { checkAllLifecycleTask ->
+		checkAllLifecycleTask.dependsOn(tasks.named('buildHealth'))
+	}
+}
 
-    apply plugin: 'java-library'
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-
-    // Get the Java JDK version specified in libs.versions.toml and accommodate all
-    // the different ways Gradle and its plugins take the Java version...
-    def jdkVersion = libs.versions.java.jdk.getOrNull()
-    def javaLanguageVersion = JavaLanguageVersion.of(jdkVersion)
-    def javaMajorVersionAsInt = javaLanguageVersion.asInt()
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(javaMajorVersionAsInt)
-        }
-
-        withSourcesJar()
-        withJavadocJar()
-    }
-
-    // Append options for unchecked/deprecation, debug info, and parameter names.
-    tasks.withType(JavaCompile).configureEach {
-        options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation' << '-g' << '-parameters'
-        options.encoding = 'UTF-8'
-        options.incremental = true
-    }
-
-    // All modules should have the same test framework setup.
-    test {
-        useJUnitPlatform()
-
-        systemProperty 'junit.jupiter.execution.parallel.enabled', true
-        systemProperty 'junit.jupiter.execution.parallel.mode.default', 'concurrent'
-
-        testLogging {
-            showStandardStreams = true
-            events "passed", "skipped", "failed"
-        }
-    }
-
-    // All modules with Java components should share the same test dependencies.
-    plugins.withType(JavaPlugin).configureEach {
-        dependencies {
-            testImplementation libs.bundles.javafx
-            testImplementation(platform(libs.junit.bom))
-            testImplementation(libs.junit.api)
-            testImplementation(libs.junit.params)
-            testImplementation(libs.assertj)
-            testRuntimeOnly(libs.junit.engine)
-            testRuntimeOnly(libs.junit.launcher)
-        }
-    }
+// JReleaser also requires defining the following system properties (can be
+// defined in [USER_HOME]/.jreleaser/config.properties):
+//    JRELEASER_GPG_PASSPHRASE=[passphrase]
+//    JRELEASER_GPG_PUBLIC_KEY=[public-key]
+//    JRELEASER_GPG_SECRET_KEY=[secret-key]
+//    JRELEASER_MAVENCENTRAL_USERNAME=[username]
+//    JRELEASER_MAVENCENTRAL_PASSWORD=[password]
+// And the following properties must be present to release snapshot versions to
+// a Nexus-like repo:
+//    NEXUS_USERNAME=[username]
+//    NEXUS_PASSWORD=[password]
+//    NEXUS_SNAPSHOT_REPO_URL=[url of the Nexus snapshot repository]
+// The variables above are only visible in this file. These tasks sign or
+// contact a remote, so the requirement belongs in './gradlew tasks' output too.
+[
+		'jreleaserAnnounce',
+		'jreleaserDeploy',
+		'jreleaserFullRelease',
+		'jreleaserPublish',
+		'jreleaserRelease',
+		'jreleaserSign',
+].each { taskName ->
+	tasks.named(taskName).configure { task ->
+		task.description = "${task.description}. Requires JRELEASER_* " +
+				'credentials; see the comment above the `jreleaser` block in ' +
+				'the root build script.'
+	}
 }
 
 jreleaser {
-    signing {
-        pgp {
-            active = 'RELEASE'
-            armored = true
-        }
-    }
-    release {
-        github {
-            tagName = libs.versions.bentofx.getOrNull()
-            changelog {
-                formatted = 'ALWAYS'
-                preset = 'conventional-commits'
-                contributors {
-                    format = '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
-                }
-            }
-        }
-    }
-    deploy {
-        maven {
-            mavenCentral {
-                sonatype {
-                    active = 'RELEASE'
-                    url = 'https://central.sonatype.com/api/v1/publisher'
-                    applyMavenCentralRules = true
-                    stagingRepository('build/staging-deploy')
-                }
-            }
-        }
-    }
+	signing {
+		pgp {
+			active = 'RELEASE'
+			armored = true
+		}
+	}
+	release {
+		// TODO: This doesn't auto-publish github releases and the 'distribution' block also isn't a viable alternative
+		//  Need to look into why it doesn't work. Probably related to the project's "alternative" artifact model...
+		github {
+			tagName = project.version
+			changelog {
+				formatted = 'ALWAYS'
+				preset = 'conventional-commits'
+				contributors {
+					format = '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
+				}
+			}
+		}
+	}
+	deploy {
+		maven {
+			mavenCentral {
+				sonatype {
+					active = 'RELEASE'
+					url = 'https://central.sonatype.com/api/v1/publisher'
+					applyMavenCentralRules = true
+					publishedModuleStagingRepositories.each { stagingRepository(it) }
+				}
+			}
+			nexus2 {
+				'snapshots' {
+					active = 'SNAPSHOT'
+					// Nexus2-style staging API isn't used for snapshots; only
+					// snapshotUrl is exercised, but the deployer schema still
+					// requires 'url' to be set.
+					url = System.getenv('NEXUS_SNAPSHOT_REPO_URL')
+					snapshotSupported = true
+					snapshotUrl = System.getenv('NEXUS_SNAPSHOT_REPO_URL')
+					username = System.getenv('NEXUS_USERNAME')
+					password = System.getenv('NEXUS_PASSWORD')
+					publishedModuleStagingRepositories.each { stagingRepository(it) }
+				}
+			}
+		}
+	}
 }
 
 // Using this task to upgrade Gradle keeps the gradle-wrapper.properties,
 // distribution JAR, and wrapper scripts (./gradle and ./gradlew.bat) in sync.
-tasks.named('wrapper', Wrapper).configure {
-    // The Gradle version and checksum are specified in libs.versions.toml
-    gradleVersion = libs.versions.gradle.wrapper.getOrNull()
-    distributionSha256Sum = libs.versions.gradle.checksum.getOrNull()
+tasks.named("wrapper", Wrapper).configure {
+	// The Gradle version and checksum are specified in libs.versions.toml
+	gradleVersion =
+			versionCatalog.findVersion("gradle-wrapper").get().requiredVersion
+	distributionSha256Sum =
+			versionCatalog.findVersion("gradle-checksum").get().requiredVersion
 
-    // Use `ALL` instead of `BIN` to provide support for developers using the Gradle scripts.
-    distributionType = BIN
-    networkTimeout = 60000
+	// Use `ALL` instead of `BIN` to provide support for developers using the Gradle scripts.
+	distributionType = BIN
+	networkTimeout = 60000
 }

@@ -1,0 +1,27 @@
+plugins {
+	id 'application'
+	id 'com.autonomousapps.dependency-analysis'
+}
+
+dependencyAnalysis {
+	app()
+}
+
+tasks.withType(JavaExec).configureEach {
+	notCompatibleWithConfigurationCache(
+			"Cannot serialize object of type `org.gradle.api.internal.project.DefaultProject`, " +
+					"a subtype of `org.gradle.api.Project`, as these are not " +
+					"supported with the configuration cache."
+	)
+}
+
+// Just support running the demos, don't create distributions, JavaDocs, or JARs for them
+tasks.named('assembleDist') { enabled = false }
+tasks.named('distTar') { enabled = false }
+tasks.named('distZip') { enabled = false }
+tasks.named('installDist') { enabled = false }
+tasks.named('startScripts') { enabled = false }
+tasks.named('javadoc') { enabled = false }
+// Note: Disabling the Jar task causes the run task to fail
+tasks.named('javadocJar') { enabled = false }
+tasks.named('sourcesJar') { enabled = false }

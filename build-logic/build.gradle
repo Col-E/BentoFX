@@ -1,0 +1,43 @@
+plugins {
+	id 'groovy-gradle-plugin'
+}
+
+/**
+ * This included build produces build convention plugins, not settings plugins.
+ * Gradle evaluates it after settings evaluation, and configures project objects
+ * then. Put normal project plugins - application, dependency setup, task wiring,
+ * and other project configuration - here. Keep settings-time discovery and
+ * settings based decisions in settings-logic instead.
+ */
+description = 'Used to apply plugins to projects and to configure ' +
+		'dependencies and tasks. Runs during project configuration, after ' +
+		'settings.'
+
+def versionCatalog = versionCatalogs.named('libs')
+def jdkVersion = versionCatalog.findVersion("java-jdk").get().requiredVersion
+def javaLanguageVersion = JavaLanguageVersion.of(jdkVersion)
+
+java {
+	toolchain {
+		languageVersion = javaLanguageVersion
+	}
+}
+
+dependencies {
+	implementation gradleApi()
+	implementation localGroovy()
+
+	implementation(libs.dependencyAnalysis.gradlePlugin.dependency) {
+		because(
+				"Declared here even though it's not used otherwise in buildSrc to work around " +
+						"https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/issues/667"
+		)
+	}
+
+	implementation libs.errorprone.gradlePlugin.dependency
+	implementation libs.javafx.gradlePlugin.dependency
+	// Brings in several transitive dependencies with vulnerabilities, but they are build-time only.
+	// noinspection VulnerableLibrariesLocal
+	implementation libs.jreleaser.gradlePlugin.dependency
+	implementation libs.nullaway.gradlePlugin.dependency
+}

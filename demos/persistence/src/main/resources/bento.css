@@ -1,0 +1,196 @@
+/*
+This file was copied from 'demos/basic/src/main/resources/bento.css' with minor
+modifications to delete unused style rules.
+ */
+.root {
+    -color-base-9: white;
+    -color-base-8: #dddddd;
+    -color-base-7: #d0d0d0;
+    -color-base-6: #c4c4c4;
+    -color-base-5: rgb(170, 170, 170);
+    -color-base-4: #6a6a6a;
+    -color-base-3: #5e5e5e;
+    -color-base-2: #444444;
+    -color-base-1: #373737;
+    -color-base-0: #373737;
+    -color-accent-9: #bddeff;
+    -color-accent-8: #a3d1ff;
+    -color-accent-7: #7abcff;
+    -color-accent-6: #57aaff;
+    -color-accent-5: #3d9eff;
+    -color-accent-4: rgb(10, 132, 255);
+    -color-accent-3: #006bd6;
+    -color-accent-2: #005bb7;
+    -color-accent-1: #00448a;
+    -color-accent-0: #002b57;
+    -color-fg-default: black;
+    -color-fg-muted:  -color-base-1;
+    -color-fg-subtle: -color-base-3;
+    -color-bg-default: -color-base-9;
+    -color-bg-overlay: -color-base-8;
+    -color-bg-subtle: -color-base-6;
+    -color-bg-inset: -color-base-4;
+    -color-border-default: -color-base-3;
+    -color-border-muted: -color-base-4;
+    -color-border-subtle: -color-base-5;
+    -color-accent-fg: -color-accent-8;
+    -color-accent-emphasis: -color-accent-5;
+    -color-accent-muted: -color-accent-2;
+    -color-accent-subtle: -color-accent-0;
+    -fx-background-color: -color-bg-default;
+}
+
+/* '.container-leaf' and '.container-branch:root' need no styling here. */
+.container-branch {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.container-branch > .split-pane-divider {
+    -fx-background-color: -color-bg-inset !important;
+    -fx-padding: 0 2px 0 2px;
+}
+.container-branch > .split-pane-divider > .horizontal-grabber {
+    -fx-background-color: -color-bg-subtle;
+    -fx-padding: 5px 1px 5px 1px;
+}
+.container-branch > .split-pane-divider > .vertical-grabber {
+    -fx-background-color: -color-bg-subtle;
+    -fx-padding: 1px 5px 1px 5px;
+}
+/* ':hover', ':pressed', and ':disabled' on the divider itself need no styling
+   here. The grabber rules below cover the first two. */
+.container-branch > .split-pane-divider:hover> .horizontal-grabber,
+.container-branch > .split-pane-divider:hover> .vertical-grabber {
+    -fx-background-color: -color-accent-emphasis;
+}
+.container-branch > .split-pane-divider:pressed > .horizontal-grabber,
+.container-branch > .split-pane-divider:pressed > .vertical-grabber {
+    -fx-background-color: -color-accent-fg;
+}
+
+/* HeaderPane */
+.header-pane {
+    -fx-background-insets: 0, 1px;
+    -fx-background-color: -color-border-default, -color-bg-default;
+}
+/* The "x" button on closable headers */
+.header-pane .close-button {
+    -fx-effect: none;
+    -fx-opacity: 0.5;
+    -fx-background-insets: 0;
+    -fx-background-radius: 50px;
+    -fx-background-color: transparent;
+    -fx-border-width: 0px;
+    -fx-padding: 0 2px 0 2px;
+}
+.header-pane .header:selected .close-button:hover {
+    -fx-background-color: -color-bg-subtle;
+}
+.header-pane .header .close-button:hover {
+    -fx-background-color: -color-bg-default;
+}
+/* The "▼" and "≡" buttons in HeaderView */
+.header-pane .corner-button {
+    -fx-effect: none;
+    -fx-background-insets: 0, 1px;
+    -fx-background-radius: 0px;
+    -fx-background-color: -color-border-default, -color-bg-overlay;
+    -fx-border-width: 0px;
+}
+.header-pane .corner-button:hover {
+    -fx-background-color: -color-border-default, -color-bg-default;
+}
+.header-pane:top .corner-button {
+    -fx-background-insets: 0, 0 0 1px 1px;
+}
+.header-pane:bottom .corner-button {
+    -fx-background-insets: 0, 1px 0 0 1px;
+}
+.header-pane:left .corner-button {
+    -fx-background-insets: 0, 1px 1px 0 0;
+}
+.header-pane:right .corner-button {
+    -fx-background-insets: 0, 1px 0 0 1px;
+}
+.button-bar {
+    -fx-spacing: -1;
+    -fx-padding: 0;
+    -fx-background-color: -color-border-default, -color-bg-default;
+}
+.button-bar:vertical {
+    -fx-fill-height: true;
+}
+.button-bar:horizontal {
+    -fx-fill-width: true;
+}
+
+/* HeaderRegion (Wrapper). '.header-region-wrapper' needs no styling here, in
+   any of the ':top', ':bottom', ':left', and ':right' header positions. */
+
+/* HeaderRegion */
+.header-region {
+    -fx-background-color: -color-border-default, -color-bg-overlay;
+}
+.header-region:top {
+    -fx-background-insets: 0, 0 0 1px 0;
+}
+.header-region:bottom {
+    -fx-background-insets: 0, 1px 0 0 0;
+}
+.header-region:left {
+    -fx-background-insets: 0, 0 1px 0 0;
+}
+.header-region:right {
+    -fx-background-insets: 0, 0 0 0 1px;
+}
+/* '.header-region .node-wrapper' needs no styling here. */
+
+/* Header */
+.header {
+    -fx-background-color: -color-border-default, -color-bg-overlay;
+}
+.header:top {
+    -fx-background-insets: 0, 0 0 1px 0;
+}
+.header:bottom {
+    -fx-background-insets: 0, 1px 0 0 0;
+}
+.header:left {
+    -fx-background-insets: 0, 0 1px 0 0;
+}
+.header:right {
+    -fx-background-insets: 0, 0 0 0 1px;
+}
+.header:hover {
+    -fx-background-color: -color-border-subtle, -color-bg-subtle;
+}
+.header-pane .header:selected {
+    -fx-background-color: -color-bg-inset, -color-bg-default;
+}
+.header-pane:active .header:selected {
+    -fx-background-color: -color-accent-4, -color-bg-default;
+}
+.header:selected:top {
+    -fx-background-insets: 0, 0 0 2px 0;
+}
+.header:selected:bottom {
+    -fx-background-insets: 0, 2px 0 0 0;
+}
+.header:selected:left {
+    -fx-background-insets: 0, 0 2px 0 0;
+}
+.header:selected:right {
+    -fx-background-insets: 0, 0 0 0 2px;
+}
+
+/* Collapsed */
+.container:collapsed .header { -fx-background-color: -color-bg-subtle; }
+.container:collapsed .header-pane { -fx-background-color: -color-bg-subtle; }
+.container:collapsed .header-region { -fx-background-color: -color-bg-subtle; }
+.container:collapsed .corner-button { -fx-background-color: -color-bg-subtle; }
+
+/* Misc */
+.dock-insertion-indicator {
+    -fx-stroke: -color-accent-4;
+    -fx-stroke-width: 2px;
+}
