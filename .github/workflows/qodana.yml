@@ -58,7 +58,7 @@ jobs:
           upload-result: true
       - name: Upload Qodana SARIF
         if: always()
-        uses: github/codeql-action/upload-sarif@v4.39.0
+        uses: github/codeql-action/upload-sarif@v4.39.3
         with:
           sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
       # Keep the raw SARIF downloadable as a workflow artifact so the

@@ -54,7 +54,7 @@ jobs:
           java-version: 21
           check-latest: true
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
       - name: Run build, analysis, tests, and coverage reports
         run: xvfb-run -a ./gradlew build checkAll
       - name: Write coverage summary
@@ -78,7 +78,7 @@ jobs:
       # module exclusions all live in 'sonar-project.properties'.
       - name: SonarQube Scan
         if: github.repository == 'philliplbryant/BentoFX'
-        uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9 # v8.3.0
+        uses: SonarSource/sonarqube-scan-action@e805d875275f728fac1885b413934be6d7c63f65 # v8.4.1
         with:
           args: >-
             -Dsonar.java.libraries=${{ env.SONAR_JAVA_LIBRARIES }}
@@ -174,7 +174,7 @@ jobs:
           path: artifacts
       - name: Publish test results
         if: hashFiles('artifacts/**/TEST-*.xml') != ''
-        uses: EnricoMi/publish-unit-test-result-action@7622c5bf3d112a72ab4fa3951c2aa5723d8ab92d # v2.25.0
+        uses: EnricoMi/publish-unit-test-result-action@da5b7be67623cd59bbbd1a0ce4f022050a55605f # v2.26.0
         with:
           check_name: Unit Test results
           fail_on: nothing
@@ -204,7 +204,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
       # Set environment variable for the project version: "var_to_set=$(command_to_run)" >> sink
       #  - For maven:  echo "PROJECT_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
       #  - For gradle: echo "PROJECT_VERSION=$(./gradlew properties | grep -Po '(?<=version: ).*')" >> $GITHUB_ENV
@@ -284,4 +284,4 @@ jobs:
           java-version: 21
           check-latest: true
       - name: Submit dependency graph
-        uses: gradle/actions/dependency-submission@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        uses: gradle/actions/dependency-submission@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
