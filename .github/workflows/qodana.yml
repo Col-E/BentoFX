@@ -49,7 +49,7 @@ jobs:
       # image accepts them. Passing them here puts the gate config where
       # the runner actually reads it.
       - name: Run Qodana
-        uses: JetBrains/qodana-action@3e8d76ff0e0241618abd808682f426afe84bab3f # v2026.2.2
+        uses: JetBrains/qodana-action@aa698739cd4b8204ad53291bea7e16cd75da3c9f # v2026.3.1
         with:
           args: |
             --within-docker,false
