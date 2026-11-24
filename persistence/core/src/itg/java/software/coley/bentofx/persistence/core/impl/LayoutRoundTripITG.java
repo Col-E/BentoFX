@@ -74,11 +74,11 @@ class LayoutRoundTripITG {
 
 	@Test
 	void capturedLayoutSurvivesRestoreFieldForField(final FxRobot robot) {
-		final List<BentoState> captured = captureNonDefaultLayout(robot);
+		final List<BentoState> nonDefaultLayout = captureNonDefaultLayout(robot);
 
-		assertCapturedLayoutIsNonTrivial(captured);
+		assertCapturedLayoutIsNonTrivial(nonDefaultLayout);
 
-		final List<BentoState> recaptured = restoreThenCapture(robot, captured);
+		final List<BentoState> recaptured = restoreThenCapture(robot, nonDefaultLayout);
 
 		assertThat(recaptured)
 				.describedAs("state captured after a restore of the same layout")
@@ -88,7 +88,7 @@ class LayoutRoundTripITG {
 								Math.abs(first - second) <= DIVIDER_TOLERANCE,
 						Double.class
 				)
-				.isEqualTo(captured);
+				.isEqualTo(nonDefaultLayout);
 	}
 
 	/**
@@ -127,10 +127,10 @@ class LayoutRoundTripITG {
 	 * Builds and shows the tree described on {@link #buildTree}, then captures it.
 	 */
 	private static List<BentoState> captureNonDefaultLayout(final FxRobot robot) {
-		final AtomicReference<List<BentoState>> capturedReference =
+		final AtomicReference<@Nullable List<BentoState>> capturedReference =
 				new AtomicReference<>();
-		final AtomicReference<Stage> stageReference = new AtomicReference<>();
-		final AtomicReference<Tree> treeReference = new AtomicReference<>();
+		final AtomicReference<@Nullable Stage> stageReference = new AtomicReference<>();
+		final AtomicReference<@Nullable Tree> treeReference = new AtomicReference<>();
 
 		robot.interact(() -> {
 			final Tree tree = buildTree();
@@ -145,7 +145,7 @@ class LayoutRoundTripITG {
 		// Collapsing consults live divider geometry, so it has to happen after the
 		// tree is laid out rather than while it is being assembled.
 		robot.interact(() -> {
-			final Tree tree = treeReference.get();
+			final Tree tree = requireNonNull(treeReference.get(), "tree");
 			tree.nestedBranch().setContainerCollapsed(tree.collapsedLeaf(), true);
 			tree.collapsedLeaf().setUncollapsedSize(UNCOLLAPSED_SIZE_PX);
 		});
@@ -153,19 +153,18 @@ class LayoutRoundTripITG {
 		fence(robot);
 
 		try {
-			robot.interact(() ->
-					capturedReference.set(
-							new DefaultBentoStateCapturer(
-									new DefaultBentoProvider(
-											treeReference.get().bento()
-									)
-							).capture()
-					)
-			);
+			robot.interact(() -> {
+				final Tree tree = requireNonNull(treeReference.get(), "tree");
+				capturedReference.set(
+						new DefaultBentoStateCapturer(
+								new DefaultBentoProvider(tree.bento())
+						).capture()
+				);
+			});
 
-			return capturedReference.get();
+			return requireNonNull(capturedReference.get(), "captured layout");
 		} finally {
-			robot.interact(() -> stageReference.get().close());
+			closeStage(robot, stageReference);
 		}
 	}
 
@@ -177,9 +176,9 @@ class LayoutRoundTripITG {
 			final FxRobot robot,
 			final List<BentoState> captured
 	) {
-		final AtomicReference<List<BentoState>> recapturedReference =
+		final AtomicReference<@Nullable List<BentoState>> recapturedReference =
 				new AtomicReference<>();
-		final AtomicReference<Stage> stageReference = new AtomicReference<>();
+		final AtomicReference<@Nullable Stage> stageReference = new AtomicReference<>();
 
 		final Bento restoredBento = new Bento(BENTO_ID);
 
@@ -220,10 +219,28 @@ class LayoutRoundTripITG {
 					)
 			);
 
-			return recapturedReference.get();
+			return requireNonNull(recapturedReference.get(), "recaptured layout");
 		} finally {
-			robot.interact(() -> stageReference.get().close());
+			closeStage(robot, stageReference);
 		}
+	}
+
+	/**
+	 * Closes the stage when one was opened. A null-guard rather than a
+	 * {@code requireNonNull}, because this runs in {@code finally}: when the
+	 * stage was never set, the step that failed to set it is already throwing,
+	 * and a second exception here would hide it.
+	 */
+	private static void closeStage(
+			final FxRobot robot,
+			final AtomicReference<@Nullable Stage> stageReference
+	) {
+		robot.interact(() -> {
+			final Stage stage = stageReference.get();
+			if (stage != null) {
+				stage.close();
+			}
+		});
 	}
 
 	/**
