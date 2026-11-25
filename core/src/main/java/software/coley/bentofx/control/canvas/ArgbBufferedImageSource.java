@@ -4,6 +4,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * ARGB source wrapping a {@link BufferedImage}.
@@ -59,14 +60,35 @@ public class ArgbBufferedImageSource implements ArgbSource {
 	@Override
 	public int[] getArgb() {
 		// We will likely be using this a bit, so it makes sense to cache the result.
-		fullArgbCache = ArgbSource.super.getArgb();
-		return fullArgbCache;
+		int[] argb = fullArgbCache;
+		if (argb == null) {
+			argb = ArgbSource.super.getArgb();
+			fullArgbCache = argb;
+		}
+		return argb;
+	}
+
+	/**
+	 * Two sources are equal when they have the same dimensions and the same pixels.
+	 * The pixels are read once and cached, so the wrapped image must not change
+	 * after this source is first compared or hashed.
+	 */
+	@Override
+	public boolean equals(@Nullable Object o) {
+		if (this == o) return true;
+		if (!(o instanceof final ArgbBufferedImageSource that)) return false;
+
+		// Matching hashes don't prove equality, but differing ones disprove it cheaply.
+		return getWidth() == that.getWidth()
+				&& getHeight() == that.getHeight()
+				&& hashCode() == that.hashCode()
+				&& Arrays.equals(getArgb(), that.getArgb());
 	}
 
 	@Override
 	public int hashCode() {
 		if (hash == 0)
-			hash = Arrays.hashCode(getArgb());
+			hash = Objects.hash(getWidth(), getHeight(), Arrays.hashCode(getArgb()));
 		return hash;
 	}
 }
