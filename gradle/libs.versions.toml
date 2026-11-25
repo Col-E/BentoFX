@@ -13,7 +13,7 @@ java-jdk = "21"
 # Libraries
 assertj = "3.27.7"
 byte-buddy = "1.18.17"
-errorprone = "2.52.0"
+errorprone = "2.53.0"
 equals-verifier = "4.5.2"
 h2 = "2.5.252"
 hibernate-orm = "7.4.5.Final"
