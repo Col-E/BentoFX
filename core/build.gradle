@@ -1,11 +1,21 @@
+import static net.ltgt.gradle.errorprone.CheckSeverity.OFF
+
 plugins {
     alias(libs.plugins.buildconfig)
     alias(libs.plugins.javafx)
+    id 'bento.project.project-convention'
+    id 'bento.release.publish-convention'
 }
 
 description = 'A docking system for JavaFX'
 
-apply from: '../gradle/publishing.gradle'
+javafx {
+    modules = ['javafx.base', 'javafx.controls', 'javafx.graphics']
+
+    // We don't want to include a specific version of JavaFX as a transitive
+    // dependency for users of the library.
+    configurations = ['compileOnlyApi', 'testImplementation']
+}
 
 javadoc {
     options {
@@ -16,20 +26,16 @@ javadoc {
     }
 }
 
-javafx {
-    version = libs.javafx.base.get().version
-    modules = ['javafx.controls']
-
-    // We don't want to include a specific version of JavaFX as a transitive
-    // dependency for users of the library.
-    configurations = ['compileOnlyApi']
+tasks.withType(JavaCompile).configureEach {
+    options.errorprone.check('BadInstanceof', OFF)
+    options.errorprone.check('MissingSummary', OFF)
+    options.errorprone.check('ReferenceEquality', OFF)
+    options.errorprone.check('StringSplitter', OFF)
+    options.errorprone.check('UnnecessaryParentheses', OFF)
 }
 
+// Col-E's core unit tests use TestFX.
 dependencies {
-    compileOnly libs.jspecify
-    compileOnly libs.nullaway.annotations
-
-    testImplementation libs.bundles.javafx
     testImplementation libs.testfx
     testImplementation libs.testfx.core
     testRuntimeOnly libs.testfx.monocle

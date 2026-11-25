@@ -1,0 +1,39 @@
+import static org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
+import static software.coley.gradle.lifecycle.BuildLifecycle.ALL_CLASSES_TASK_NAME
+import static software.coley.gradle.lifecycle.TestLifecycle.*
+
+plugins {
+	id 'jacoco'
+	id 'jvm-test-suite'
+	id 'bento.project.build-lifecycle'
+}
+
+def allClassesTask = tasks.named(ALL_CLASSES_TASK_NAME)
+def checkTask = tasks.named('check')
+def testClassesTask = tasks.named('testClasses')
+def testSuiteName = 'test'
+def testTask = tasks.named(testSuiteName, Test)
+
+jacoco {
+	toolVersion = libs.versions.jacoco.get()
+}
+
+def jacocoTestReportTask = tasks.named('jacocoTestReport', JacocoReport) { reportTask ->
+	reportTask.group = VERIFICATION_GROUP
+	reportTask.description = 'Generates JaCoCo coverage report for the test task.'
+	reportTask.shouldRunAfter(testTask)
+	reportTask.reports {
+		xml.required = true
+		html.required = true
+		csv.required = false
+	}
+}
+
+allClassesTask.configure {
+	dependsOn(testClassesTask)
+}
+
+checkTask.configure {
+	dependsOn(testTask)
+	dependsOn(jacocoTestReportTask)
+}

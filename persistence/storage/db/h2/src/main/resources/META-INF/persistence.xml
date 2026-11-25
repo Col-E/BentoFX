@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+                                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+
+   <persistence-unit name="bentoLayout" transaction-type="RESOURCE_LOCAL">
+
+      <class>software.coley.bentofx.persistence.impl.storage.db.DockingLayoutEntity</class>
+
+      <properties>
+
+          <!-- H2 database. One desktop application's own layouts, in a file only
+               that application opens, so there is no AUTO_SERVER listening for
+               other processes and no user or password: a credential carried in
+               the artifact, identical everywhere, secures nothing. The file's own
+               permissions are the boundary. -->
+         <property name="jakarta.persistence.jdbc.driver"
+                   value="org.h2.Driver"/>
+
+          <!-- DatabaseLayoutStorageProvider always overrides this value with one
+               built from LayoutStorageLocations.resolveBentoFxHome(), so this is
+               only what a JPA tool sees if it opens this persistence unit
+               directly rather than through that provider. -->
+         <property name="jakarta.persistence.jdbc.url"
+                   value="jdbc:h2:file:${user.home}/.bentofx/layouts"/>
+
+          <!-- Tell Hibernate to use Hikari -->
+          <property name="hibernate.connection.provider_class"
+                    value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider"/>
+
+          <!-- Hikari settings -->
+          <property name="hibernate.hikari.minimumIdle"
+                    value="2"/>
+          <property name="hibernate.hikari.maximumPoolSize"
+                    value="10"/>
+          <property name="hibernate.hikari.connectionTimeout"
+                    value="20000"/>
+          <property name="hibernate.hikari.idleTimeout"
+                    value="300000"/>
+          <property name="hibernate.hikari.maxLifetime"
+                    value="1800000"/>
+
+          <!-- Hibernate-->
+         <property name="hibernate.hbm2ddl.auto"
+                   value="update"/>
+         <property name="hibernate.show_sql"
+                   value="false"/>
+         <property name="hibernate.format_sql"
+                   value="false"/>
+      </properties>
+   </persistence-unit>
+</persistence>

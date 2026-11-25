@@ -14,7 +14,10 @@ import software.coley.bentofx.path.DockablePath;
 import software.coley.bentofx.util.DragDropTarget;
 import software.coley.bentofx.util.DragUtils;
 
-import static software.coley.bentofx.util.BentoStates.*;
+import static software.coley.bentofx.util.BentoStates.PSEUDO_SIDE_BOTTOM;
+import static software.coley.bentofx.util.BentoStates.PSEUDO_SIDE_LEFT;
+import static software.coley.bentofx.util.BentoStates.PSEUDO_SIDE_RIGHT;
+import static software.coley.bentofx.util.BentoStates.PSEUDO_SIDE_TOP;
 
 /**
  * Linear item pane to hold {@link Header} displays of {@link DockContainerLeaf#getDockables()}.

@@ -1,0 +1,33 @@
+plugins {
+	id 'bento.project.project-convention'
+	id 'bento.release.publish-convention'
+	id 'bento.test.integration-test-parallel-suite'
+}
+
+description = 'BentoFX Persistence for Files'
+
+dependencies {
+
+	api projects.persistenceCore
+
+	/**
+	 * Both codecs, so {@link FileLayoutConversionITP} can store a layout
+	 * through either one. Parallel integration-test scope only; this module's published
+	 * artifact stays codec-agnostic.
+	 */
+	integrationTestParallelImplementation projects.persistence.codec.json
+	integrationTestParallelImplementation projects.persistence.codec.xml
+
+	integrationTestParallelImplementation testFixtures(
+			projects.persistence.testFixtures
+	)
+
+	/**
+	 * {@link FileLayoutConversionITP} reads
+	 * {@link javafx.application.Platform} directly, to assert the JavaFX
+	 * runtime is not started while it stores a layout.
+	 */
+	integrationTestParallelImplementation libs.javafx.graphics
+
+	integrationTestParallelImplementation libs.junit.params
+}

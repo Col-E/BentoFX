@@ -1,0 +1,77 @@
+plugins {
+	id 'bento.project.project-convention'
+	id 'bento.release.publish-convention'
+	id 'bento.test.integration-test-parallel-suite'
+}
+
+description = "H2 Database Implementation of the Bento LayoutStorage interface"
+
+dependencies {
+
+	api projects.persistenceCore
+
+	api libs.jakarta.persistence
+
+	implementation libs.byte.buddy
+	implementation libs.hibernate.hikari.cp
+	implementation libs.hibernate.validator
+	implementation libs.jakarta.cdi.api
+	implementation libs.jakarta.transaction
+	implementation libs.jakarta.xmlbinding.api
+	implementation libs.slf4j.api
+	implementation libs.zaxxer.hikari.cp
+
+	compileOnly libs.hibernate.core
+
+	runtimeOnly libs.h2
+	runtimeOnly libs.jakarta.el
+	runtimeOnly libs.jakarta.xmlbinding.impl
+
+	/**
+	 * Both codecs, so {@link DatabaseLayoutConversionITP} can store a layout
+	 * through either one. Parallel integration-test scope only; this module's published
+	 * artifact stays codec-agnostic.
+	 */
+	integrationTestParallelImplementation projects.persistence.codec.json
+	integrationTestParallelImplementation projects.persistence.codec.xml
+
+	integrationTestParallelImplementation testFixtures(
+			projects.persistence.testFixtures
+	)
+
+	/**
+	 * {@link DatabaseLayoutConversionITP} reads
+	 * {@link javafx.application.Platform} directly, to assert the JavaFX
+	 * runtime is not started while it stores a layout.
+	 */
+	integrationTestParallelImplementation libs.javafx.graphics
+
+	integrationTestParallelImplementation libs.junit.params
+
+	integrationTestParallelRuntimeOnly libs.slf4j.simple
+}
+
+/**
+ * There appears to be a bug in the Dependency Analysis Gradle Plugin (DAGP),
+ * which erroneously reports these dependencies to be unused and/or runtime only.
+ * Generally speaking, they are runtime only dependencies **except** they are
+ * required to compile module-info.java. Exclude them here until the DAGP fixes
+ * the bug.
+ */
+dependencyAnalysis {
+	issues {
+		onUnusedDependencies {
+			exclude(libs.byte.buddy)
+			exclude(libs.jakarta.cdi.api)
+			exclude(libs.jakarta.el)
+			exclude(libs.jakarta.transaction)
+			exclude(libs.jakarta.xmlbinding.api)
+			exclude(libs.zaxxer.hikari.cp)
+		}
+
+		onRuntimeOnly {
+			exclude(libs.hibernate.hikari.cp)
+			exclude(libs.hibernate.validator)
+		}
+	}
+}

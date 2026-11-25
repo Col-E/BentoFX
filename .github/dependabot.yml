@@ -1,0 +1,67 @@
+version: 2
+
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "gradle"
+    ignore:
+      - dependency-name: "org.openjfx:*"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "org.openjfx.javafxplugin:org.openjfx.javafxplugin.gradle.plugin"
+        update-types:
+          - "version-update:semver-major"
+    groups:
+      testing:
+        patterns:
+          - "org.junit*"
+          - "org.assertj*"
+          - "org.mockito*"
+          - "org.testfx*"
+          - "net.bytebuddy*"
+      gradle-plugins:
+        patterns:
+          - "com.gradle*"
+          - "org.gradle*"
+          - "com.github.gmazzo.buildconfig"
+          - "com.autonomousapps.*"
+          - "net.ltgt.*"
+          - "org.openjfx.javafxplugin"
+          - "com.github.ben-manes.versions"
+      jackson:
+        patterns:
+          - "com.fasterxml.jackson*"
+      hibernate:
+        patterns:
+          - "org.hibernate*"
+      jakarta:
+        patterns:
+          - "jakarta.*"
+          - "org.glassfish.jaxb*"
+          - "org.glassfish.expressly*"
+      javafx:
+        patterns:
+          - "org.openjfx*"
+      logging:
+        patterns:
+          - "org.slf4j*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:30"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"

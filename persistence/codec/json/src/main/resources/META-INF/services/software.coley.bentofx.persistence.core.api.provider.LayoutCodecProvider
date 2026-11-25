@@ -1,0 +1,12 @@
+# Registers this module's codec provider for ServiceLoader on the class path.
+#
+# module-info.java declares the same provider with a `provides` directive, and the
+# JVM honors that only when this jar is on the module path. An application that
+# puts it on the class path - still the default for most - finds no provider at
+# all, and resolution fails with "No LayoutCodecProvider implementation was
+# found. Add a runtime dependency that provides one." even though the dependency
+# is present.
+#
+# Keep this in step with module-info.java: renaming the provider in one place and
+# not the other leaves one of the two paths silently broken.
+software.coley.bentofx.persistence.impl.codec.json.provider.JsonLayoutCodecProvider

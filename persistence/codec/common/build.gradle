@@ -1,0 +1,16 @@
+plugins {
+	alias(libs.plugins.javafx)
+	id 'bento.project.project-convention'
+	id 'bento.release.publish-convention'
+}
+
+description = 'BentoFX Persistence'
+
+javafx {
+	modules = ['javafx.graphics']
+	configurations = ['api']
+}
+
+dependencies {
+	api projects.persistenceCore
+}

@@ -1,0 +1,41 @@
+import static org.gradle.language.base.plugins.LifecycleBasePlugin.VERIFICATION_GROUP
+
+// Without 'sonar.java.libraries' the scanner analyzes Java with an incomplete
+// classpath and silently skips the rules that need type resolution. The paths
+// can't be written into 'sonar-project.properties' because they live in the
+// Gradle cache, so each project writes its own list and the scan joins the
+// files it finds. Resolved per project so this stays usable once Isolated
+// Projects is enabled.
+def sonarClasspathTask = tasks.register('sonarClasspath') {
+	description = 'Writes this project\'s dependency jars for the SonarQube scanner to read.'
+	group = VERIFICATION_GROUP
+
+	def mainClasspath = sourceSets.main.compileClasspath
+	def testClasspath = files(
+			sourceSets.matching { it.name != 'main' }.collect { it.compileClasspath }
+	)
+	def outputDirectory = layout.buildDirectory.dir('sonar')
+
+	inputs.files(mainClasspath).withPropertyName('mainClasspath')
+	inputs.files(testClasspath).withPropertyName('testClasspath')
+	outputs.dir(outputDirectory)
+
+	doLast {
+		def directory = outputDirectory.get().asFile
+
+		// Sibling projects reach a test classpath as class directories rather
+		// than jars, and the scanner accepts both, so anything that exists is
+		// kept. Separators are normalized to '/' because a backslash escapes the
+		// next character in a properties file, which is where these end up.
+		def pathsOf = { files ->
+			files.findAll { it.exists() }
+					.collect { it.absolutePath.replace(File.separator, '/') }
+					.join(',')
+		}
+
+		new File(directory, 'libraries.txt').text = pathsOf(mainClasspath.files)
+		new File(directory, 'test-libraries.txt').text = pathsOf(testClasspath.files)
+	}
+}
+
+tasks.named('check').configure { it.dependsOn(sonarClasspathTask) }

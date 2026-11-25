@@ -1,0 +1,26 @@
+version: "1.0"
+
+# Pinned to match the qodana-action release in .github/workflows/qodana.yml
+# (v2026.2.x); update both together.
+linter: jetbrains/qodana-jvm-community:2026.2
+
+projectJDK: "21"
+
+profile:
+  name: qodana.starter
+
+# Baseline and fail-threshold are passed as CLI args in
+# .github/workflows/qodana.yml: the standalone Qodana CLI the Action
+# installs rejects those keys here, even though the linter image accepts
+# them. The baseline file 'qodana.sarif.json' is tracked at repo root.
+
+coverage:
+  reportProblems: false
+
+exclude:
+  - name: All
+    paths:
+      - build
+      - core
+      - demos/basic
+      - demos/persistence/src/main/resources/bento.css

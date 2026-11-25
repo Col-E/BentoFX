@@ -1,6 +1,7 @@
 plugins {
-    id 'application'
     alias(libs.plugins.javafx)
+    id 'bento.project.project-convention'
+    id 'bento.project.application-convention'
 }
 
 description = 'BentoFX Basic Demo'
@@ -13,14 +14,12 @@ application {
 }
 
 javafx {
-    version = libs.javafx.base.orNull.version
     modules = ['javafx.base', 'javafx.controls', 'javafx.graphics']
 }
 
 dependencies {
     implementation projects.core
 
-    compileOnly libs.jspecify
 }
 
 // Demo code isn't public API.
